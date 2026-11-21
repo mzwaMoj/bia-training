@@ -1,0 +1,1919 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ML Math Lab</title>
+<meta name="description" content="An interactive, game-style lesson on the maths behind machine learning: vectors, matrices, dot products, loss, gradients and gradient descent.">
+<style>
+:root{
+  --bg:#f5f7fb; --surface:#ffffff; --surface-2:#f0f3f9; --ink:#172033; --muted:#5f6b85; --line:#dfe4ee; --grid:#eceff6;
+  --accent:#4f46e5; --accent-ink:#ffffff; --accent-soft:#eef0ff;
+  --c1:#2563eb; --c2:#ea580c; --c3:#0d9488; --c4:#9333ea;
+  --good:#15803d; --good-bg:#e7f6ec; --bad:#dc2626; --bad-bg:#fdecec; --warn:#b45309; --warn-bg:#fdf3e1;
+  --shadow:0 1px 2px rgba(20,30,60,.04),0 6px 24px rgba(20,30,60,.06);
+  --radius:16px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1220; --surface:#151c2e; --surface-2:#1b2439; --ink:#e7ebf5; --muted:#97a3bf; --line:#283350; --grid:#1f2940;
+    --accent:#8b8cf8; --accent-ink:#0d1220; --accent-soft:#232a4d;
+    --c1:#60a5fa; --c2:#fb923c; --c3:#2dd4bf; --c4:#c084fc;
+    --good:#4ade80; --good-bg:#11301f; --bad:#f87171; --bad-bg:#3a1717; --warn:#fbbf24; --warn-bg:#3a2a0e;
+    --shadow:none; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1220; --surface:#151c2e; --surface-2:#1b2439; --ink:#e7ebf5; --muted:#97a3bf; --line:#283350; --grid:#1f2940;
+  --accent:#8b8cf8; --accent-ink:#0d1220; --accent-soft:#232a4d;
+  --c1:#60a5fa; --c2:#fb923c; --c3:#2dd4bf; --c4:#c084fc;
+  --good:#4ade80; --good-bg:#11301f; --bad:#f87171; --bad-bg:#3a1717; --warn:#fbbf24; --warn-bg:#3a2a0e;
+  --shadow:none; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;overflow-x:clip;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent)}
+.hidden{display:none!important}
+.mono,code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- top bar ---------- */
+.topbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:16px;padding:10px 16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.01em;text-decoration:none;color:var(--ink);font-size:1.05rem}
+.brand-logo{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--c3));display:grid;place-items:center;color:#fff;font-size:15px;font-weight:800}
+.topnav{display:flex;gap:4px;margin-left:8px}
+.topnav a{padding:6px 12px;border-radius:999px;text-decoration:none;color:var(--muted);font-weight:600;font-size:.92rem}
+.topnav a.on,.topnav a:hover{background:var(--surface-2);color:var(--ink)}
+.hud{margin-left:auto;display:flex;align-items:center;gap:12px}
+.lvl{display:flex;flex-direction:column;align-items:flex-end;line-height:1.2}
+.lvl b{font-size:.85rem}
+.lvl small{color:var(--muted);font-size:.72rem}
+.xpbar{width:120px;height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:4px}
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--c3));width:0;transition:width .5s}
+.icon-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center}
+
+/* ---------- layout ---------- */
+.layout{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:250px minmax(0,1fr);gap:28px;padding:24px 16px 80px}
+.side{position:sticky;top:76px;align-self:start}
+.side h4{margin:0 0 8px;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.side a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;text-decoration:none;color:var(--ink);font-size:.93rem;font-weight:500}
+.side a:hover{background:var(--surface-2)}
+.side a.on{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.side .dot{flex:none;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:.72rem;font-weight:700;color:var(--muted);background:var(--surface)}
+.side a.done .dot{background:var(--good);border-color:var(--good);color:#fff}
+.side-prog{margin:16px 10px 0;font-size:.8rem;color:var(--muted)}
+.side-prog .bar{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:6px}
+.side-prog .bar i{display:block;height:100%;background:var(--good);width:0;transition:width .4s}
+.mnav{display:none}
+@media (max-width:960px){
+  .layout{grid-template-columns:minmax(0,1fr);padding-top:12px}
+  .side{display:none}
+  .topnav{display:none}
+  .mnav{display:flex;gap:6px;overflow-x:auto;padding:8px 16px;border-top:1px solid var(--line);scrollbar-width:none}
+  .mnav a{flex:none;padding:5px 12px;border-radius:999px;border:1px solid var(--line);text-decoration:none;color:var(--ink);font-size:.85rem;background:var(--surface)}
+  .mnav a.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+  .lvl{display:none}
+}
+
+/* ---------- typography & cards ---------- */
+.view{animation:fade .25s ease;min-width:0}
+.eq{max-width:100%}
+.m{white-space:normal}
+#main{min-width:0}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+h1{font-size:clamp(1.7rem,3.4vw,2.4rem);line-height:1.15;letter-spacing:-.02em;margin:.1em 0 .3em}
+h2{font-size:1.35rem;letter-spacing:-.01em;margin:1.8em 0 .5em}
+h3{font-size:1.08rem;margin:1.3em 0 .4em}
+p{margin:.5em 0 .9em}
+.lead{font-size:1.1rem;color:var(--muted);max-width:68ch}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;text-transform:uppercase;letter-spacing:.09em;font-weight:800;color:var(--accent)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin:16px 0}
+.prose{max-width:76ch}
+.callout{border-radius:14px;padding:14px 18px;margin:16px 0;border:1px solid var(--line);background:var(--surface)}
+.callout.idea{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 30%,transparent)}
+.callout.remember{background:var(--good-bg);border-color:color-mix(in srgb,var(--good) 35%,transparent)}
+.callout.warn{background:var(--warn-bg);border-color:color-mix(in srgb,var(--warn) 35%,transparent)}
+.callout b.t{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.callout.idea b.t{color:var(--accent)} .callout.remember b.t{color:var(--good)} .callout.warn b.t{color:var(--warn)}
+.question-banner{display:flex;gap:12px;align-items:center;background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:10px 14px;color:var(--muted);font-weight:600;margin:6px 0 18px}
+.question-banner span{font-size:1.3rem}
+table.t{width:100%;border-collapse:collapse;font-size:.94rem;margin:10px 0}
+table.t th,table.t td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left}
+table.t th{font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700}
+table.t td.r,table.t th.r{text-align:right}
+.tbl-wrap{overflow-x:auto}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.two>*{min-width:0}
+@media (max-width:720px){.two{grid-template-columns:minmax(0,1fr)}}
+
+/* ---------- math notation ---------- */
+.m{font-family:"Cambria Math","STIX Two Math",Georgia,serif;font-size:1.08em;white-space:nowrap}
+.m i{font-style:italic}
+.eq{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;padding:14px;margin:12px 0;background:var(--surface-2);border-radius:12px;font-family:"Cambria Math","STIX Two Math",Georgia,serif;font-size:1.18rem;overflow-x:auto}
+.vec{display:inline-flex;flex-direction:column;align-items:center;padding:2px 9px;border-left:2px solid currentColor;border-right:2px solid currentColor;border-radius:6px;vertical-align:middle;line-height:1.25;margin:0 3px}
+.mat{display:inline-grid;gap:2px 14px;padding:2px 10px;border-left:2px solid currentColor;border-right:2px solid currentColor;border-radius:6px;vertical-align:middle;text-align:center;line-height:1.3}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 3px}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 4px}
+.frac>span:last-child{padding:0 4px}
+.hl1{color:var(--c1);font-weight:700} .hl2{color:var(--c2);font-weight:700} .hl3{color:var(--c3);font-weight:700} .hl4{color:var(--c4);font-weight:700}
+
+/* ---------- code ---------- */
+.code{position:relative;margin:12px 0}
+.code pre{margin:0;background:#0f172a;color:#e2e8f0;border-radius:12px;padding:16px 18px;overflow-x:auto;font-size:.86rem;line-height:1.6}
+.code .cm{color:#7c8aa5}.code .kw{color:#c4b5fd}.code .st{color:#86efac}.code .nb{color:#fdba74}
+.code .copy{position:absolute;top:8px;right:8px;border:1px solid #334155;background:#1e293b;color:#cbd5e1;border-radius:8px;padding:3px 10px;font-size:.75rem}
+.code .out{background:var(--surface-2);border:1px solid var(--line);border-top:0;border-radius:0 0 12px 12px;padding:8px 18px;font-size:.84rem;color:var(--muted);white-space:pre-wrap;font-family:ui-monospace,Menlo,monospace}
+.code.has-out pre{border-radius:12px 12px 0 0}
+details.py{margin:16px 0;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:4px 16px}
+details.py summary{cursor:pointer;font-weight:700;padding:10px 0;color:var(--ink)}
+
+/* ---------- labs ---------- */
+.lab{background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);margin:24px 0;overflow:hidden}
+.lab-head{padding:18px 22px 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--accent-soft),transparent)}
+.lab-head h3{margin:4px 0 2px;font-size:1.2rem}
+.lab-head p{margin:0;color:var(--muted);font-size:.94rem}
+.lab-tag{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:var(--accent);background:var(--surface);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-radius:999px;padding:2px 10px}
+.lab-body{display:grid;grid-template-columns:290px minmax(0,1fr);gap:0}
+.lab-body.wide{grid-template-columns:1fr}
+@media (max-width:860px){.lab-body{grid-template-columns:minmax(0,1fr)}}
+.controls{padding:18px 20px;border-right:1px solid var(--line);background:var(--surface-2)}
+@media (max-width:860px){.controls{border-right:0;border-bottom:1px solid var(--line)}}
+.viz{padding:18px 20px;min-width:0}
+.ctl{display:block;margin-bottom:14px}
+.ctl .lbl{display:flex;justify-content:space-between;align-items:baseline;font-size:.86rem;font-weight:600;margin-bottom:2px}
+.ctl output{font-variant-numeric:tabular-nums;font-weight:800;color:var(--accent);background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:0 8px;min-width:46px;text-align:center}
+.ctl .hint{font-size:.76rem;color:var(--muted);margin-top:-2px}
+.grp{font-size:.7rem;text-transform:uppercase;letter-spacing:.09em;font-weight:800;color:var(--muted);margin:16px 0 8px;display:flex;align-items:center;gap:6px}
+.grp:first-child{margin-top:0}
+.sw{width:10px;height:10px;border-radius:3px;display:inline-block}
+input[type=range]{width:100%;accent-color:var(--accent);height:22px;margin:0}
+.toggle{display:flex;align-items:center;gap:8px;font-size:.88rem;font-weight:600;margin:6px 0;cursor:pointer}
+.toggle input{accent-color:var(--accent);width:16px;height:16px}
+.btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:var(--accent-ink);border:0;border-radius:11px;padding:10px 18px;font-weight:700;font-size:.94rem;transition:transform .1s,filter .15s}
+.btn:hover{filter:brightness(1.07)} .btn:active{transform:translateY(1px)}
+.btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+.btn.sm{padding:6px 12px;font-size:.84rem;border-radius:9px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.presets{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:.82rem;font-weight:600}
+.chip:hover{border-color:var(--accent)}
+.chip.sel{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+svg.chart{width:100%;height:auto;display:block;overflow:visible}
+svg .gl{stroke:var(--grid);stroke-width:1}
+svg .zl{stroke:var(--muted);stroke-width:1.2;opacity:.55}
+svg .tk{fill:var(--muted);font-size:11px;font-family:system-ui,sans-serif}
+svg .albl{fill:var(--muted);font-size:12px;font-weight:600;font-family:system-ui,sans-serif}
+svg .lbl{font-size:13px;font-weight:700;font-family:system-ui,sans-serif}
+svg text{font-family:system-ui,sans-serif}
+.chart-title{font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin:4px 0 6px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.8rem;color:var(--muted);margin:4px 0 8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.readout{margin-top:12px;background:var(--surface-2);border-radius:12px;padding:12px 16px;font-size:.95rem}
+.readout .row{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;margin:3px 0}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:10px 0}
+.stat{background:var(--surface-2);border-radius:12px;padding:10px 14px}
+.stat small{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.stat b{font-size:1.35rem;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.interp{margin-top:12px;border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 12px 12px 0;padding:10px 14px;font-size:.94rem}
+.interp.good{border-color:var(--good);background:var(--good-bg)}
+.interp.bad{border-color:var(--bad);background:var(--bad-bg)}
+.interp.warn{border-color:var(--warn);background:var(--warn-bg)}
+.interp b.t{display:block;font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;opacity:.85}
+
+/* challenges */
+.challenges{border-top:1px solid var(--line);padding:14px 22px;display:grid;gap:8px;background:var(--surface)}
+.challenges h4{margin:0 0 2px;font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.chal{display:flex;gap:10px;align-items:flex-start;font-size:.93rem}
+.chal .ck{flex:none;width:22px;height:22px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;font-size:.75rem;margin-top:1px;color:transparent}
+.chal.done .ck{background:var(--good);border-color:var(--good);color:#fff}
+.chal.done .txt{color:var(--muted);text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--muted) 50%,transparent)}
+.chal .xp{margin-left:auto;font-size:.74rem;font-weight:800;color:var(--accent);white-space:nowrap}
+
+/* quick check */
+.qc{border:1px solid var(--line);border-radius:18px;background:var(--surface);padding:18px 22px;margin:24px 0}
+.qc-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.qc-head h3{margin:0}
+.qc-item{border-top:1px solid var(--line);padding:14px 0 6px}
+.qc-item:first-of-type{border-top:0}
+.qc-q{font-weight:600;margin-bottom:10px}
+.opts{display:grid;gap:8px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;font-size:.98rem;transition:border-color .15s,background .15s}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt kbd{flex:none;width:26px;height:26px;display:grid;place-items:center;border-radius:7px;background:var(--surface-2);border:1px solid var(--line);font-size:.8rem;font-weight:700;color:var(--muted);font-family:inherit}
+.opt.right{border-color:var(--good);background:var(--good-bg)}
+.opt.right kbd{background:var(--good);color:#fff;border-color:var(--good)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.opt.wrong kbd{background:var(--bad);color:#fff;border-color:var(--bad)}
+.opt:disabled{cursor:default}
+.fb{margin-top:10px;padding:10px 14px;border-radius:12px;font-size:.93rem}
+.fb.ok{background:var(--good-bg)} .fb.no{background:var(--bad-bg)}
+
+/* topic nav */
+.topic-head{display:flex;gap:16px;align-items:flex-start;margin-bottom:6px}
+.topic-num{flex:none;width:54px;height:54px;border-radius:15px;background:linear-gradient(135deg,var(--accent),var(--c3));color:#fff;display:grid;place-items:center;font-size:1.5rem;font-weight:800;box-shadow:0 6px 18px color-mix(in srgb,var(--accent) 30%,transparent)}
+.pager{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:36px;padding-top:20px;border-top:1px solid var(--line)}
+
+/* home */
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:28px;align-items:center;padding:8px 0 10px}
+@media (max-width:860px){.hero{grid-template-columns:minmax(0,1fr)}}
+.hero-stats{display:flex;gap:22px;flex-wrap:wrap;margin:14px 0 20px}
+.hero-stats div b{display:block;font-size:1.5rem;letter-spacing:-.02em}
+.hero-stats div small{color:var(--muted);font-size:.8rem}
+.roadmap{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:14px 0}
+.rm{position:relative;display:block;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;transition:border-color .15s,transform .15s,box-shadow .15s}
+.rm:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow)}
+.rm .n{width:30px;height:30px;border-radius:9px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:800;font-size:.9rem;margin-bottom:10px}
+.rm.done .n{background:var(--good);color:#fff}
+.rm b{display:block;font-size:1.02rem}
+.rm span{display:block;color:var(--muted);font-size:.87rem;margin-top:2px}
+.rm .badge{position:absolute;top:14px;right:14px;font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.rm.special{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 55%,var(--c3)));color:#fff;border-color:transparent}
+.rm.special span,.rm.special .badge{color:rgba(255,255,255,.85)}
+.rm.special .n{background:rgba(255,255,255,.2);color:#fff}
+
+/* matrix grids */
+.mgrid{display:inline-grid;gap:4px;padding:6px 8px;border-left:2px solid var(--muted);border-right:2px solid var(--muted);border-radius:8px}
+.mgrid .c{min-width:36px;height:34px;padding:0 6px;display:grid;place-items:center;border-radius:7px;background:var(--surface-2);font-weight:700;font-variant-numeric:tabular-nums;font-size:.92rem;transition:background .15s}
+.mgrid .c.hr{background:color-mix(in srgb,var(--c1) 22%,var(--surface));color:var(--c1)}
+.mgrid .c.hc{background:color-mix(in srgb,var(--c2) 22%,var(--surface));color:var(--c2)}
+.mgrid.res .c{cursor:pointer;background:color-mix(in srgb,var(--c3) 12%,var(--surface))}
+.mgrid.res .c:hover{outline:2px solid var(--c3)}
+.mgrid.res .c.sel{background:var(--c3);color:#fff}
+.mrow{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin:10px 0}
+.mlabel{font-size:.75rem;color:var(--muted);font-weight:700;text-align:center;margin-top:4px;text-transform:uppercase;letter-spacing:.06em}
+.mop{font-size:1.5rem;color:var(--muted);font-weight:300}
+.stepper{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0;font-size:.88rem;font-weight:600}
+.stepper .sb{display:flex;align-items:center;gap:6px}
+.stepper button{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-weight:800}
+.stepper b{min-width:22px;text-align:center;font-variant-numeric:tabular-nums}
+.shape-line{font-size:1.25rem;font-weight:700;text-align:center;padding:10px;border-radius:12px;background:var(--surface-2);font-variant-numeric:tabular-nums}
+.shape-line .ok{color:var(--good);text-decoration:underline;text-underline-offset:4px}
+.shape-line .no{color:var(--bad);text-decoration:underline wavy;text-underline-offset:4px}
+.dataset td,.dataset th{cursor:pointer;transition:background .15s}
+.dataset tr.hrow td{background:color-mix(in srgb,var(--c1) 16%,transparent)}
+.dataset .hcol{background:color-mix(in srgb,var(--c2) 16%,transparent)}
+
+/* order card */
+.feature-cards{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.fcard{flex:1;min-width:110px;border:1px solid var(--line);border-radius:14px;padding:12px 14px;text-align:center;background:var(--surface)}
+.fcard b{display:block;font-size:1.8rem;letter-spacing:-.02em}
+.fcard small{color:var(--muted);font-weight:600}
+.fcard:nth-child(1) b{color:var(--c1)}.fcard:nth-child(2) b{color:var(--c2)}.fcard:nth-child(3) b{color:var(--c3)}
+
+/* code stepper */
+.codepanel{background:#0f172a;border-radius:12px;padding:10px 0;font-family:ui-monospace,Menlo,monospace;font-size:.84rem;color:#cbd5e1;overflow-x:auto}
+.codepanel div{padding:2px 16px;white-space:pre;border-left:3px solid transparent}
+.codepanel div.on{background:rgba(129,140,248,.18);border-left-color:#a5b4fc;color:#fff}
+.codepanel .cm{color:#7c8aa5}
+.inspector{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:.88rem;margin-top:12px;background:var(--surface-2);border-radius:12px;padding:12px 14px}
+.inspector dt{color:var(--muted);font-family:ui-monospace,Menlo,monospace}
+.inspector dd{margin:0;font-family:ui-monospace,Menlo,monospace;font-weight:700;overflow-wrap:anywhere}
+.inspector dd.flash{animation:flash .6s}
+@keyframes flash{0%{background:color-mix(in srgb,var(--accent) 35%,transparent)}100%{background:transparent}}
+
+/* checklist */
+.checklist label{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.checklist input{accent-color:var(--good);width:18px;height:18px;margin-top:3px}
+
+/* glossary */
+.flips{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.flip{perspective:900px;height:140px;cursor:pointer;background:none;border:0;padding:0;text-align:left}
+.flip-in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.on .flip-in{transform:rotateY(180deg)}
+.flip-f,.flip-b{position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;border:1px solid var(--line);padding:16px;display:flex;flex-direction:column;justify-content:center}
+.flip-f{background:var(--surface)}
+.flip-f b{font-size:1.15rem}
+.flip-f small{color:var(--muted);font-size:.78rem;margin-top:6px}
+.flip-b{background:var(--accent-soft);transform:rotateY(180deg);font-size:.93rem}
+
+/* quiz */
+.quiz-wrap{max-width:780px}
+.setup-grid{display:grid;gap:18px}
+.setup-grid .grp{margin:0 0 8px}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:560px){.modes{grid-template-columns:1fr}}
+.mode{text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:14px 16px}
+.mode b{display:block;font-size:1.02rem}
+.mode span{color:var(--muted);font-size:.86rem}
+.mode.sel{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 15%,transparent)}
+.qhud{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 18px;margin-bottom:10px}
+.qhud .s small{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.qhud .s b{font-size:1.15rem;font-variant-numeric:tabular-nums}
+.progress{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.timer{height:5px;background:var(--line);border-radius:99px;overflow:hidden;margin:10px 0 0}
+.timer i{display:block;height:100%;background:var(--good);width:100%}
+.timer.low i{background:var(--bad)}
+.qtext{font-size:1.15rem;font-weight:600;margin:6px 0 16px;line-height:1.5}
+.qtag{display:inline-block;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:2px 10px}
+.streak{color:var(--c2)}
+.pop{animation:pop .35s}
+@keyframes pop{50%{transform:scale(1.18)}}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.score-big{font-size:3.6rem;font-weight:800;letter-spacing:-.03em;margin:0;line-height:1;background:linear-gradient(135deg,var(--accent),var(--c3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.tbars{display:grid;gap:10px;margin:12px 0}
+.tbar{display:grid;grid-template-columns:140px 1fr 56px;gap:10px;align-items:center;font-size:.88rem}
+.tbar .tr{height:12px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+.tbar .tr i{display:block;height:100%;border-radius:99px;transition:width .8s}
+.miss{border-top:1px solid var(--line);padding:12px 0;font-size:.93rem}
+.miss .ans{color:var(--good);font-weight:700}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);display:grid;gap:8px;z-index:60;pointer-events:none;width:max-content;max-width:calc(100vw - 32px)}
+.toast{background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:12px;font-weight:700;font-size:.92rem;box-shadow:0 10px 30px rgba(0,0,0,.2);animation:tin .3s ease,tout .4s ease 2.4s forwards}
+@keyframes tin{from{opacity:0;transform:translateY(10px)}}
+@keyframes tout{to{opacity:0;transform:translateY(10px)}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="#home"><span class="brand-logo">∇</span><span>ML Math Lab</span></a>
+    <nav class="topnav">
+      <a href="#home" data-nav="home">Lessons</a>
+      <a href="#quiz" data-nav="quiz">Quiz arena</a>
+      <a href="#glossary" data-nav="glossary">Glossary</a>
+    </nav>
+    <div class="hud">
+      <div class="lvl"><b id="lvlTitle">Level 1 · Data Rookie</b><small id="xpText">0 XP</small><div class="xpbar"><i id="xpFill"></i></div></div>
+      <button class="icon-btn" id="themeBtn" title="Toggle light / dark theme" aria-label="Toggle theme">◐</button>
+    </div>
+  </div>
+  <nav class="mnav" id="mnav"></nav>
+</header>
+
+<div class="layout">
+  <aside class="side">
+    <h4>Course</h4>
+    <div id="sideNav"></div>
+    <div class="side-prog"><span id="progText">0 of 7 topics complete</span><div class="bar"><i id="progFill"></i></div></div>
+  </aside>
+
+  <main id="main">
+
+<!-- =============================== HOME =============================== -->
+<section class="view" id="v-home">
+  <div class="hero">
+    <div>
+      <span class="eyebrow">Beginner · Practical · Interactive</span>
+      <h1>The maths behind machine learning, one slider at a time</h1>
+      <p class="lead">No maths degree needed. You'll learn how a computer turns customer data into predictions, measures its own mistakes, and improves itself, using simple examples you can play with.</p>
+      <div class="hero-stats">
+        <div><b>7</b><small>bite-sized topics</small></div>
+        <div><b>8</b><small>hands-on labs</small></div>
+        <div><b>∞</b><small>quiz questions</small></div>
+      </div>
+      <div class="btnrow">
+        <a class="btn" href="#t1">Start with Topic 1 →</a>
+        <a class="btn ghost" href="#quiz">Jump to the quiz</a>
+      </div>
+    </div>
+    <div class="card" style="margin:0">
+      <div class="chart-title">The puzzle we'll solve</div>
+      <svg class="chart" id="heroSvg" aria-label="Scatter chart of products ordered vs amount spent"></svg>
+      <p style="font-size:.9rem;color:var(--muted);margin:6px 0 0">Five customers: more products means higher spend. If someone orders <b>6 products</b>, can a computer <i>learn</i> to predict <b>R600</b>?</p>
+    </div>
+  </div>
+
+  <h2>What is maths for machine learning?</h2>
+  <div class="prose">
+    <p>Machine learning means <b>teaching a computer to find patterns in data</b> and use them to make predictions. Maths is how the computer stores that data, makes a guess, checks how wrong the guess was, and gets better.</p>
+    <p>All through this lesson we use one story: <b>you own an online store</b> and want to predict how much a customer will spend.</p>
+  </div>
+  <div class="card tbl-wrap" style="max-width:640px">
+    <table class="t">
+      <thead><tr><th>Customer</th><th class="r">Products ordered</th><th class="r">Amount spent</th></tr></thead>
+      <tbody>
+        <tr><td>A</td><td class="r">1</td><td class="r">R100</td></tr>
+        <tr><td>B</td><td class="r">2</td><td class="r">R200</td></tr>
+        <tr><td>C</td><td class="r">3</td><td class="r">R300</td></tr>
+        <tr><td>D</td><td class="r">4</td><td class="r">R400</td></tr>
+        <tr><td>E</td><td class="r">5</td><td class="r">R500</td></tr>
+        <tr style="color:var(--accent);font-weight:700"><td>New</td><td class="r">6</td><td class="r">R ? </td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Your learning roadmap</h2>
+  <p class="prose">Each topic answers one question. Finish the lab challenges and quick checks to earn XP and level up.</p>
+  <div class="roadmap" id="roadmap"></div>
+
+  <h2>The big picture: the training loop</h2>
+  <div class="two">
+    <div class="card" style="margin:0"><svg class="chart" id="cycleHome" aria-label="Training loop diagram"></svg></div>
+    <div class="prose">
+      <p>Every topic is one piece of this loop. By the end you'll be able to explain each step:</p>
+      <ol>
+        <li><b>Data</b> goes in as <span class="hl1">vectors</span> and <span class="hl1">matrices</span>.</li>
+        <li>The model <b>predicts</b> using a <span class="hl2">dot product</span>.</li>
+        <li>It measures its mistakes with a <span class="hl3">loss</span>.</li>
+        <li>The <span class="hl4">gradient</span> says which way to adjust.</li>
+        <li><b>Gradient descent</b> updates the weights.</li>
+        <li><b>Repeat</b> until the predictions are good.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== TOPIC 1 =============================== -->
+<section class="view hidden" id="v-t1">
+  <div class="topic-head"><div class="topic-num">1</div><div><span class="eyebrow">Topic 1</span><h1 style="margin:0">Vectors</h1></div></div>
+  <div class="question-banner"><span>❓</span>How is one order written as numbers?</div>
+
+  <div class="callout idea"><b class="t">Big idea</b>A <b>vector</b> is just a list of numbers in a fixed order. In machine learning, <b>one vector describes one thing</b>: one customer, one order, one house.</div>
+
+  <div class="prose">
+    <h2>One order = one vector</h2>
+    <p>A customer places an order. We note three facts about it. Each fact is called a <b>feature</b>, a piece of information the model can use.</p>
+  </div>
+  <div class="feature-cards" style="max-width:560px">
+    <div class="fcard"><b>3</b><small>Products</small></div>
+    <div class="fcard"><b>10</b><small>Distance (km)</small></div>
+    <div class="fcard"><b>5</b><small>Rating</small></div>
+  </div>
+  <div class="eq"><span><i>x</i> =</span><span class="vec"><span class="hl1">3</span><span class="hl2">10</span><span class="hl3">5</span></span><span style="font-size:.85rem;color:var(--muted);font-family:system-ui">← products, distance, rating</span></div>
+  <div class="callout warn"><b class="t">Order matters</b><span class="m">[3, 10, 5]</span> and <span class="m">[10, 3, 5]</span> are different customers. The model always expects the features in the same positions.</div>
+
+  <div class="prose">
+    <h2>Adding vectors</h2>
+    <p>Add vectors <b>position by position</b>. They must be the same length. Example: Customer A orders 2 products from 5 km away, Customer B orders 3 products from 10 km away.</p>
+  </div>
+  <div class="eq"><span class="vec"><span>2</span><span>5</span></span>+<span class="vec"><span>3</span><span>10</span></span>=<span class="vec"><span>2+3</span><span>5+10</span></span>=<span class="vec"><span class="hl3">5</span><span class="hl3">15</span></span></div>
+
+  <div class="prose">
+    <h2>Magnitude: how long is the arrow?</h2>
+    <p>Draw a vector as an arrow from the origin. Its <b>magnitude</b> is the arrow's length, worked out with Pythagoras:</p>
+  </div>
+  <div class="eq"><span>|A| = √(<i>a</i>₁² + <i>a</i>₂²)</span><span style="color:var(--muted)">→</span><span>|[3, 4]| = √(9 + 16) = √25 = <b class="hl3">5</b></span></div>
+
+  <div class="lab">
+    <div class="lab-head"><span class="lab-tag">🧪 Lab 1</span><h3>Vector Playground</h3><p>Move the sliders to change vectors A and B. Switch on the sum and the magnitude triangle to see the maths drawn.</p></div>
+    <div class="lab-body">
+      <div class="controls">
+        <div class="grp"><span class="sw" style="background:var(--c1)"></span>Vector A</div>
+        <label class="ctl"><div class="lbl">a₁ (x direction) <output for="va1"></output></div><input type="range" id="va1" min="-6" max="10" step="1" value="2"></label>
+        <label class="ctl"><div class="lbl">a₂ (y direction) <output for="va2"></output></div><input type="range" id="va2" min="-6" max="10" step="1" value="3"></label>
+        <div class="grp"><span class="sw" style="background:var(--c2)"></span>Vector B</div>
+        <label class="ctl"><div class="lbl">b₁ (x direction) <output for="vb1"></output></div><input type="range" id="vb1" min="-6" max="10" step="1" value="4"></label>
+        <label class="ctl"><div class="lbl">b₂ (y direction) <output for="vb2"></output></div><input type="range" id="vb2" min="-6" max="10" step="1" value="1"></label>
+        <div class="grp">Show</div>
+        <label class="toggle"><input type="checkbox" id="vsum" checked> A + B (green)</label>
+        <label class="toggle"><input type="checkbox" id="vmag" checked> Magnitude triangle for A</label>
+        <div class="grp">Presets</div>
+        <div class="presets">
+                    <button class="chip" data-vp="6,8,0,0">6-8-10</button>
+          <button class="chip" data-vp="4,2,-4,-2">Opposites</button>
+          <button class="chip" data-vp="5,0,0,5">Right angle</button>
+        </div>
+      </div>
+      <div class="viz">
+        <div class="legend"><span><i class="sw" style="background:var(--c1)"></i>A</span><span><i class="sw" style="background:var(--c2)"></i>B</span><span><i class="sw" style="background:var(--c3)"></i>A + B</span></div>
+        <svg class="chart" id="vecSvg" style="max-width:440px;margin:auto"></svg>
+        <div class="readout" id="vecRead"></div>
+        <div class="interp" id="vecInterp"></div>
+      </div>
+    </div>
+    <div class="challenges" data-chal="t1"></div>
+  </div>
+
+  <details class="py"><summary>🐍 Python practical: vectors in NumPy</summary>
+    <div class="code has-out"><pre><code class="py-src">import numpy as np
+
+# Customer information: products, distance, rating
+customer = np.array([3, 10, 5])
+print(customer)
+
+# Magnitude (length) of a 2D vector
+v = np.array([3, 4])
+print(np.linalg.norm(v))</code></pre><div class="out">[ 3 10  5]
+5.0</div></div>
+  </details>
+
+  <div class="callout remember"><b class="t">Remember</b>A vector represents <b>one observation</b>: one customer, one order or one house. Each number in it is a feature.</div>
+  <div class="qc" data-qc="t1"></div>
+  <div class="pager" data-pager="t1"></div>
+</section>
+
+<!-- =============================== TOPIC 2 =============================== -->
+<section class="view hidden" id="v-t2">
+  <div class="topic-head"><div class="topic-num">2</div><div><span class="eyebrow">Topic 2</span><h1 style="margin:0">Matrices</h1></div></div>
+  <div class="question-banner"><span>❓</span>How are many orders kept lined up?</div>
+
+  <div class="callout idea"><b class="t">Big idea</b>A <b>matrix</b> is a grid of numbers, like an Excel sheet. <b>Each row is one customer</b> (a vector) and <b>each column is one feature</b>.</div>
+
+  <h2>A dataset is a matrix</h2>
+  <p class="prose">Click a <b>row</b> to see one customer, or a <b>column heading</b> to see one feature.</p>
+  <div class="two">
+    <div class="card tbl-wrap" style="margin:0">
+      <table class="t dataset" id="dataset">
+        <thead><tr><th>Customer</th><th class="r" data-col="0">Products</th><th class="r" data-col="1">Distance</th><th class="r" data-col="2">Rating</th></tr></thead>
+        <tbody>
+          <tr data-row="0"><td>A</td><td class="r">1</td><td class="r">5</td><td class="r">4</td></tr>
+          <tr data-row="1"><td>B</td><td class="r">2</td><td class="r">10</td><td class="r">5</td></tr>
+          <tr data-row="2"><td>C</td><td class="r">3</td><td class="r">15</td><td class="r">3</td></tr>
+          <tr data-row="3"><td>D</td><td class="r">4</td><td class="r">20</td><td class="r">5</td></tr>
+        </tbody>
+      </table>
+      <div class="interp" id="dsInfo"><b class="t">Tip</b>Click any row or column heading.</div>
+    </div>
+    <div>
+      <div class="eq"><span><i>X</i> =</span><span class="mat" style="grid-template-columns:repeat(3,auto)"><span>1</span><span>5</span><span>4</span><span>2</span><span>10</span><span>5</span><span>3</span><span>15</span><span>3</span><span>4</span><span>20</span><span>5</span></span></div>
+      <div class="stats"><div class="stat"><small>Rows (customers)</small><b>4</b></div><div class="stat"><small>Columns (features)</small><b>3</b></div><div class="stat"><small>Shape</small><b>(4, 3)</b></div></div>
+      <p style="font-size:.92rem;color:var(--muted)">Shape is always written <b>(rows, columns)</b>. Rows come first.</p>
+    </div>
+  </div>
+
+  <h2>Adding matrices</h2>
+  <p class="prose">Just like vectors: same shape, add matching positions.</p>
+  <div class="eq"><span class="mat" style="grid-template-columns:repeat(2,auto)"><span>1</span><span>2</span><span>3</span><span>4</span></span>+<span class="mat" style="grid-template-columns:repeat(2,auto)"><span>5</span><span>6</span><span>7</span><span>8</span></span>=<span class="mat" style="grid-template-columns:repeat(2,auto)"><span>6</span><span>8</span><span>10</span><span>12</span></span></div>
+
+  <h2>Multiplying matrices: the shape rule</h2>
+  <div class="prose">
+    <p>Matrix multiplication is how ML models process <b>thousands of customers in one go</b>. There's one rule:</p>
+  </div>
+  <div class="eq"><span>(4 × <b class="hl3">3</b>) · (<b class="hl3">3</b> × 2) = (4 × 2)</span></div>
+  <div class="prose"><p>The <b class="hl3">inside numbers must match</b> (columns of the first = rows of the second). The <b>outside numbers</b> give the shape of the answer. Each answer cell is a row of the first matrix "dotted" with a column of the second. You'll meet the dot product properly in Topic 3.</p></div>
+
+  <div class="lab">
+    <div class="lab-head"><span class="lab-tag">🧪 Lab 2</span><h3>Shape Builder</h3><p>Change the shapes of A and B. If they fit, click any green answer cell to see exactly how it was calculated.</p></div>
+    <div class="lab-body">
+      <div class="controls">
+        <div class="grp"><span class="sw" style="background:var(--c1)"></span>Matrix A</div>
+        <div class="stepper"><span>Rows</span><span class="sb"><button data-dim="ar" data-d="-1">−</button><b id="s-ar"></b><button data-dim="ar" data-d="1">+</button></span></div>
+        <div class="stepper"><span>Columns</span><span class="sb"><button data-dim="ac" data-d="-1">−</button><b id="s-ac"></b><button data-dim="ac" data-d="1">+</button></span></div>
+        <div class="grp"><span class="sw" style="background:var(--c2)"></span>Matrix B</div>
+        <div class="stepper"><span>Rows</span><span class="sb"><button data-dim="br" data-d="-1">−</button><b id="s-br"></b><button data-dim="br" data-d="1">+</button></span></div>
+        <div class="stepper"><span>Columns</span><span class="sb"><button data-dim="bc" data-d="-1">−</button><b id="s-bc"></b><button data-dim="bc" data-d="1">+</button></span></div>
+        <div class="grp">Try</div>
+        <div class="presets">
+          <button class="chip" id="mPreset">Customers × weights</button>
+          <button class="chip" id="mShuffle">New numbers</button>
+        </div>
+        <p class="hint" style="font-size:.8rem;color:var(--muted);margin-top:12px">"Customers × weights" multiplies our 4 customers by weights [100, 5, 10]. That's a prediction for every customer at once.</p>
+      </div>
+      <div class="viz">
+        <div class="shape-line" id="mShape"></div>
+        <div class="mrow" id="mGrids"></div>
+        <div class="interp" id="mInfo"></div>
+      </div>
+    </div>
+    <div class="challenges" data-chal="t2"></div>
+  </div>
+
+  <details class="py"><summary>🐍 Python practical: matrices in NumPy</summary>
+    <div class="code has-out"><pre><code class="py-src">import numpy as np
+
+# Customer dataset: products, distance, rating
+X = np.array([
+    [1, 5, 4],
+    [2, 10, 5],
+    [3, 15, 3],
+    [4, 20, 5]
+])
+print("Shape:", X.shape)
+
+# One prediction per customer, all at once
+W = np.array([100, 5, 10])
+print(X @ W)</code></pre><div class="out">Shape: (4, 3)
+[165 300 405 550]</div></div>
+  </details>
+
+  <div class="callout remember"><b class="t">Remember</b>A vector is <b>one</b> observation; a matrix holds <b>many</b>. Shape = (rows, columns). To multiply, the inside numbers must match.</div>
+  <div class="qc" data-qc="t2"></div>
+  <div class="pager" data-pager="t2"></div>
+</section>
+
+<!-- =============================== TOPIC 3 =============================== -->
+<section class="view hidden" id="v-t3">
+  <div class="topic-head"><div class="topic-num">3</div><div><span class="eyebrow">Topic 3</span><h1 style="margin:0">Dot products</h1></div></div>
+  <div class="question-banner"><span>❓</span>How do features and weights make a prediction?</div>
+
+  <div class="callout idea"><b class="t">Big idea</b>A <b>dot product</b> multiplies matching pairs of numbers and adds the results. It's exactly how a till slip works: <i>quantity × price</i> for each item, then add it all up.</div>
+
+  <div class="two">
+    <div class="prose">
+      <h2 style="margin-top:.6em">Features × weights</h2>
+      <p><b>Features</b> are the facts about a customer. <b>Weights</b> say how much each fact matters.</p>
+      <p>Customer: <span class="m">X = [3, 10]</span> (3 products, 10 km).<br>Learned weights: <span class="m">W = [100, 5]</span>, so each product adds R100 and each km adds R5.</p>
+    </div>
+    <div class="card" style="margin:0">
+      <div class="chart-title">The till slip</div>
+      <table class="t" style="margin:0">
+        <tr><td>3 products × R100</td><td class="r"><b>R300</b></td></tr>
+        <tr><td>10 km × R5</td><td class="r"><b>R50</b></td></tr>
+        <tr style="font-size:1.1rem"><td><b>Prediction</b></td><td class="r"><b style="color:var(--accent)">R350</b></td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="eq"><span><i>X</i> · <i>W</i> = <i>x</i>₁<i>w</i>₁ + <i>x</i>₂<i>w</i>₂ = (3 × 100) + (10 × 5) = 300 + 50 = <b class="hl3">350</b></span></div>
+
+  <h2>Adding a bias</h2>
+  <div class="prose"><p>A <b>bias</b> is a fixed amount added at the end, like a flat service fee. It means the prediction doesn't have to be zero when every feature is zero. With a bias of R50:</p></div>
+  <div class="eq"><span><i>ŷ</i> = <i>X</i> · <i>W</i> + <i>b</i> = 350 + 50 = <b class="hl3">R400</b></span></div>
+  <p class="prose" style="color:var(--muted);font-size:.94rem">In real ML we don't pick the weights by hand. The model <b>learns</b> them from data. That's what Topics 4–6 are about.</p>
+
+  <div class="lab">
+    <div class="lab-head"><span class="lab-tag">🧪 Lab 3</span><h3>Prediction Machine</h3><p>Change the customer's features and the model's weights. The waterfall chart shows how each feature pushes the prediction up or down.</p></div>
+    <div class="lab-body">
+      <div class="controls">
+        <div class="grp">Customer features (x)</div>
+        <label class="ctl"><div class="lbl">Products <output for="dx1"></output></div><input type="range" id="dx1" min="0" max="10" step="1" value="3"></label>
+        <label class="ctl"><div class="lbl">Distance (km) <output for="dx2"></output></div><input type="range" id="dx2" min="0" max="40" step="1" value="10"></label>
+        <label class="ctl"><div class="lbl">Rating (1–5) <output for="dx3"></output></div><input type="range" id="dx3" min="1" max="5" step="1" value="5"></label>
+        <div class="grp">Model weights (w) and bias</div>
+        <label class="ctl"><div class="lbl">R per product <output for="dw1"></output></div><input type="range" id="dw1" min="0" max="200" step="5" value="100"></label>
+        <label class="ctl"><div class="lbl">R per km <output for="dw2"></output></div><input type="range" id="dw2" min="-20" max="20" step="1" value="5"></label>
+        <label class="ctl"><div class="lbl">R per rating point <output for="dw3"></output></div><input type="range" id="dw3" min="-50" max="50" step="5" value="0"></label>
+        <label class="ctl"><div class="lbl">Bias b <output for="db"></output></div><input type="range" id="db" min="-100" max="200" step="10" value="50"></label>
+        <div class="grp">Scenarios</div>
+        <div class="presets">
+          <button class="chip" data-dp="3,10,5,100,5,0,50">Lesson (R400)</button>
+          <button class="chip" data-dp="3,30,5,100,-5,0,50">Far = discount</button>
+          <button class="chip" data-dp="2,5,5,80,2,30,0">Ratings matter</button>
+          <button class="chip" data-dp="0,0,1,100,5,0,50">Empty order</button>
+        </div>
+      </div>
+      <div class="viz">
+        <div class="chart-title">How the prediction is built</div>
+        <svg class="chart" id="dotSvg"></svg>
+        <div class="readout" id="dotRead"></div>
+        <div class="interp" id="dotInterp"></div>
+      </div>
+    </div>
+    <div class="challenges" data-chal="t3"></div>
+  </div>
+
+  <details class="py"><summary>🐍 Python practical: a prediction with np.dot</summary>
+    <div class="code has-out"><pre><code class="py-src">import numpy as np
+
+X = np.array([3, 10])     # customer features
+W = np.array([100, 5])    # model weights
+b = 50                    # model bias
+
+prediction = np.dot(X, W) + b
+print("Predicted spending: R", prediction)</code></pre><div class="out">Predicted spending: R 400</div></div>
+  </details>
+
+  <div class="callout remember"><b class="t">Remember</b>Prediction = (each feature × its weight), added up, plus the bias. Bigger weight = that feature matters more. Negative weight = that feature <i>lowers</i> the prediction.</div>
+  <div class="qc" data-qc="t3"></div>
+  <div class="pager" data-pager="t3"></div>
+</section>
+
+<!-- =============================== TOPIC 4 =============================== -->
+<section class="view hidden" id="v-t4">
+  <div class="topic-head"><div class="topic-num">4</div><div><span class="eyebrow">Topic 4</span><h1 style="margin:0">Loss</h1></div></div>
+  <div class="question-banner"><span>❓</span>How wrong is the model, as one number?</div>
+
+  <div class="callout idea"><b class="t">Big idea</b><b>Loss</b> is a score for how wrong the model is. Lower is better; zero means perfect. Training is all about making this number smaller.</div>
+
+  <div class="prose">
+    <h2>Step 1: errors</h2>
+    <p>Suppose our model guesses <b>R80 per product</b>, but customers really spend R100 per product. The <b>error</b> is the actual value minus the prediction:</p>
+  </div>
+  <div class="eq"><span>Error = <i>y</i> − <i>ŷ</i></span><span style="color:var(--muted);font-size:.9rem;font-family:system-ui">(<i>y</i> = actual, <i>ŷ</i> "y-hat" = predicted)</span></div>
+  <div class="card tbl-wrap" style="max-width:680px">
+    <table class="t">
+      <thead><tr><th>Customer</th><th class="r">Actual y</th><th class="r">Predicted ŷ</th><th class="r">Error</th><th class="r">Error²</th></tr></thead>
+      <tbody>
+        <tr><td>A</td><td class="r">100</td><td class="r">80</td><td class="r">20</td><td class="r">400</td></tr>
+        <tr><td>B</td><td class="r">200</td><td class="r">160</td><td class="r">40</td><td class="r">1,600</td></tr>
+        <tr><td>C</td><td class="r">300</td><td class="r">240</td><td class="r">60</td><td class="r">3,600</td></tr>
+        <tr><td>D</td><td class="r">400</td><td class="r">320</td><td class="r">80</td><td class="r">6,400</td></tr>
+        <tr style="font-weight:700"><td colspan="3">Total</td><td class="r">200</td><td class="r">12,000</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Step 2: squash the errors into one number</h2>
+  <div class="two">
+    <div class="card" style="margin:0">
+      <b>Mean Squared Error (MSE)</b>
+      <div class="eq" style="font-size:1.05rem"><span>MSE = <span class="frac"><span>1</span><span><i>n</i></span></span> Σ (<i>y</i> − <i>ŷ</i>)²</span></div>
+      <p style="margin:0">Square each error, then average: <span class="m">12,000 ÷ 4 = <b>3,000</b></span>. Squaring makes big mistakes count <i>a lot</i> more. Units are squared (rand²).</p>
+    </div>
+    <div class="card" style="margin:0">
+      <b>Mean Absolute Error (MAE)</b>
+      <div class="eq" style="font-size:1.05rem"><span>MAE = <span class="frac"><span>1</span><span><i>n</i></span></span> Σ |<i>y</i> − <i>ŷ</i>|</span></div>
+      <p style="margin:0">Ignore the sign, then average: <span class="m">200 ÷ 4 = <b>R50</b></span>. Easy to explain: "on average we're R50 off."</p>
+    </div>
+  </div>
+  <p class="prose" style="margin-top:16px">For classification (yes/no answers) there's also <b>binary cross-entropy</b>. You'll meet it in logistic regression.</p>
+
+  <div class="lab">
+    <div class="lab-head"><span class="lab-tag">🧪 Lab 4</span><h3>Loss Explorer</h3><p>Fit the line <span class="m"><i>ŷ</i> = <i>w</i>·<i>x</i> + <i>b</i></span> to the customers. Red lines are the errors. Watch the loss change, and see what one unusual customer does.</p></div>
+    <div class="lab-body">
+      <div class="controls">
+        <div class="grp">Model</div>
+        <label class="ctl"><div class="lbl">Weight w (R per product) <output for="lw"></output></div><input type="range" id="lw" min="0" max="200" step="1" value="80"></label>
+        <label class="ctl"><div class="lbl">Bias b <output for="lb"></output></div><input type="range" id="lb" min="-100" max="100" step="5" value="0"></label>
+        <div class="grp">Data</div>
+        <label class="toggle"><input type="checkbox" id="lout"> Add an outlier (Customer E: 5 products, R900)</label>
+        <div class="grp">Loss curve shows</div>
+        <div class="presets" id="lMetric">
+          <button class="chip sel" data-m="mse">MSE</button>
+          <button class="chip" data-m="mae">MAE</button>
+        </div>
+        <div class="grp">Presets</div>
+        <div class="presets">
+          <button class="chip" data-lp="80,0">Lesson (w = 80)</button>
+          <button class="chip" data-lp="110,0">After 1 step</button>
+          <button class="chip" data-lp="50,100">Wrong shape</button>
+        </div>
+      </div>
+      <div class="viz">
+        <div class="two" style="gap:14px">
+          <div><div class="chart-title">Data &amp; prediction line</div><svg class="chart" id="lossSvg"></svg></div>
+          <div><div class="chart-title" id="lCurveTitle">Loss vs weight (b fixed)</div><svg class="chart" id="lossCurve"></svg></div>
+        </div>
+        <div class="stats" id="lStats"></div>
+        <div class="tbl-wrap"><table class="t" id="lTable"></table></div>
+        <div class="interp" id="lInterp"></div>
+      </div>
+    </div>
+    <div class="challenges" data-chal="t4"></div>
+  </div>
+
+  <h2>Comparing models</h2>
+  <div class="card" style="max-width:620px">
+    <div class="chart-title">Lower loss = better fit (same data, same scale)</div>
+    <svg class="chart" id="cmpSvg"></svg>
+  </div>
+
+  <details class="py"><summary>🐍 Python practical: MSE and MAE</summary>
+    <div class="code has-out"><pre><code class="py-src">import numpy as np
+
+actual    = np.array([100, 200, 300, 400])
+predicted = np.array([80, 160, 240, 320])
+
+errors = actual - predicted
+mse = np.mean(errors ** 2)
+mae = np.mean(np.abs(errors))
+
+print("Errors:", errors)
+print("MSE:", mse)
+print("MAE:", mae)</code></pre><div class="out">Errors: [20 40 60 80]
+MSE: 3000.0
+MAE: 50.0</div></div>
+  </details>
+
+  <div class="callout remember"><b class="t">Remember</b>Loss tells the model how wrong it is. MSE punishes big mistakes heavily; MAE treats all mistakes equally. Training tries to <b>reduce</b> the loss.</div>
+  <div class="qc" data-qc="t4"></div>
+  <div class="pager" data-pager="t4"></div>
+</section>
+
+<!-- =============================== TOPIC 5 =============================== -->
+<section class="view hidden" id="v-t5">
+  <div class="topic-head"><div class="topic-num">5</div><div><span class="eyebrow">Topic 5</span><h1 style="margin:0">Slope &amp; gradient</h1></div></div>
+  <div class="question-banner"><span>❓</span>Which way should a weight move?</div>
+
+  <div class="callout idea"><b class="t">Big idea</b><b>Slope</b> tells you how steep a line is and whether it goes up or down. A <b>gradient</b> is the slope of the <i>loss</i>: it tells the model whether to make a weight bigger or smaller.</div>
+
+  <div class="prose">
+    <h2>Slope: rise over run</h2>
+    <p>Think of driving over a hill. Going up = positive slope. Going down = negative. Flat = zero.</p>
+  </div>
+  <div class="eq"><span><i>m</i> = <span class="frac"><span><i>y</i>₂ − <i>y</i>₁</span><span><i>x</i>₂ − <i>x</i>₁</span></span> = <span class="frac"><span>rise</span><span>run</span></span></span><span style="color:var(--muted)">→</span><span>(2, 4) and (4, 8): <i>m</i> = <span class="frac"><span>8 − 4</span><span>4 − 2</span></span> = <b class="hl3">2</b></span></div>
+  <p class="prose">A slope of 2 means: each time <i>x</i> goes up by 1, <i>y</i> goes up by 2.</p>
+
+  <div class="lab">
+    <div class="lab-head"><span class="lab-tag">🧪 Lab 5a</span><h3>Slope Finder</h3><p>Move the two points. The dashed triangle shows the rise and the run.</p></div>
+    <div class="lab-body">
+      <div class="controls">
+        <div class="grp"><span class="sw" style="background:var(--c1)"></span>Point 1</div>
+        <label class="ctl"><div class="lbl">x₁ <output for="sx1"></output></div><input type="range" id="sx1" min="0" max="10" step="1" value="2"></label>
+        <label class="ctl"><div class="lbl">y₁ <output for="sy1"></output></div><input type="range" id="sy1" min="0" max="10" step="1" value="4"></label>
+        <div class="grp"><span class="sw" style="background:var(--c2)"></span>Point 2</div>
+        <label class="ctl"><div class="lbl">x₂ <output for="sx2"></output></div><input type="range" id="sx2" min="0" max="10" step="1" value="4"></label>
+        <label class="ctl"><div class="lbl">y₂ <output for="sy2"></output></div><input type="range" id="sy2" min="0" max="10" step="1" value="8"></label>
+      </div>
+      <div class="viz">
+        <svg class="chart" id="slopeSvg" style="max-width:480px;margin:auto"></svg>
+        <div class="readout" id="slopeRead"></div>
+      </div>
+    </div>
+    <div class="challenges" data-chal="t5a"></div>
+  </div>
+
+  <div class="prose">
+    <h2>Gradient: the slope of the loss</h2>
+    <p>Back to the store. The model is <span class="m"><i>ŷ</i> = <i>w</i> · <i>x</i></span>. If we plot <b>loss</b> (up) against <b>weight</b> (across), we get a valley. The bottom of the valley is the best weight.</p>
+    <p>The gradient is the slope of that valley <b>where you're standing right now</b>:</p>
+    <ul>
+      <li><b>Negative gradient</b> (downhill to the right) → <b>increase</b> the weight.</li>
+      <li><b>Positive gradient</b> (uphill to the right) → <b>decrease</b> the weight.</li>
+      <li><b>Zero gradient</b> → flat ground. Possibly the bottom (but it could also be a peak or a flat spot).</li>
+    </ul>
+    <p>For our data, at <span class="m"><i>w</i> = 80</span> the gradient is <b>−300</b>: negative, so we should increase the weight towards 100.</p>
+  </div>
+
+  <div class="lab">
+    <div class="lab-head"><span class="lab-tag">🧪 Lab 5b</span><h3>Gradient Compass</h3><p>Stand anywhere on the loss valley. The orange line is the slope (gradient) where you stand, and the arrow shows which way is downhill.</p></div>
+    <div class="lab-body">
+      <div class="controls">
+        <label class="ctl"><div class="lbl">Current weight w <output for="gw"></output></div><input type="range" id="gw" min="40" max="160" step="1" value="80"></label>
+        <label class="toggle"><input type="checkbox" id="gtan" checked> Show tangent (slope) line</label>
+        <div class="grp">Formula used</div>
+        <div style="font-size:.88rem">For data x = [1, 2, 3, 4], y = [100, 200, 300, 400]:<div class="eq" style="font-size:.98rem;padding:10px"><span><span class="frac"><span>d<i>L</i></span><span>d<i>w</i></span></span> = <span class="frac"><span>2</span><span><i>n</i></span></span> Σ <i>x</i>(<i>wx</i> − <i>y</i>)</span></div></div>
+        <div class="grp">Jump to</div>
+        <div class="presets">
+          <button class="chip" data-gp="80">w = 80</button>
+          <button class="chip" data-gp="130">w = 130</button>
+          <button class="chip" data-gp="100">w = 100</button>
+        </div>
+      </div>
+      <div class="viz">
+        <svg class="chart" id="gradSvg"></svg>
+        <div class="stats" id="gStats"></div>
+        <div class="interp" id="gInterp"></div>
+      </div>
+    </div>
+    <div class="challenges" data-chal="t5b"></div>
+  </div>
+
+  <div class="callout remember"><b class="t">Remember</b>Positive gradient → move weight <b>down</b>. Negative gradient → move weight <b>up</b>. Zero → flat spot. The gradient always points <i>uphill</i>, so we step the <i>opposite</i> way.</div>
+  <div class="qc" data-qc="t5"></div>
+  <div class="pager" data-pager="t5"></div>
+</section>
+
+<!-- =============================== TOPIC 6 =============================== -->
+<section class="view hidden" id="v-t6">
+  <div class="topic-head"><div class="topic-num">6</div><div><span class="eyebrow">Topic 6</span><h1 style="margin:0">Gradient descent</h1></div></div>
+  <div class="question-banner"><span>❓</span>How big a step should the model take, and what can go wrong?</div>
+
+  <div class="callout idea"><b class="t">Big idea</b><b>Gradient descent</b> = walk downhill on the loss valley in small steps. Each step: check the slope, then move the weight the opposite way.</div>
+
+  <h2>The update rule</h2>
+  <div class="eq" style="font-size:1.35rem"><span><i>w</i><sub>new</sub> = <i>w</i><sub>old</sub> − <span class="hl2">α</span> · <span class="hl4"><span class="frac"><span>d<i>L</i></span><span>d<i>w</i></span></span></span></span></div>
+  <div class="two">
+    <div class="card" style="margin:0"><b><i>w</i><sub>old</sub></b>: the weight right now, e.g. 80.</div>
+    <div class="card" style="margin:0"><b class="hl2">α (alpha), the learning rate</b>: how big each step is, e.g. 0.1.</div>
+    <div class="card" style="margin:0"><b class="hl4">dL/dw, the gradient</b>: the slope of the loss, e.g. −300.</div>
+    <div class="card" style="margin:0"><b>The minus sign</b>: step <i>against</i> the slope, which means downhill.</div>
+  </div>
+
+  <h2>One step, worked out</h2>
+  <div class="eq"><span><i>w</i><sub>new</sub> = 80 − 0.1 × (−300) = 80 + 30 = <b class="hl3">110</b></span></div>
+  <div class="card tbl-wrap" style="max-width:520px">
+    <table class="t"><thead><tr><th>Measurement</th><th class="r">Before</th><th class="r">After</th></tr></thead>
+    <tbody><tr><td>Weight</td><td class="r">80</td><td class="r">110</td></tr><tr><td>MSE</td><td class="r">3,000</td><td class="r" style="color:var(--good);font-weight:700">750 ↓</td></tr></tbody></table>
+  </div>
+  <p class="prose">The loss dropped from 3,000 to 750. We overshot 100 a little, but we're much closer. The next steps will zig-zag in. Try it below.</p>
+
+  <div class="lab">
+    <div class="lab-head"><span class="lab-tag">🧪 Lab 6</span><h3>Descent Simulator</h3><p>Pick a starting weight and a learning rate, then press <b>Play</b> or <b>Step</b>. Try the scenario buttons to see what goes wrong when the step size is off.</p></div>
+    <div class="lab-body">
+      <div class="controls">
+        <label class="ctl"><div class="lbl">Starting weight <output for="gdw"></output></div><input type="range" id="gdw" min="20" max="180" step="1" value="80"></label>
+        <label class="ctl"><div class="lbl">Learning rate α <output for="gda"></output></div><input type="range" id="gda" min="0.001" max="0.15" step="0.001" value="0.1"></label>
+        <label class="ctl"><div class="lbl">Animation speed <output for="gds"></output></div><input type="range" id="gds" min="1" max="10" step="1" value="5"></label>
+        <div class="btnrow">
+          <button class="btn sm" id="gdPlay">▶ Play</button>
+          <button class="btn sm ghost" id="gdStep">Step</button>
+          <button class="btn sm ghost" id="gdReset">Reset</button>
+        </div>
+        <div class="grp">Scenarios</div>
+        <div class="presets">
+          <button class="chip" data-gdp="80,0.1">Lesson</button>
+          <button class="chip" data-gdp="30,0.008">Too small</button>
+          <button class="chip" data-gdp="60,0.04">Just right</button>
+          <button class="chip" data-gdp="80,0.125">Bouncy</button>
+          <button class="chip" data-gdp="90,0.14">Too big</button>
+        </div>
+      </div>
+      <div class="viz">
+        <div class="two" style="gap:14px">
+          <div><div class="chart-title">Path on the loss valley</div><svg class="chart" id="gdCurve"></svg></div>
+          <div><div class="chart-title">Loss per iteration (log scale)</div><svg class="chart" id="gdHist"></svg></div>
+        </div>
+        <div class="stats" id="gdStats"></div>
+        <div class="interp" id="gdInterp"></div>
+        <div class="tbl-wrap"><table class="t" id="gdTable" style="font-size:.86rem"></table></div>
+      </div>
+    </div>
+    <div class="challenges" data-chal="t6"></div>
+  </div>
+
+  <h2>What can go wrong?</h2>
+  <div class="two">
+    <div class="callout warn" style="margin:0"><b class="t">Learning rate too small</b>Tiny steps. The model gets there eventually, but training takes far too long.</div>
+    <div class="callout warn" style="margin:0"><b class="t">Learning rate too large</b>Giant steps. The model jumps over the bottom, bounces around, and can even fly off (the loss explodes).</div>
+  </div>
+
+  <div class="callout remember"><b class="t">Remember</b>Gradient descent improves the model by nudging weights against the gradient. The learning rate sets the size of each nudge, and picking it well matters.</div>
+  <div class="qc" data-qc="t6"></div>
+  <div class="pager" data-pager="t6"></div>
+</section>
+
+<!-- =============================== TOPIC 7 =============================== -->
+<section class="view hidden" id="v-t7">
+  <div class="topic-head"><div class="topic-num">7</div><div><span class="eyebrow">Topic 7</span><h1 style="margin:0">Notebook practical: the full loop</h1></div></div>
+  <div class="question-banner"><span>❓</span>Can I run the whole loop myself and explain it?</div>
+
+  <div class="callout idea"><b class="t">Big idea</b>Training a model is a loop: <b>predict → measure loss → find gradient → update weight</b>, repeated. Each pass is one <b>iteration</b>.</div>
+
+  <div class="two">
+    <div class="card" style="margin:0"><svg class="chart" id="cycleT7"></svg></div>
+    <div class="prose">
+      <h3 style="margin-top:0">What we're building</h3>
+      <p>A model that predicts customer spend from products ordered: <span class="m"><i>ŷ</i> = <i>w</i> · <i>x</i></span>.</p>
+      <p>Data: <span class="m">X = [1, 2, 3, 4]</span>, <span class="m">y = [100, 200, 300, 400]</span>. We start with a poor guess, <span class="m"><i>w</i> = 80</span>, and let the loop fix it.</p>
+      <p>Step through the code below <b>one line at a time</b> and watch each variable change, just like running cells in your notebook.</p>
+    </div>
+  </div>
+
+  <div class="lab">
+    <div class="lab-head"><span class="lab-tag">🧪 Lab 7</span><h3>Training Loop Stepper</h3><p>Click <b>Next line</b> to run the code line by line, or <b>Run all</b> to train fully. Then use your trained model to predict for a new customer.</p></div>
+    <div class="lab-body">
+      <div class="controls">
+        <label class="ctl"><div class="lbl">Starting weight w <output for="tw"></output></div><input type="range" id="tw" min="0" max="200" step="5" value="80"></label>
+        <label class="ctl"><div class="lbl">Learning rate <output for="ta"></output></div><input type="range" id="ta" min="0.01" max="0.14" step="0.01" value="0.1"></label>
+        <label class="ctl"><div class="lbl">Iterations <output for="ti"></output></div><input type="range" id="ti" min="1" max="40" step="1" value="20"></label>
+        <div class="btnrow">
+          <button class="btn sm" id="tNext">Next line ↵</button>
+          <button class="btn sm ghost" id="tIter">+1 iteration</button>
+          <button class="btn sm ghost" id="tAll">Run all</button>
+          <button class="btn sm ghost" id="tReset">Reset</button>
+        </div>
+        <div class="grp">Use the trained model</div>
+        <label class="ctl"><div class="lbl">New customer: products <output for="tn"></output></div><input type="range" id="tn" min="1" max="12" step="1" value="6"></label>
+        <div class="readout" id="tPred" style="margin-top:0"></div>
+      </div>
+      <div class="viz">
+        <div class="codepanel" id="tCode"></div>
+        <dl class="inspector" id="tInspect"></dl>
+        <div class="two" style="gap:14px;margin-top:14px">
+          <div><div class="chart-title">Weight per iteration</div><svg class="chart" id="tW"></svg></div>
+          <div><div class="chart-title">Loss per iteration (log scale)</div><svg class="chart" id="tL"></svg></div>
+        </div>
+        <div class="interp" id="tInterp"></div>
+      </div>
+    </div>
+    <div class="challenges" data-chal="t7"></div>
+  </div>
+
+  <details class="py" open><summary>🐍 The complete notebook code</summary>
+    <div class="code"><pre><code class="py-src">import numpy as np
+
+# Training data
+X = np.array([1, 2, 3, 4])
+y = np.array([100, 200, 300, 400])
+
+# Initialise weight and learning rate
+w = 80.0
+learning_rate = 0.1
+
+for i in range(20):
+    predictions = w * X                                # 1. predict
+    loss = np.mean((predictions - y) ** 2)             # 2. loss (MSE)
+    gradient = np.mean(2 * X * (predictions - y))      # 3. gradient
+    w = w - learning_rate * gradient                   # 4. update
+
+    if i % 5 == 0:
+        print(f"Iteration: {i}, Loss: {loss:.4f}, Weight: {w:.4f}")
+
+print("\nFinal weight:", w)
+
+# Use the trained model
+new_customer = np.array([6])
+print("Predicted spending: R", (w * new_customer)[0])</code></pre></div>
+  </details>
+
+  <h2>Your practical challenge</h2>
+  <p class="prose">Open the notebook and try these without looking at the worked example. Your ticks are saved in this browser.</p>
+  <div class="card checklist" id="checklist"></div>
+
+  <h2>What to learn next</h2>
+  <div class="roadmap">
+    <div class="rm"><div class="n">1</div><b>Linear regression</b><span>Predict numbers such as prices or sales.</span></div>
+    <div class="rm"><div class="n">2</div><b>Logistic regression</b><span>Predict yes/no categories.</span></div>
+    <div class="rm"><div class="n">3</div><b>Classification</b><span>E.g. spam or not spam.</span></div>
+    <div class="rm"><div class="n">4</div><b>Neural networks</b><span>Many dot products stacked in layers.</span></div>
+    <div class="rm"><div class="n">5</div><b>Backpropagation</b><span>Gradients for every weight in a network.</span></div>
+    <div class="rm"><div class="n">6</div><b>NumPy &amp; Pandas</b><span>Work with real datasets.</span></div>
+  </div>
+
+  <div class="callout remember"><b class="t">Final advice</b>Don't rush the maths. If you can explain the customer-spend example from start to finish (data → prediction → loss → gradient → update → repeat), you understand how a simple model learns.</div>
+  <div class="qc" data-qc="t7"></div>
+  <div class="pager" data-pager="t7"></div>
+</section>
+
+<!-- =============================== QUIZ =============================== -->
+<section class="view hidden" id="v-quiz">
+  <div class="quiz-wrap">
+    <div id="qSetup">
+      <span class="eyebrow">🎮 Quiz arena</span>
+      <h1>Test your ML maths</h1>
+      <p class="lead">Fresh questions every round, with new numbers each time. Build a streak for bonus points and read the worked answer after every question.</p>
+      <div class="card setup-grid">
+        <div><div class="grp">Mode</div>
+          <div class="modes" id="qMode">
+            <button class="mode sel" data-v="practice"><b>🧘 Practice</b><span>No timer, no lives. Learn at your own pace.</span></button>
+            <button class="mode" data-v="challenge"><b>⚡ Challenge</b><span>3 lives, a countdown timer and time bonuses.</span></button>
+          </div></div>
+        <div><div class="grp">Difficulty</div>
+          <div class="presets" id="qDiff"><button class="chip sel" data-v="0">Easy</button><button class="chip" data-v="1">Medium</button><button class="chip" data-v="2">Hard</button></div></div>
+        <div><div class="grp">Number of questions</div>
+          <div class="presets" id="qCount"><button class="chip" data-v="5">5</button><button class="chip sel" data-v="10">10</button><button class="chip" data-v="15">15</button><button class="chip" data-v="20">20</button></div></div>
+        <div><div class="grp">Topics</div>
+          <div class="presets" id="qTopics"></div></div>
+        <div class="btnrow" style="align-items:center"><button class="btn" id="qStart">Start round →</button><span style="color:var(--muted);font-size:.9rem" id="qBest"></span></div>
+      </div>
+    </div>
+
+    <div id="qPlay" class="hidden">
+      <div class="card">
+        <div class="qhud">
+          <div class="s"><small>Question</small><b id="qNum">1/10</b></div>
+          <div class="s"><small>Score</small><b id="qScore">0</b></div>
+          <div class="s"><small>Streak</small><b id="qStreak" class="streak">0</b></div>
+          <div class="s" id="qLivesBox"><small>Lives</small><b id="qLives">❤️❤️❤️</b></div>
+          <button class="btn sm ghost" id="qQuit">Quit</button>
+        </div>
+        <div class="progress"><i id="qProg"></i></div>
+        <div class="timer hidden" id="qTimer"><i id="qTimerFill"></i></div>
+      </div>
+      <div class="card" id="qCard">
+        <span class="qtag" id="qTag"></span>
+        <div class="qtext" id="qText"></div>
+        <div class="opts" id="qOpts"></div>
+        <div id="qFb"></div>
+        <div class="btnrow hidden" id="qNextRow" style="justify-content:flex-end;margin-top:14px"><button class="btn" id="qNext">Next →</button></div>
+      </div>
+      <p style="color:var(--muted);font-size:.82rem;text-align:center">Tip: press 1–4 to answer and Enter for the next question.</p>
+    </div>
+
+    <div id="qResult" class="hidden">
+      <div class="card" style="text-align:center">
+        <span class="eyebrow" id="qRank"></span>
+        <p class="score-big" id="qFinal">0</p>
+        <p style="color:var(--muted);margin:6px 0 0" id="qSummary"></p>
+        <div class="btnrow" style="justify-content:center;margin-top:16px"><button class="btn" id="qAgain">Play again</button><button class="btn ghost" id="qSetupBtn">Change settings</button><a class="btn ghost" href="#home">Back to lessons</a></div>
+      </div>
+      <div class="card"><div class="chart-title">Accuracy by topic</div><div class="tbars" id="qBars"></div></div>
+      <div class="card" id="qMissWrap"><div class="chart-title">Review your mistakes</div><div id="qMiss"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== GLOSSARY =============================== -->
+<section class="view hidden" id="v-glossary">
+  <span class="eyebrow">Revision</span>
+  <h1>Glossary &amp; summary</h1>
+  <p class="lead">Tap a card to flip it. Try to say the meaning out loud before you look.</p>
+  <div class="flips" id="flips"></div>
+  <h2>The seven topics at a glance</h2>
+  <div class="card tbl-wrap">
+    <table class="t">
+      <thead><tr><th>Topic</th><th>In plain English</th><th>Key maths</th></tr></thead>
+      <tbody>
+        <tr><td><b>Vectors</b></td><td>Numbers describing one observation.</td><td class="m">x = [3, 10, 5]</td></tr>
+        <tr><td><b>Matrices</b></td><td>Numbers describing many observations.</td><td class="m">shape = (rows, cols)</td></tr>
+        <tr><td><b>Dot products</b></td><td>Combine features and weights into a prediction.</td><td class="m">ŷ = X·W + b</td></tr>
+        <tr><td><b>Loss</b></td><td>How wrong the predictions are.</td><td class="m">MSE = mean((y − ŷ)²)</td></tr>
+        <tr><td><b>Slope &amp; gradient</b></td><td>Which way the loss goes when a weight changes.</td><td class="m">dL/dw</td></tr>
+        <tr><td><b>Gradient descent</b></td><td>Adjust weights to reduce loss.</td><td class="m">w ← w − α·dL/dw</td></tr>
+        <tr><td><b>Notebook practical</b></td><td>Put it all together in Python.</td><td class="m">NumPy loop</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+  </main>
+</div>
+<div id="toast" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ================================================================
+   Utilities
+================================================================ */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in (attrs||{})){if(k==='text')e.textContent=attrs[k];else e.setAttribute(k,attrs[k]);}if(parent)parent.appendChild(e);return e;}
+function fmt(v,d=2){
+  if(!isFinite(v)) return v>0?'∞':'−∞';
+  if(Math.abs(v)>=1e6) return v.toExponential(2).replace('e+','e').replace(/-/g,'−');
+  let r=Math.round(v*Math.pow(10,d))/Math.pow(10,d); if(Object.is(r,-0)) r=0;
+  return String(r).replace('-','−');
+}
+const money=v=>(v<0?'−R':'R')+fmt(Math.abs(v));
+const comma=v=>{if(!isFinite(v)||Math.abs(v)>=1e9)return fmt(v);const r=Math.round(v*100)/100;return (r<0?'−':'')+Math.abs(r).toLocaleString('en-US',{maximumFractionDigits:2});};
+const ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const css=n=>`var(--${n})`;
+const store={get(k,d){try{const v=localStorage.getItem('mlmath.'+k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem('mlmath.'+k,JSON.stringify(v));}catch(e){}}};
+
+function niceTicks(a,b,n){n=n||5;const span=b-a;if(!(span>0))return [a];const s0=span/n,mag=Math.pow(10,Math.floor(Math.log10(s0))),r=s0/mag;const step=(r<1.5?1:r<3?2:r<7?5:10)*mag;const out=[];for(let v=Math.ceil(a/step-1e-9)*step;v<=b+1e-9;v+=step)out.push(+v.toFixed(10));return out;}
+
+/* Generic 2D plot: returns scale fns + layers */
+let clipN=0;
+function plot(svg,o){
+  const W=o.w||520,H=o.h||320,p=Object.assign({l:52,r:14,t:14,b:40},o.pad||{});
+  svg.innerHTML='';svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const [x0,x1]=o.x,[y0,y1]=o.y;
+  const X=v=>p.l+(v-x0)/(x1-x0)*(W-p.l-p.r);
+  const Y=v=>H-p.b-(v-y0)/(y1-y0)*(H-p.t-p.b);
+  const ax=el('g',{},svg);
+  const xf=o.xf||(t=>fmt(t)),yf=o.yf||(t=>fmt(t));
+  (o.xt||niceTicks(x0,x1,o.xn||6)).forEach(t=>{el('line',{x1:X(t),x2:X(t),y1:p.t,y2:H-p.b,class:'gl'},ax);el('text',{x:X(t),y:H-p.b+16,'text-anchor':'middle',class:'tk',text:xf(t)},ax);});
+  (o.yt||niceTicks(y0,y1,o.yn||5)).forEach(t=>{el('line',{x1:p.l,x2:W-p.r,y1:Y(t),y2:Y(t),class:'gl'},ax);el('text',{x:p.l-7,y:Y(t)+4,'text-anchor':'end',class:'tk',text:yf(t)},ax);});
+  if(x0<=0&&x1>=0&&!o.noZero) el('line',{x1:X(0),x2:X(0),y1:p.t,y2:H-p.b,class:'zl'},ax);
+  if(y0<=0&&y1>=0&&!o.noZero) el('line',{x1:p.l,x2:W-p.r,y1:Y(0),y2:Y(0),class:'zl'},ax);
+  if(o.xl) el('text',{x:(p.l+W-p.r)/2,y:H-4,'text-anchor':'middle',class:'albl',text:o.xl},ax);
+  if(o.yl) el('text',{x:12,y:(p.t+H-p.b)/2,'text-anchor':'middle',class:'albl',transform:`rotate(-90 12 ${(p.t+H-p.b)/2})`,text:o.yl},ax);
+  const id='clip'+(++clipN);
+  const defs=el('defs',{},svg);const cp=el('clipPath',{id},defs);el('rect',{x:p.l,y:p.t,width:W-p.l-p.r,height:H-p.t-p.b},cp);
+  const g=el('g',{'clip-path':`url(#${id})`},svg);
+  const top=el('g',{},svg);
+  return {X,Y,g,top,W,H,p};
+}
+function arrow(g,x1,y1,x2,y2,color,w){w=w||3;const a=Math.atan2(y2-y1,x2-x1),L=Math.hypot(x2-x1,y2-y1);if(L<1)return;const h=Math.min(13,L*.45);
+  el('line',{x1,y1,x2:x2-Math.cos(a)*h*.75,y2:y2-Math.sin(a)*h*.75,style:`stroke:${color};stroke-width:${w};stroke-linecap:round`},g);
+  el('polygon',{points:`${x2},${y2} ${x2-h*Math.cos(a-.42)},${y2-h*Math.sin(a-.42)} ${x2-h*Math.cos(a+.42)},${y2-h*Math.sin(a+.42)}`,style:`fill:${color}`},g);}
+function line(g,x1,y1,x2,y2,style){return el('line',{x1,y1,x2,y2,style},g);}
+function text(g,x,y,t,style,anchor){return el('text',{x,y,'text-anchor':anchor||'middle',class:'lbl',style:style||'',text:t},g);}
+function pathFrom(pts){return pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(2)+','+p[1].toFixed(2)).join('');}
+
+/* ================================================================
+   State, XP, toasts
+================================================================ */
+const state=Object.assign({xp:0,done:{},awards:{},best:0,checklist:[],theme:null},store.get('state',{}));
+function save(){store.set('state',state);}
+const LEVELS=['Data Rookie','Vector Voyager','Matrix Mover','Dot Product Pro','Loss Hunter','Gradient Guide','Descent Master','ML Maths Legend'];
+function renderHud(){
+  const lvl=Math.min(LEVELS.length,Math.floor(state.xp/200)+1);
+  $('#lvlTitle').textContent=`Level ${lvl} · ${LEVELS[lvl-1]}`;
+  $('#xpText').textContent=`${state.xp} XP`+(lvl<LEVELS.length?` · ${200-state.xp%200} to next level`:'');
+  $('#xpFill').style.width=(lvl<LEVELS.length?(state.xp%200)/2:100)+'%';
+  const n=TOPICS.filter(t=>state.done[t.id]).length;
+  $('#progText').textContent=`${n} of 7 topics complete`;$('#progFill').style.width=(n/7*100)+'%';
+  $$('[data-tid]').forEach(a=>a.classList.toggle('done',!!state.done[a.dataset.tid]));
+}
+function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;$('#toast').appendChild(t);setTimeout(()=>t.remove(),3000);}
+function award(id,xp,msg){if(state.awards[id])return false;state.awards[id]=1;const before=Math.floor(state.xp/200);state.xp+=xp;save();renderHud();toast(`+${xp} XP · ${msg}`);if(Math.floor(state.xp/200)>before&&before+1<LEVELS.length)setTimeout(()=>toast(`🎉 Level up! You're now a ${LEVELS[Math.min(LEVELS.length-1,before+1)]}`),700);return true;}
+
+/* ================================================================
+   Topics, navigation
+================================================================ */
+const TOPICS=[
+  {id:'t1',title:'Vectors',q:'How is one order written as numbers?'},
+  {id:'t2',title:'Matrices',q:'How are many orders kept lined up?'},
+  {id:'t3',title:'Dot products',q:'How do features and weights make a prediction?'},
+  {id:'t4',title:'Loss',q:'How wrong is the model, as one number?'},
+  {id:'t5',title:'Slope & gradient',q:'Which way should a weight move?'},
+  {id:'t6',title:'Gradient descent',q:'How big a step, and what can go wrong?'},
+  {id:'t7',title:'Notebook practical',q:'Can I run the whole loop myself?'}
+];
+function buildNav(){
+  const side=$('#sideNav');
+  side.innerHTML=`<a href="#home" data-nav="home"><span class="dot">⌂</span>Overview</a>`+
+    TOPICS.map((t,i)=>`<a href="#${t.id}" data-nav="${t.id}" data-tid="${t.id}"><span class="dot">${state.done[t.id]?'✓':i+1}</span>${t.title}</a>`).join('')+
+    `<a href="#quiz" data-nav="quiz"><span class="dot">🎮</span>Quiz arena</a><a href="#glossary" data-nav="glossary"><span class="dot">📖</span>Glossary</a>`;
+  $('#mnav').innerHTML=`<a href="#home" data-nav="home">Overview</a>`+TOPICS.map((t,i)=>`<a href="#${t.id}" data-nav="${t.id}">${i+1}. ${t.title}</a>`).join('')+`<a href="#quiz" data-nav="quiz">🎮 Quiz</a><a href="#glossary" data-nav="glossary">Glossary</a>`;
+  $('#roadmap').innerHTML=TOPICS.map((t,i)=>`<a class="rm ${state.done[t.id]?'done':''}" href="#${t.id}" data-tid="${t.id}"><div class="n">${state.done[t.id]?'✓':i+1}</div><span class="badge">${state.done[t.id]?'Done':'Topic '+(i+1)}</span><b>${t.title}</b><span>${t.q}</span></a>`).join('')+
+    `<a class="rm special" href="#quiz"><div class="n">🎮</div><span class="badge">Game</span><b>Quiz arena</b><span>Randomised questions, streaks, lives and a high score.</span></a>`;
+  // pagers
+  $$('[data-pager]').forEach(p=>{
+    const i=TOPICS.findIndex(t=>t.id===p.dataset.pager),prev=TOPICS[i-1],next=TOPICS[i+1];
+    p.innerHTML=`${prev?`<a class="btn ghost" href="#${prev.id}">← ${prev.title}</a>`:'<a class="btn ghost" href="#home">← Overview</a>'}
+      <button class="btn ${state.done[TOPICS[i].id]?'ghost':''}" data-complete="${TOPICS[i].id}">${state.done[TOPICS[i].id]?'✓ Completed':'Mark topic complete'}</button>
+      ${next?`<a class="btn ghost" href="#${next.id}">${next.title} →</a>`:'<a class="btn ghost" href="#quiz">Quiz arena →</a>'}`;
+  });
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-complete]');if(!b)return;
+  const id=b.dataset.complete;if(state.done[id])return;
+  state.done[id]=1;save();award('done-'+id,30,`${TOPICS.find(t=>t.id===id).title} complete`);
+  buildNav();route();renderHud();
+});
+function route(){
+  const h=(location.hash||'#home').slice(1);
+  const id=$('#v-'+h)?h:'home';
+  $$('.view').forEach(v=>v.classList.toggle('hidden',v.id!=='v-'+id));
+  $$('[data-nav]').forEach(a=>a.classList.toggle('on',a.dataset.nav===id));
+  const on=$('#mnav .on');if(on)on.scrollIntoView({block:'nearest',inline:'center'});
+  if(id==='quiz'&&!quiz.active)showSetup();
+}
+window.addEventListener('hashchange',()=>{route();window.scrollTo(0,0);});
+
+/* theme */
+function applyTheme(){if(state.theme)document.documentElement.setAttribute('data-theme',state.theme);else document.documentElement.removeAttribute('data-theme');}
+$('#themeBtn').addEventListener('click',()=>{const dark=state.theme?state.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;state.theme=dark?'light':'dark';save();applyTheme();});
+
+/* sliders */
+function showOut(id){const i=$('#'+id),o=$(`output[for="${id}"]`);if(o)o.textContent=fmt(+i.value,3);}
+const val=id=>+$('#'+id).value;
+function setVal(id,v){$('#'+id).value=v;showOut(id);}
+function bind(ids,cb){ids.forEach(id=>{$('#'+id).addEventListener('input',()=>{showOut(id);cb();});showOut(id);});}
+
+/* challenges */
+const CHAL={
+  t1:[{id:'c1a',xp:40,t:'Make |A| exactly 5 using two non-zero numbers.'},{id:'c1b',xp:40,t:'Make A + B equal [5, 15].'}],
+  t2:[{id:'c2a',xp:40,t:'Build a multiplication whose answer has shape (4, 2).'},{id:'c2b',xp:40,t:'Get one prediction per customer: result shape (4, 1). Then click a result cell.'}],
+  t3:[{id:'c3a',xp:40,t:'Make the model predict exactly R600.'},{id:'c3b',xp:40,t:'Find a setting where one feature lowers the prediction.'}],
+  t4:[{id:'c4a',xp:40,t:'Bring MSE below 500.'},{id:'c4b',xp:50,t:'Find the perfect fit: MSE = 0 (no outlier).'}],
+  t5a:[{id:'c5a',xp:30,t:'Make the slope exactly −2.'},{id:'c5c',xp:20,t:'Make a flat line (slope 0).'}],
+  t5b:[{id:'c5b',xp:40,t:'Stand where the gradient is exactly 0.'}],
+  t6:[{id:'c6a',xp:40,t:'Converge (within 0.5 of w = 100) in 10 steps or fewer.'},{id:'c6b',xp:40,t:'Make training diverge on purpose (loss explodes).'},{id:'c6c',xp:60,t:'Find a learning rate that lands within 1 of the best weight in a single step.'}],
+  t7:[{id:'c7a',xp:40,t:'Train the model, then predict 6 products within R5 of R600.'},{id:'c7b',xp:30,t:'Step through one full iteration line by line.'}]
+};
+function renderChallenges(){
+  $$('[data-chal]').forEach(box=>{
+    const list=CHAL[box.dataset.chal];
+    box.innerHTML='<h4>🎯 Lab challenges</h4>'+list.map(c=>`<div class="chal ${state.awards[c.id]?'done':''}" id="ch-${c.id}"><span class="ck">✓</span><span class="txt">${c.t}</span><span class="xp">+${c.xp} XP</span></div>`).join('');
+  });
+}
+let labsReady=false;
+function complete(id){
+  if(!labsReady||state.awards[id])return;
+  const c=Object.values(CHAL).flat().find(c=>c.id===id);
+  award(id,c.xp,'Challenge complete');
+  const n=$('#ch-'+id);if(n){n.classList.add('done');n.classList.add('pop');}
+}
+
+/* python highlighting + copy */
+function hlPy(src){
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return src.split('\n').map(ln=>{
+    let code=ln,cm='';let inS=null;
+    for(let i=0;i<ln.length;i++){const ch=ln[i];if(inS){if(ch===inS)inS=null;}else if(ch==='"'||ch==="'")inS=ch;else if(ch==='#'){code=ln.slice(0,i);cm=ln.slice(i);break;}}
+    let h=esc(code).replace(/(f?"[^"]*"|'[^']*')/g,'<span class="st">$1</span>')
+      .replace(/\b(import|as|for|in|if|print|range|from)\b(?![^<]*<\/span>)/g,'<span class="kw">$1</span>')
+      .replace(/\b(np)\b(?![^<]*<\/span>)/g,'<span class="nb">$1</span>');
+    return h+(cm?`<span class="cm">${esc(cm)}</span>`:'');
+  }).join('\n');
+}
+function initCode(){
+  $$('code.py-src').forEach(c=>{
+    const raw=c.textContent;c.innerHTML=hlPy(raw);
+    const b=document.createElement('button');b.className='copy';b.textContent='Copy';
+    b.onclick=()=>{try{navigator.clipboard.writeText(raw).then(()=>{b.textContent='Copied ✓';setTimeout(()=>b.textContent='Copy',1500);});}catch(e){}};
+    c.closest('.code').appendChild(b);
+  });
+}
+
+/* ================================================================
+   HOME visuals
+================================================================ */
+function drawHero(){
+  const P=plot($('#heroSvg'),{w:420,h:270,x:[0,7],y:[0,700],xt:[0,1,2,3,4,5,6,7],yt:[0,200,400,600],yf:t=>'R'+t,xl:'Products ordered',yl:'Amount spent',pad:{l:56,b:40}});
+  line(P.g,P.X(0),P.Y(0),P.X(7),P.Y(700),`stroke:${css('accent')};stroke-width:2;stroke-dasharray:5 5;opacity:.6`);
+  [1,2,3,4,5].forEach(x=>el('circle',{cx:P.X(x),cy:P.Y(100*x),r:7,style:`fill:${css('c1')};stroke:${css('surface')};stroke-width:2`},P.top));
+  el('circle',{cx:P.X(6),cy:P.Y(600),r:16,style:`fill:none;stroke:${css('c2')};stroke-width:2.5;stroke-dasharray:4 3`},P.top);
+  text(P.top,P.X(6),P.Y(600)+5,'?',`fill:${css('c2')};font-size:16px`);
+}
+function drawCycle(svg,active){
+  const steps=['Input data','Predict','Loss','Gradient','Update weights','Repeat'];
+  const cols=['c1','c2','c3','c4','accent','muted'];
+  svg.innerHTML='';svg.setAttribute('viewBox','0 0 480 380');
+  const cx=240,cy=190,R=140;
+  const pts=steps.map((s,i)=>{const a=-Math.PI/2+i*2*Math.PI/steps.length;return [cx+R*Math.cos(a),cy+R*Math.sin(a)];});
+  pts.forEach((p,i)=>{const q=pts[(i+1)%pts.length];const a=Math.atan2(q[1]-p[1],q[0]-p[0]);const off=Math.abs(Math.cos(a))>0.5?72:30;
+    arrow(svg,p[0]+Math.cos(a)*off,p[1]+Math.sin(a)*off,q[0]-Math.cos(a)*off,q[1]-Math.sin(a)*off,css('muted'),2);});
+  pts.forEach((p,i)=>{const g=el('g',{},svg);const on=active===i;
+    el('rect',{x:p[0]-68,y:p[1]-19,width:136,height:38,rx:19,style:`fill:${on?css(cols[i]):css('surface')};stroke:${css(cols[i])};stroke-width:2`},g);
+    text(g,p[0],p[1]+5,`${i+1}. ${steps[i]}`,`fill:${on?'#fff':css('ink')};font-size:12.5px`);});
+  text(svg,cx,cy-4,'Training','fill:var(--muted);font-size:13px');text(svg,cx,cy+14,'loop','fill:var(--muted);font-size:13px');
+}
+
+/* ================================================================
+   LAB 1 — Vectors
+================================================================ */
+function vecUpdate(){
+  const a=[val('va1'),val('va2')],b=[val('vb1'),val('vb2')],s=[a[0]+b[0],a[1]+b[1]];
+  const showSum=$('#vsum').checked,showMag=$('#vmag').checked;
+  const xs=[0,a[0],b[0]],ys=[0,a[1],b[1]];if(showSum){xs.push(s[0]);ys.push(s[1]);}
+  let x0=Math.min(...xs)-1,x1=Math.max(...xs)+1,y0=Math.min(...ys)-1,y1=Math.max(...ys)+1;
+  const span=Math.max(x1-x0,y1-y0,6);x0-= (span-(x1-x0))/2;x1=x0+span;y0-=(span-(y1-y0))/2;y1=y0+span;
+  const P=plot($('#vecSvg'),{w:420,h:420,x:[x0,x1],y:[y0,y1],pad:{l:34,r:14,t:14,b:34},xn:8,yn:8});
+  const O=[P.X(0),P.Y(0)];
+  if(showMag&&a[0]&&a[1]){
+    line(P.g,O[0],O[1],P.X(a[0]),O[1],`stroke:${css('c1')};stroke-width:1.5;stroke-dasharray:5 4`);
+    line(P.g,P.X(a[0]),O[1],P.X(a[0]),P.Y(a[1]),`stroke:${css('c1')};stroke-width:1.5;stroke-dasharray:5 4`);
+    text(P.g,(O[0]+P.X(a[0]))/2,O[1]+(a[1]>0?16:-8),`a₁ = ${fmt(a[0])}`,`fill:${css('c1')};font-size:11px`);
+    text(P.g,P.X(a[0])+(a[0]>0?8:-8),(O[1]+P.Y(a[1]))/2,`a₂ = ${fmt(a[1])}`,`fill:${css('c1')};font-size:11px`,a[0]>0?'start':'end');
+  }
+  if(showSum){
+    line(P.g,P.X(a[0]),P.Y(a[1]),P.X(s[0]),P.Y(s[1]),`stroke:${css('c2')};stroke-width:1.5;stroke-dasharray:4 4;opacity:.7`);
+    line(P.g,P.X(b[0]),P.Y(b[1]),P.X(s[0]),P.Y(s[1]),`stroke:${css('c1')};stroke-width:1.5;stroke-dasharray:4 4;opacity:.7`);
+    arrow(P.g,O[0],O[1],P.X(s[0]),P.Y(s[1]),css('c3'),3.5);
+    text(P.top,P.X(s[0]),P.Y(s[1])-10,`A+B [${fmt(s[0])}, ${fmt(s[1])}]`,`fill:${css('c3')};font-size:12px`);
+  }
+  arrow(P.g,O[0],O[1],P.X(a[0]),P.Y(a[1]),css('c1'),3.5);
+  arrow(P.g,O[0],O[1],P.X(b[0]),P.Y(b[1]),css('c2'),3.5);
+  text(P.top,P.X(a[0]),P.Y(a[1])-10,`A [${fmt(a[0])}, ${fmt(a[1])}]`,`fill:${css('c1')};font-size:12px`);
+  text(P.top,P.X(b[0]),P.Y(b[1])+(b[1]>=a[1]?-10:20),`B [${fmt(b[0])}, ${fmt(b[1])}]`,`fill:${css('c2')};font-size:12px`);
+  const magA=Math.hypot(a[0],a[1]),magB=Math.hypot(b[0],b[1]);
+  $('#vecRead').innerHTML=`
+    <div class="row"><span class="m"><b class="hl3">A + B</b> = [${fmt(a[0])} + ${fmt(b[0])}, ${fmt(a[1])} + ${fmt(b[1])}] = <b>[${fmt(s[0])}, ${fmt(s[1])}]</b></span></div>
+    <div class="row"><span class="m"><b class="hl1">|A|</b> = √(${fmt(a[0])}² + ${fmt(a[1])}²) = √(${fmt(a[0]**2)} + ${fmt(a[1]**2)}) = √${fmt(a[0]**2+a[1]**2)} = <b>${fmt(magA,3)}</b></span></div>
+    <div class="row"><span class="m"><b class="hl2">|B|</b> = √${fmt(b[0]**2+b[1]**2)} = <b>${fmt(magB,3)}</b></span></div>`;
+  let msg;
+  if(s[0]===0&&s[1]===0) msg='A and B point in exactly <b>opposite directions</b> with the same length, so they cancel out: A + B = [0, 0].';
+  else if(Number.isInteger(magA)&&a[0]&&a[1]) msg=`Nice: [${a[0]}, ${a[1]}] has a whole-number length of <b>${magA}</b>. That's a Pythagorean triple.`;
+  else msg=`Think of A as an order: <b>${a[0]} products</b> and <b>${a[1]} km</b>. Adding B is like combining two orders into one: <b>${s[0]} products, ${s[1]} km</b>.`;
+  $('#vecInterp').innerHTML='<b class="t">Interpretation</b>'+msg;
+  if(magA===5&&a[0]!==0&&a[1]!==0)complete('c1a');
+  if(s[0]===5&&s[1]===15)complete('c1b');
+}
+function initVec(){
+  bind(['va1','va2','vb1','vb2'],vecUpdate);['vsum','vmag'].forEach(id=>$('#'+id).addEventListener('change',vecUpdate));
+  $$('[data-vp]').forEach(b=>b.onclick=()=>{const v=b.dataset.vp.split(',').map(Number);['va1','va2','vb1','vb2'].forEach((id,i)=>setVal(id,v[i]));vecUpdate();});
+  vecUpdate();
+}
+
+/* ================================================================
+   LAB 2 — Matrices
+================================================================ */
+const mat={ar:2,ac:3,br:3,bc:2,A:[],B:[],sel:null,preset:false};
+const randM=(r,c)=>Array.from({length:r},()=>Array.from({length:c},()=>ri(1,9)));
+function fitM(M,r,c){return Array.from({length:r},(_,i)=>Array.from({length:c},(_,j)=>(M[i]&&M[i][j]!=null)?M[i][j]:ri(1,9)));}
+function gridHTML(M,cls,hlRow,hlCol){
+  const c=M[0].length;
+  return `<div class="mgrid ${cls||''}" style="grid-template-columns:repeat(${c},auto)">`+M.map((row,i)=>row.map((v,j)=>`<div class="c ${i===hlRow?'hr':''} ${j===hlCol?'hc':''}" data-i="${i}" data-j="${j}">${v}</div>`).join('')).join('')+'</div>';
+}
+function matRender(){
+  ['ar','ac','br','bc'].forEach(k=>$('#s-'+k).textContent=mat[k]);
+  const ok=mat.ac===mat.br;
+  $('#mShape').innerHTML=`(${mat.ar} × <span class="${ok?'ok':'no'}">${mat.ac}</span>) · (<span class="${ok?'ok':'no'}">${mat.br}</span> × ${mat.bc}) ${ok?`= <span style="color:var(--c3)">(${mat.ar} × ${mat.bc})</span>`:'= ✗'}`;
+  const s=mat.sel;
+  let html=`<div><div>${gridHTML(mat.A,'',s?s[0]:-1,-1)}</div><div class="mlabel">A (${mat.ar}×${mat.ac})${mat.preset?' · customers':''}</div></div><span class="mop">·</span>
+    <div><div>${gridHTML(mat.B,'',-1,s?s[1]:-1)}</div><div class="mlabel">B (${mat.br}×${mat.bc})${mat.preset?' · weights':''}</div></div>`;
+  let info;
+  if(ok){
+    const C=mat.A.map(row=>Array.from({length:mat.bc},(_,j)=>row.reduce((acc,v,k)=>acc+v*mat.B[k][j],0)));
+    html+=`<span class="mop">=</span><div><div>${gridHTML(C,'res')}</div><div class="mlabel">Result (${mat.ar}×${mat.bc})</div></div>`;
+    if(s){
+      const [i,j]=s;const terms=mat.A[i].map((v,k)=>`<span class="hl1">${v}</span>×<span class="hl2">${mat.B[k][j]}</span>`);
+      info=`<b class="t">Cell row ${i+1}, column ${j+1}</b>Row ${i+1} of A · column ${j+1} of B = ${terms.join(' + ')} = <b>${C[i][j]}</b>`+(mat.preset?`<br>That's customer <b>${'ABCD'[i]}</b>'s predicted spend: <b>R${C[i][j]}</b>.`:'');
+    } else info=`<b class="t">It fits ✓</b>The inside numbers match (${mat.ac} = ${mat.br}). The outside numbers give the answer's shape: <b>(${mat.ar}, ${mat.bc})</b>. Click any green cell to see how it was calculated.`;
+    $('#mInfo').className='interp good';
+  } else {
+    info=`<b class="t">Can't multiply ✗</b>A has <b>${mat.ac} columns</b> but B has <b>${mat.br} rows</b>. Each row of A needs a partner number in every column of B, so the inside numbers must match.`;
+    $('#mInfo').className='interp bad';
+  }
+  $('#mGrids').innerHTML=html;$('#mInfo').innerHTML=info;
+  $$('#mGrids .res .c').forEach(c=>{c.onclick=()=>{mat.sel=[+c.dataset.i,+c.dataset.j];matRender();if(mat.ar===4&&mat.bc===1&&ok)complete('c2b');};
+    if(s&&+c.dataset.i===s[0]&&+c.dataset.j===s[1])c.classList.add('sel');});
+  if(ok&&mat.ar===4&&mat.bc===2)complete('c2a');
+}
+function initMat(){
+  mat.A=randM(mat.ar,mat.ac);mat.B=randM(mat.br,mat.bc);
+  $$('.stepper button').forEach(b=>b.onclick=()=>{const k=b.dataset.dim;mat[k]=Math.max(1,Math.min(5,mat[k]+ +b.dataset.d));mat.A=fitM(mat.A,mat.ar,mat.ac);mat.B=fitM(mat.B,mat.br,mat.bc);mat.sel=null;mat.preset=false;matRender();});
+  $('#mPreset').onclick=()=>{Object.assign(mat,{ar:4,ac:3,br:3,bc:1,A:[[1,5,4],[2,10,5],[3,15,3],[4,20,5]],B:[[100],[5],[10]],sel:null,preset:true});matRender();};
+  $('#mShuffle').onclick=()=>{mat.A=randM(mat.ar,mat.ac);mat.B=randM(mat.br,mat.bc);mat.sel=null;mat.preset=false;matRender();};
+  matRender();
+  // dataset table
+  const info=$('#dsInfo'),rows=$$('#dataset tbody tr'),names='ABCD',feats=['Products','Distance','Rating'];
+  const clear=()=>{rows.forEach(r=>r.classList.remove('hrow'));$$('#dataset .hcol').forEach(c=>c.classList.remove('hcol'));};
+  rows.forEach((r,i)=>r.onclick=()=>{clear();r.classList.add('hrow');const v=[...r.children].slice(1).map(c=>c.textContent);info.innerHTML=`<b class="t">Row = one customer = one vector</b>Customer ${names[i]}: <span class="m">[${v.join(', ')}]</span>, meaning ${v[0]} products, ${v[1]} km, rating ${v[2]}.`;});
+  $$('#dataset th[data-col]').forEach(th=>th.onclick=()=>{clear();const j=+th.dataset.col;th.classList.add('hcol');rows.forEach(r=>r.children[j+1].classList.add('hcol'));const v=rows.map(r=>r.children[j+1].textContent);info.innerHTML=`<b class="t">Column = one feature</b>"${feats[j]}" for every customer: <span class="m">[${v.join(', ')}]</span>. A column is the same <i>kind</i> of information for everyone.`;});
+}
+
+/* ================================================================
+   LAB 3 — Dot product
+================================================================ */
+function dotUpdate(){
+  const x=[val('dx1'),val('dx2'),val('dx3')],w=[val('dw1'),val('dw2'),val('dw3')],b=val('db');
+  const names=['Products','Distance','Rating'],units=['products','km','stars'];
+  const parts=x.map((v,i)=>v*w[i]),total=parts.reduce((a,c)=>a+c,0)+b;
+  const rows=parts.map((v,i)=>({lab:`${names[i]}: ${x[i]} × ${fmt(w[i])}`,v})).concat([{lab:'Bias',v:b}]);
+  let cum=0;const segs=rows.map(r=>{const s=cum;cum+=r.v;return {...r,s,e:cum};});
+  const lo=Math.min(0,...segs.map(s=>Math.min(s.s,s.e))),hi=Math.max(0,...segs.map(s=>Math.max(s.s,s.e)),10);
+  const svg=$('#dotSvg'),W=560,rowH=42,H=(rows.length+1)*rowH+34,L=170,R=70;
+  svg.innerHTML='';svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const X=v=>L+(v-lo)/(hi-lo||1)*(W-L-R);
+  niceTicks(lo,hi,5).forEach(t=>{line(svg,X(t),8,X(t),H-26,`stroke:${css('grid')}`);el('text',{x:X(t),y:H-10,'text-anchor':'middle',class:'tk',text:'R'+fmt(t)},svg);});
+  line(svg,X(0),8,X(0),H-26,`stroke:${css('muted')};opacity:.6`);
+  segs.forEach((s,i)=>{const y=10+i*rowH;const col=s.v>=0?css('good'):css('bad');
+    text(svg,L-10,y+rowH/2,s.lab,`fill:${css('ink')};font-size:12.5px;font-weight:600`,'end');
+    const xa=X(Math.min(s.s,s.e)),xb=X(Math.max(s.s,s.e));
+    el('rect',{x:xa,y:y+8,width:Math.max(2,xb-xa),height:rowH-16,rx:5,style:`fill:${col};opacity:.85`},svg);
+    text(svg,xb+6,y+rowH/2+4,(s.v>=0?'+':'')+money(s.v).replace('−R','−R'),`fill:${col};font-size:12px`,'start');
+    if(i<segs.length-1)line(svg,X(s.e),y+rowH-8,X(s.e),y+rowH+8,`stroke:${css('muted')};stroke-dasharray:2 2`);
+  });
+  const y=10+segs.length*rowH;
+  text(svg,L-10,y+rowH/2+4,'Prediction ŷ',`fill:${css('accent')};font-size:13px`,'end');
+  el('rect',{x:X(Math.min(0,total)),y:y+6,width:Math.max(2,Math.abs(X(total)-X(0))),height:rowH-12,rx:6,style:`fill:${css('accent')}`},svg);
+  text(svg,Math.max(X(0),X(total))+6,y+rowH/2+5,money(total),`fill:${css('accent')};font-size:14px`,'start');
+  $('#dotRead').innerHTML=`<div class="row m" style="flex-wrap:wrap">ŷ = (${x[0]}×${fmt(w[0])}) + (${x[1]}×${fmt(w[1])}) + (${x[2]}×${fmt(w[2])}) + ${fmt(b)}</div>
+    <div class="row m">&nbsp;&nbsp;= ${parts.map(fmt).join(' + ')} + ${fmt(b)} = <b style="color:var(--accent);font-size:1.15em">${money(total)}</b></div>`;
+  const absParts=parts.map(Math.abs),big=absParts.indexOf(Math.max(...absParts));
+  let msg=parts[big]===0?`All features contribute R0. The prediction is just the bias, ${money(b)}. That's why we need a bias: a baseline even for an "empty" input.`:
+    `The biggest driver is <b>${names[big].toLowerCase()}</b> (${money(parts[big])}). `;
+  const neg=parts.map((p,i)=>p<0?names[i].toLowerCase():null).filter(Boolean);
+  if(neg.length)msg+=`<b>${neg.join(' and ')}</b> ${neg.length>1?'have':'has'} a negative weight, so ${neg.length>1?'they pull':'it pulls'} the prediction <b>down</b>. For example, a far-away customer might get a delivery discount. `;
+  if(w[2]===0&&parts[big]!==0)msg+='The rating weight is 0, so the model is ignoring rating completely.';
+  $('#dotInterp').innerHTML='<b class="t">Interpretation</b>'+msg;
+  if(total===600)complete('c3a');
+  if(parts.some(p=>p<0))complete('c3b');
+}
+function initDot(){
+  const ids=['dx1','dx2','dx3','dw1','dw2','dw3','db'];bind(ids,dotUpdate);
+  $$('[data-dp]').forEach(btn=>btn.onclick=()=>{btn.dataset.dp.split(',').map(Number).forEach((v,i)=>setVal(ids[i],v));dotUpdate();});
+  dotUpdate();
+}
+
+/* ================================================================
+   LAB 4 — Loss
+================================================================ */
+let lMetric='mse';
+function lossData(){const d=[{n:'A',x:1,y:100},{n:'B',x:2,y:200},{n:'C',x:3,y:300},{n:'D',x:4,y:400}];if($('#lout').checked)d.push({n:'E',x:5,y:900,out:true});return d;}
+function metrics(d,w,b){const e=d.map(p=>p.y-(w*p.x+b));return {e,mse:e.reduce((a,v)=>a+v*v,0)/e.length,mae:e.reduce((a,v)=>a+Math.abs(v),0)/e.length};}
+function lossUpdate(){
+  const w=val('lw'),b=val('lb'),d=lossData(),{e,mse,mae}=metrics(d,w,b);
+  const ymax=Math.max(500,...d.map(p=>p.y),...d.map(p=>w*p.x+b))+50,ymin=Math.min(0,...d.map(p=>w*p.x+b));
+  const P=plot($('#lossSvg'),{w:400,h:300,x:[0,6],y:[ymin,ymax],xt:[0,1,2,3,4,5,6],xl:'Products',yl:'Spend (R)',pad:{l:52}});
+  line(P.g,P.X(0),P.Y(b),P.X(6),P.Y(6*w+b),`stroke:${css('accent')};stroke-width:3`);
+  d.forEach((p,i)=>{const yh=w*p.x+b;line(P.g,P.X(p.x),P.Y(p.y),P.X(p.x),P.Y(yh),`stroke:${css('bad')};stroke-width:2.5;opacity:.85`);
+    el('circle',{cx:P.X(p.x),cy:P.Y(yh),r:4,style:`fill:${css('accent')}`},P.top);
+    el('circle',{cx:P.X(p.x),cy:P.Y(p.y),r:6.5,style:`fill:${p.out?css('c2'):css('c1')};stroke:${css('surface')};stroke-width:2`},P.top);
+    text(P.top,P.X(p.x)+10,P.Y(p.y)+4,p.n,`fill:${p.out?css('c2'):css('c1')};font-size:11px`,'start');});
+  text(P.top,P.W-18,P.p.t+14,`ŷ = ${fmt(w)}x ${b<0?'−':'+'} ${fmt(Math.abs(b))}`,`fill:${css('accent')};font-size:12px`,'end');
+  // loss curve vs w
+  const f=ww=>{const m=metrics(d,ww,b);return lMetric==='mse'?m.mse:m.mae;};
+  const pts=[];for(let ww=0;ww<=200;ww+=2)pts.push([ww,f(ww)]);
+  const cmax=Math.max(...pts.map(p=>p[1]));
+  const C=plot($('#lossCurve'),{w:400,h:300,x:[0,200],y:[0,cmax*1.05],xl:'Weight w',yl:lMetric.toUpperCase(),pad:{l:58},yf:t=>t>=1000?fmt(t/1000)+'k':fmt(t)});
+  el('path',{d:pathFrom(pts.map(p=>[C.X(p[0]),C.Y(p[1])])),style:`fill:none;stroke:${css('c4')};stroke-width:2.5`},C.g);
+  const best=pts.reduce((a,p)=>p[1]<a[1]?p:a);
+  line(C.g,C.X(best[0]),C.Y(0),C.X(best[0]),C.Y(best[1]),`stroke:${css('good')};stroke-dasharray:4 4`);
+  text(C.top,C.X(best[0]),C.Y(best[1])-10,`best ≈ ${best[0]}`,`fill:${css('good')};font-size:11px`);
+  const cur=f(w);el('circle',{cx:C.X(w),cy:C.Y(cur),r:7,style:`fill:${css('accent')};stroke:${css('surface')};stroke-width:2.5`},C.top);
+  $('#lCurveTitle').textContent=`${lMetric.toUpperCase()} vs weight (b = ${fmt(b)})`;
+  // stats + table
+  $('#lStats').innerHTML=`<div class="stat"><small>MSE</small><b>${comma(mse)}</b></div><div class="stat"><small>MAE</small><b>R${comma(mae)}</b></div><div class="stat"><small>RMSE (√MSE)</small><b>R${comma(Math.sqrt(mse))}</b></div>`;
+  const rows=d.map((p,i)=>`<tr style="${p.out?'color:var(--c2)':''}"><td>${p.n}</td><td class="r">${p.x}</td><td class="r">${p.y}</td><td class="r">${fmt(w*p.x+b)}</td><td class="r">${fmt(e[i])}</td><td class="r">${comma(e[i]**2)}</td><td class="r">${fmt(Math.abs(e[i]))}</td></tr>`).join('');
+  $('#lTable').innerHTML=`<thead><tr><th>Cust.</th><th class="r">x</th><th class="r">y</th><th class="r">ŷ</th><th class="r">Error</th><th class="r">Error²</th><th class="r">|Error|</th></tr></thead><tbody>${rows}
+    <tr style="font-weight:700"><td colspan="5">Average (÷ ${d.length})</td><td class="r">${comma(mse)}</td><td class="r">${comma(mae)}</td></tr></tbody>`;
+  // interpretation
+  const meanE=e.reduce((a,v)=>a+v,0)/e.length;let cls='interp',msg;
+  if(mse<0.001){cls='interp good';msg='<b>Perfect fit.</b> Every prediction equals the actual value, so the loss is 0. This is the weight training is looking for.';}
+  else{
+    msg=meanE>0?`On average the line sits <b>below</b> the points (it under-predicts), so the weight should go <b>up</b>. `:`On average the line sits <b>above</b> the points (it over-predicts), so the weight should go <b>down</b>. `;
+    if(Math.abs(meanE)<5&&mse>100)msg='The errors roughly cancel out (some above, some below), yet loss is still high. The <b>shape</b> of the line is wrong: try changing both w and b. ';
+    if($('#lout').checked){const se=e[e.length-1]**2,sa=Math.abs(e[e.length-1]);const ts=e.reduce((a,v)=>a+v*v,0),ta=e.reduce((a,v)=>a+Math.abs(v),0);
+      msg+=`<br><b>Outlier effect:</b> Customer E causes <b>${fmt(ts?se/ts*100:0,0)}%</b> of the squared error (MSE) but only <b>${fmt(ta?sa/ta*100:0,0)}%</b> of the absolute error (MAE). Squaring makes big mistakes dominate.`;cls='interp warn';}
+  }
+  $('#lInterp').className=cls;$('#lInterp').innerHTML='<b class="t">Interpretation</b>'+msg;
+  if(mse<500)complete('c4a');
+  if(mse<0.001&&!$('#lout').checked)complete('c4b');
+}
+function drawCompare(){
+  const svg=$('#cmpSvg'),W=520,H=130;svg.innerHTML='';svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const data=[['Model A (w = 80)',3000,css('bad')],['Model B',500,css('good')]],L=130,X=v=>L+v/3200*(W-L-70);
+  data.forEach((d,i)=>{const y=14+i*52;text(svg,L-10,y+24,d[0],`fill:${css('ink')};font-size:12.5px`,'end');el('rect',{x:L,y,width:X(d[1])-L,height:34,rx:6,style:`fill:${d[2]};opacity:.85`},svg);text(svg,X(d[1])+8,y+22,comma(d[1]),`fill:${d[2]};font-size:13px`,'start');});
+}
+function initLoss(){
+  bind(['lw','lb'],lossUpdate);$('#lout').addEventListener('change',lossUpdate);
+  $$('#lMetric .chip').forEach(c=>c.onclick=()=>{lMetric=c.dataset.m;$$('#lMetric .chip').forEach(x=>x.classList.toggle('sel',x===c));lossUpdate();});
+  $$('[data-lp]').forEach(btn=>btn.onclick=()=>{const v=btn.dataset.lp.split(',').map(Number);setVal('lw',v[0]);setVal('lb',v[1]);lossUpdate();});
+  lossUpdate();drawCompare();
+}
+
+/* ================================================================
+   LAB 5 — Slope & gradient
+================================================================ */
+function slopeUpdate(){
+  const x1=val('sx1'),y1=val('sy1'),x2=val('sx2'),y2=val('sy2');
+  const P=plot($('#slopeSvg'),{w:440,h:400,x:[0,10],y:[0,10],xt:[0,2,4,6,8,10],yt:[0,2,4,6,8,10],xl:'x',yl:'y',pad:{l:40,b:40}});
+  let read;
+  if(x1===x2){
+    line(P.g,P.X(x1),P.Y(0),P.X(x1),P.Y(10),`stroke:${css('muted')};stroke-width:2.5;stroke-dasharray:6 4`);
+    read=`<div class="row"><b>Run = 0</b>: you can't divide by zero, so a vertical line has an <b>undefined</b> slope. Move one of the points sideways.</div>`;
+  } else {
+    const m=(y2-y1)/(x2-x1),f=x=>y1+m*(x-x1);
+    line(P.g,P.X(0),P.Y(f(0)),P.X(10),P.Y(f(10)),`stroke:${css('accent')};stroke-width:3`);
+    line(P.g,P.X(x1),P.Y(y1),P.X(x2),P.Y(y1),`stroke:${css('c3')};stroke-width:2;stroke-dasharray:5 4`);
+    line(P.g,P.X(x2),P.Y(y1),P.X(x2),P.Y(y2),`stroke:${css('c4')};stroke-width:2;stroke-dasharray:5 4`);
+    text(P.top,(P.X(x1)+P.X(x2))/2,P.Y(y1)+(y2>=y1?18:-8),`run = ${x2-x1}`,`fill:${css('c3')};font-size:12px`);
+    text(P.top,P.X(x2)+(x2>x1?8:-8),(P.Y(y1)+P.Y(y2))/2+4,`rise = ${y2-y1}`,`fill:${css('c4')};font-size:12px`,x2>x1?'start':'end');
+    const dir=m>0?'<b style="color:var(--good)">positive</b>: the line goes <b>uphill</b>':m<0?'<b style="color:var(--bad)">negative</b>: the line goes <b>downhill</b>':'<b>zero</b>: the line is <b>flat</b>';
+    read=`<div class="row m">m = (${y2} − ${y1}) / (${x2} − ${x1}) = ${y2-y1} / ${x2-x1} = <b style="font-size:1.2em;color:var(--accent)">${fmt(m,3)}</b></div>
+      <div class="row">The slope is ${dir}.${m!==0?` Each step of 1 to the right changes y by <b>${fmt(m,3)}</b>.`:''}</div>`;
+    if(m===-2)complete('c5a');if(m===0)complete('c5c');
+  }
+  el('circle',{cx:P.X(x1),cy:P.Y(y1),r:7,style:`fill:${css('c1')};stroke:${css('surface')};stroke-width:2`},P.top);
+  el('circle',{cx:P.X(x2),cy:P.Y(y2),r:7,style:`fill:${css('c2')};stroke:${css('surface')};stroke-width:2`},P.top);
+  text(P.top,P.X(x1)-10,P.Y(y1)-10,`(${x1}, ${y1})`,`fill:${css('c1')};font-size:12px`,'end');
+  text(P.top,P.X(x2)+10,P.Y(y2)-10,`(${x2}, ${y2})`,`fill:${css('c2')};font-size:12px`,'start');
+  $('#slopeRead').innerHTML=read;
+}
+const GX=[1,2,3,4],GY=[100,200,300,400];
+const gLoss=w=>GX.reduce((a,x,i)=>a+(w*x-GY[i])**2,0)/GX.length;
+const gGrad=w=>GX.reduce((a,x,i)=>a+2*x*(w*x-GY[i]),0)/GX.length;
+function gradUpdate(){
+  const w=val('gw'),L=gLoss(w),g=gGrad(w);
+  const pts=[];for(let x=40;x<=160;x+=1)pts.push([x,gLoss(x)]);
+  const P=plot($('#gradSvg'),{w:600,h:320,x:[40,160],y:[0,28000],xl:'Weight w',yl:'Loss (MSE)',yf:t=>t>=1000?fmt(t/1000)+'k':fmt(t),pad:{l:56}});
+  el('path',{d:pathFrom(pts.map(p=>[P.X(p[0]),P.Y(p[1])])),style:`fill:none;stroke:${css('c4')};stroke-width:3`},P.g);
+  el('circle',{cx:P.X(100),cy:P.Y(0),r:5,style:`fill:${css('good')}`},P.top);
+  text(P.top,P.X(100),P.Y(0)-10,'minimum (w = 100)',`fill:${css('good')};font-size:11px`);
+  if($('#gtan').checked){const d=18;line(P.g,P.X(w-d),P.Y(L-g*d),P.X(w+d),P.Y(L+g*d),`stroke:${css('c2')};stroke-width:3;stroke-linecap:round`);}
+  el('circle',{cx:P.X(w),cy:P.Y(L),r:8,style:`fill:${css('accent')};stroke:${css('surface')};stroke-width:3`},P.top);
+  if(Math.abs(g)>1e-9){const dir=g<0?1:-1,y=P.Y(L)-26;arrow(P.top,P.X(w),y,P.X(w)+dir*60,y,css('good'),3.5);text(P.top,P.X(w)+dir*30,y-10,'downhill',`fill:${css('good')};font-size:11px`);}
+  $('#gStats').innerHTML=`<div class="stat"><small>Weight w</small><b>${fmt(w)}</b></div><div class="stat"><small>Loss</small><b>${comma(L)}</b></div><div class="stat"><small>Gradient dL/dw</small><b style="color:${g<0?'var(--c1)':g>0?'var(--c2)':'var(--good)'}">${fmt(g)}</b></div>`;
+  let cls,msg;
+  if(g===0){cls='interp good';msg='<b>Gradient = 0.</b> The ground is flat. You\'re at the bottom of the valley, the best weight. Gradient descent would stop moving here.';complete('c5b');}
+  else if(g<0){cls='interp';msg=`The gradient is <b>negative (${fmt(g)})</b>: loss goes <b>down</b> as w goes up. So <b>increase the weight</b>. Each product is worth more than ${fmt(w)}.`;}
+  else{cls='interp warn';msg=`The gradient is <b>positive (+${fmt(g)})</b>: loss goes <b>up</b> as w goes up. So <b>decrease the weight</b>. The model over-predicts.`;}
+  msg+=` <span style="color:var(--muted)">Steepness: |gradient| = ${fmt(Math.abs(g))}. The further from 100, the steeper the slope and the bigger the push.</span>`;
+  $('#gInterp').className=cls;$('#gInterp').innerHTML='<b class="t">Which way?</b>'+msg;
+}
+function initSlope(){
+  bind(['sx1','sy1','sx2','sy2'],slopeUpdate);slopeUpdate();
+  bind(['gw'],gradUpdate);$('#gtan').addEventListener('change',gradUpdate);
+  $$('[data-gp]').forEach(b=>b.onclick=()=>{setVal('gw',+b.dataset.gp);gradUpdate();});
+  gradUpdate();
+}
+
+/* ================================================================
+   LAB 6 — Gradient descent simulator
+================================================================ */
+const gd={path:[],timer:null};
+function gdReset(){gdStop();gd.path=[val('gdw')];gdDraw();}
+function gdStop(){if(gd.timer){clearInterval(gd.timer);gd.timer=null;}$('#gdPlay').textContent='▶ Play';}
+function gdStepOnce(){
+  const a=val('gda'),w=gd.path[gd.path.length-1];
+  if(gd.path.length>60||Math.abs(w-100)>1e7||(Math.abs(w-100)<1e-6&&gd.path.length>1)){gdStop();return false;}
+  gd.path.push(w-a*gGrad(w));gdDraw();return true;
+}
+function gdDraw(){
+  const a=val('gda'),path=gd.path,last=path[path.length-1],r=1-15*a;
+  const finite=path.filter(w=>Math.abs(w-100)<4000);
+  const lo=Math.min(20,...finite),hi=Math.max(180,...finite);
+  const ymax=Math.max(gLoss(lo),gLoss(hi));
+  const P=plot($('#gdCurve'),{w:400,h:300,x:[lo,hi],y:[0,ymax*1.05],xl:'Weight w',yl:'Loss',yf:t=>t>=1e6?fmt(t/1e6)+'M':t>=1000?fmt(t/1000)+'k':fmt(t),pad:{l:56}});
+  const pts=[];for(let i=0;i<=200;i++){const x=lo+(hi-lo)*i/200;pts.push([P.X(x),P.Y(gLoss(x))]);}
+  el('path',{d:pathFrom(pts),style:`fill:none;stroke:${css('c4')};stroke-width:2.5`},P.g);
+  const pp=path.filter(w=>Math.abs(w-100)<4000).map(w=>[P.X(w),P.Y(gLoss(w))]);
+  if(pp.length>1)el('path',{d:pathFrom(pp),style:`fill:none;stroke:${css('c2')};stroke-width:1.8;opacity:.8`},P.g);
+  pp.forEach((p,i)=>el('circle',{cx:p[0],cy:p[1],r:i===pp.length-1?7:4,style:`fill:${css(i===0?'c1':'c2')};opacity:${i===pp.length-1?1:.35+.65*i/pp.length};stroke:${css('surface')};stroke-width:1.5`},P.top));
+  if(Math.abs(last-100)>=4000)text(P.top,P.W/2,P.p.t+20,'💥 weight flew off the chart!',`fill:${css('bad')};font-size:14px`);
+  // history (log)
+  const ls=path.map(w=>Math.log10(Math.max(gLoss(w),1e-4)));
+  const ymin=Math.min(-1,Math.floor(Math.min(...ls))),ymx=Math.max(4,Math.ceil(Math.max(...ls)));
+  const yt=[];const stepT=Math.max(1,Math.ceil((ymx-ymin)/6));for(let t=ymin;t<=ymx;t+=stepT)yt.push(t);
+  const nmax=Math.max(10,path.length-1);
+  const lab=t=>{const v=Math.pow(10,t);return v>=1e6?'1e'+t:v>=1000?fmt(v/1000)+'k':fmt(v,4);};
+  const Hh=plot($('#gdHist'),{w:400,h:300,x:[0,nmax],y:[ymin,ymx],yt,yf:lab,xl:'Iteration',yl:'Loss',pad:{l:52},noZero:true});
+  el('path',{d:pathFrom(ls.map((l,i)=>[Hh.X(i),Hh.Y(l)])),style:`fill:none;stroke:${css('accent')};stroke-width:2.5`},Hh.g);
+  ls.forEach((l,i)=>el('circle',{cx:Hh.X(i),cy:Hh.Y(l),r:3,style:`fill:${css('accent')}`},Hh.g));
+  // stats
+  const L=gLoss(last);
+  $('#gdStats').innerHTML=`<div class="stat"><small>Iteration</small><b>${path.length-1}</b></div><div class="stat"><small>Weight</small><b>${fmt(last,3)}</b></div><div class="stat"><small>Loss</small><b>${comma(L)}</b></div><div class="stat"><small>Gradient</small><b>${fmt(gGrad(last))}</b></div>`;
+  // interpretation by step factor
+  let cls,t,msg;
+  if(Math.abs(r)>1.0001){cls='interp bad';t='Diverging 💥';msg=`α = ${a} is <b>too big</b>. Every step overshoots the bottom by <i>more</i> than the last, so the loss grows instead of shrinking. Lower the learning rate below ≈ 0.133.`;}
+  else if(Math.abs(Math.abs(r)-1)<=0.0001){cls='interp warn';t='Stuck bouncing';msg='The steps are exactly big enough to jump from one side of the valley to the same height on the other side. It never gets closer.';}
+  else if(r<-0.6){cls='interp warn';t='Bouncy (zig-zag)';msg=`The model overshoots each time but the jumps slowly get smaller. It gets there, but wastes steps. A slightly smaller α would be smoother.`;}
+  else if(Math.abs(r)<0.02){cls='interp good';t='Perfect step 🎯';msg='This learning rate lands right at the bottom in about one step. On real problems you rarely find a value this perfect, but it shows how much α matters.';}
+  else if(r<0){cls='interp good';t='Fast, with a small overshoot';msg='Each step jumps a little past the bottom, then comes back. It still converges quickly. This is what happened in the lesson (80 → 110 → 95 → …).';}
+  else if(r<0.75){cls='interp good';t='Smooth and steady ✓';msg='Good choice. Steps shrink as the slope flattens, and the model walks smoothly down to w ≈ 100.';}
+  else{cls='interp warn';t='Too slow 🐢';msg=`α = ${a} is <b>small</b>. Each step only covers ${fmt((1-r)*100,1)}% of the remaining distance, so training needs many iterations.`;}
+  let need='—';{let w=val('gdw');for(let i=1;i<=500;i++){w=w-a*gGrad(w);if(Math.abs(w-100)<0.5){need=i;break;}if(Math.abs(w)>1e9)break;}}
+  msg+=` <span style="color:var(--muted)">Steps needed to get within 0.5 of the best weight: <b>${need}</b>.</span>`;
+  $('#gdInterp').className=cls;$('#gdInterp').innerHTML=`<b class="t">${t}</b>${msg}`;
+  // table
+  const startI=Math.max(0,path.length-6);
+  $('#gdTable').innerHTML=`<thead><tr><th>Iter</th><th class="r">w (before)</th><th class="r">Gradient</th><th class="r">α × gradient</th><th class="r">w (after)</th><th class="r">Loss after</th></tr></thead><tbody>`+
+    path.slice(1).map((w,k)=>{const i=k+1,wb=path[i-1],g=gGrad(wb);return i>startI?`<tr><td>${i}</td><td class="r">${fmt(wb,3)}</td><td class="r">${fmt(g,2)}</td><td class="r">${fmt(a*g,3)}</td><td class="r"><b>${fmt(w,3)}</b></td><td class="r">${comma(gLoss(w))}</td></tr>`:'';}).join('')+
+    (path.length===1?'<tr><td colspan="6" style="color:var(--muted)">Press Step or Play to start training.</td></tr>':'')+'</tbody>';
+  // challenges
+  const steps=path.length-1;
+  if(steps>0&&steps<=10&&Math.abs(last-100)<0.5)complete('c6a');
+  if(gLoss(last)>1e6)complete('c6b');
+  if(steps>=1&&Math.abs(path[1]-100)<1&&Math.abs(path[0]-100)>10)complete('c6c');
+}
+function initGD(){
+  bind(['gdw','gda','gds'],()=>{});
+  $('#gdw').addEventListener('input',gdReset);$('#gda').addEventListener('input',gdReset);
+  $('#gdStep').onclick=()=>{gdStop();gdStepOnce();};
+  $('#gdReset').onclick=gdReset;
+  $('#gdPlay').onclick=()=>{if(gd.timer){gdStop();return;}$('#gdPlay').textContent='⏸ Pause';const ms=650-val('gds')*58;gd.timer=setInterval(()=>{if(!gdStepOnce())gdStop();},ms);};
+  $$('[data-gdp]').forEach(b=>b.onclick=()=>{const v=b.dataset.gdp.split(',').map(Number);setVal('gdw',v[0]);setVal('gda',v[1]);gdReset();});
+  gdReset();
+}
+
+/* ================================================================
+   LAB 7 — Training loop stepper
+================================================================ */
+const CODE=[
+  {t:'for i in range(iterations):',c:''},
+  {t:'    predictions = w * X',c:'# 1. predict'},
+  {t:'    loss = np.mean((predictions - y) ** 2)',c:'# 2. loss'},
+  {t:'    gradient = np.mean(2 * X * (predictions - y))',c:'# 3. gradient'},
+  {t:'    w = w - learning_rate * gradient',c:'# 4. update'}
+];
+const tl={last:-1,prevW:80,w:80,i:0,line:0,pred:null,loss:null,grad:null,hist:[],lossHist:[],changed:null,linesSeen:new Set()};
+const arr=a=>a?'['+a.map(v=>fmt(v,2)).join(', ')+']':'—';
+function tReset(){Object.assign(tl,{last:-1,prevW:val('tw'),w:val('tw'),i:0,line:0,pred:null,loss:null,grad:null,hist:[val('tw')],lossHist:[],changed:null,linesSeen:new Set()});tRender();}
+function tNext(){
+  const iters=val('ti'),a=val('ta');
+  if(tl.i>=iters&&tl.line===0){toast('Training finished. Press Reset to start again.');return;}
+  tl.last=tl.line;
+  if(tl.line===0){tl.line=1;tl.changed='i';}
+  else if(tl.line===1){tl.pred=GX.map(x=>tl.w*x);tl.line=2;tl.changed='pred';}
+  else if(tl.line===2){tl.loss=tl.pred.reduce((s,p,k)=>s+(p-GY[k])**2,0)/GX.length;tl.line=3;tl.changed='loss';}
+  else if(tl.line===3){tl.grad=tl.pred.reduce((s,p,k)=>s+2*GX[k]*(p-GY[k]),0)/GX.length;tl.line=4;tl.changed='grad';}
+  else if(tl.line===4){tl.prevW=tl.w;tl.w=tl.w-a*tl.grad;tl.hist.push(tl.w);tl.lossHist.push(tl.loss);tl.i++;tl.line=0;tl.changed='w';}
+  tl.linesSeen.add(tl.line);if(tl.linesSeen.size>=5&&tl.i>=1)complete('c7b');
+  tRender();
+}
+function tRun(n){const target=Math.min(val('ti'),tl.i+n);let guard=0;while((tl.i<target||tl.line!==0)&&guard++<1000)tNext();}
+function tRender(){
+  $('#tCode').innerHTML=CODE.map((c,k)=>`<div class="${k===tl.last?'on':''}">${c.t.replace(/</g,'&lt;')}${c.c?'  <span class="cm">'+c.c+'</span>':''}</div>`).join('');
+  const errs=tl.pred?tl.pred.map((p,k)=>p-GY[k]):null;
+  const rows=[['i',tl.i+(tl.line?'':''),'i'],['w',fmt(tl.w,4),'w'],['X','[1, 2, 3, 4]'],['y','[100, 200, 300, 400]'],['predictions',arr(tl.pred),'pred'],['predictions − y',arr(errs),'pred'],['loss',tl.loss==null?'—':fmt(tl.loss,4),'loss'],['gradient',tl.grad==null?'—':fmt(tl.grad,4),'grad']];
+  $('#tInspect').innerHTML=rows.map(r=>`<dt>${r[0]}</dt><dd class="${r[2]&&r[2]===tl.changed?'flash':''}">${r[1]}</dd>`).join('');
+  // charts
+  const n=Math.max(val('ti'),tl.hist.length-1,5);
+  const ws=tl.hist,wlo=Math.min(90,...ws)-5,whi=Math.max(110,...ws)+5;
+  const P=plot($('#tW'),{w:400,h:240,x:[0,n],y:[wlo,whi],xl:'Iteration',yl:'w',pad:{l:48},noZero:true});
+  line(P.g,P.X(0),P.Y(100),P.X(n),P.Y(100),`stroke:${css('good')};stroke-dasharray:5 4;stroke-width:1.5`);
+  text(P.top,P.X(n)-4,P.Y(100)-6,'target 100',`fill:${css('good')};font-size:10.5px`,'end');
+  el('path',{d:pathFrom(ws.map((w,i)=>[P.X(i),P.Y(w)])),style:`fill:none;stroke:${css('c1')};stroke-width:2.5`},P.g);
+  ws.forEach((w,i)=>el('circle',{cx:P.X(i),cy:P.Y(w),r:3.5,style:`fill:${css('c1')}`},P.g));
+  const ls=tl.lossHist.map(l=>Math.log10(Math.max(l,1e-6)));
+  const ymin=Math.min(-2,Math.floor(Math.min(...ls,0))),ymax=Math.max(4,Math.ceil(Math.max(...ls,0)));
+  const yt=[];for(let t=ymin;t<=ymax;t+=Math.max(1,Math.ceil((ymax-ymin)/5)))yt.push(t);
+  const Q=plot($('#tL'),{w:400,h:240,x:[0,n],y:[ymin,ymax],yt,yf:t=>{const v=Math.pow(10,t);return v>=1e6?'1e'+t:v>=1000?fmt(v/1000)+'k':fmt(v,6);},xl:'Iteration',yl:'Loss',pad:{l:52},noZero:true});
+  if(ls.length)el('path',{d:pathFrom(ls.map((l,i)=>[Q.X(i),Q.Y(l)])),style:`fill:none;stroke:${css('c3')};stroke-width:2.5`},Q.g);
+  ls.forEach((l,i)=>el('circle',{cx:Q.X(i),cy:Q.Y(l),r:3.5,style:`fill:${css('c3')}`},Q.g));
+  // interpretation
+  const notes=[`<b>Loop start:</b> beginning iteration i = ${tl.i}. The next lines will predict, measure, and update.`,'<b>Predict:</b> multiply every customer\'s products by the current weight (a dot product per customer).','<b>Loss:</b> square each error and average. One number for "how wrong are we?"','<b>Gradient:</b> the slope of the loss at the current weight. Its sign says which way to move.','<b>Update:</b> step against the gradient. Then the loop repeats with the new weight.'];
+  let msg;
+  if(tl.last<0)msg='Ready. Press <b>Next line</b> (or Enter) to run the first line.';
+  else{msg=notes[tl.last];
+    if(tl.last===4)msg+=` Here: w = ${fmt(tl.prevW,3)} − ${val('ta')} × (${fmt(tl.grad,3)}) = <b>${fmt(tl.w,3)}</b>. Iteration ${tl.i} done${tl.i>=val('ti')?'. <b>Training complete!</b> Try predicting for a new customer.':'.'}`;}
+  if(Math.abs(tl.w)>1e5)msg='<b style="color:var(--bad)">The weight is exploding!</b> The learning rate is too large for this data. Reset with a smaller one.';
+  $('#tInterp').innerHTML='<b class="t">What just happened</b>'+msg;
+  tPredict();
+}
+function tPredict(){
+  const n=val('tn'),p=tl.w*n,act=100*n,err=p-act;
+  $('#tPred').innerHTML=`<div class="m">ŷ = ${fmt(tl.w,3)} × ${n} = <b style="color:var(--accent);font-size:1.15em">${money(Math.round(p*100)/100)}</b></div><div style="font-size:.85rem;color:${Math.abs(err)<5?'var(--good)':'var(--muted)'}">True pattern: R${act} · off by ${money(Math.abs(Math.round(err*100)/100))}</div>`;
+  if(n===6&&tl.i>0&&Math.abs(err)<5)complete('c7a');
+}
+function initLoop(){
+  bind(['tw','ta','ti'],tReset);bind(['tn'],tPredict);
+  $('#tNext').onclick=tNext;$('#tIter').onclick=()=>tRun(1);$('#tAll').onclick=()=>tRun(1e4);$('#tReset').onclick=tReset;
+  document.addEventListener('keydown',e=>{if(e.key==='Enter'&&location.hash==='#t7'&&!/INPUT|BUTTON|SELECT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();tNext();}});
+  tReset();
+  drawCycle($('#cycleT7'),-1);
+  // checklist
+  const items=['Create a NumPy array containing 5 customer orders.','Create a second array with the actual spending amounts.','Find the shape of your dataset.','Create an initial model weight of 50.','Make predictions using the weight and your input data.','Calculate the Mean Squared Error.','Calculate the gradient.','Update the weight using gradient descent.','Repeat the training process 20 times.','Use the trained model to predict spending for a new customer.'];
+  const box=$('#checklist');
+  const render=()=>{const n=state.checklist.filter(Boolean).length;box.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b>${n}/10 completed</b><button class="btn sm ghost" id="clReset">Reset</button></div>`+items.map((t,i)=>`<label><input type="checkbox" data-cl="${i}" ${state.checklist[i]?'checked':''}><span>${t}</span></label>`).join('');
+    $$('[data-cl]',box).forEach(c=>c.onchange=()=>{state.checklist[+c.dataset.cl]=c.checked;save();if(state.checklist.filter(Boolean).length===10)award('checklist',80,'Practical challenge complete');render();});
+    $('#clReset').onclick=()=>{state.checklist=[];save();render();};};
+  render();
+}
+
+/* ================================================================
+   Quick checks (per topic)
+================================================================ */
+const QC={
+  t1:[{q:'A customer has 2 products, a 5 km delivery distance and a rating of 4. Which vector represents them (products, distance, rating)?',o:['[2, 5, 4]','[5, 2, 4]','[11]','[2 × 5 × 4]'],a:0,e:'List each feature in the agreed order: products, distance, rating → [2, 5, 4].'},
+      {q:'What is the magnitude of the vector [6, 8]?',o:['14','10','100','48'],a:1,e:'√(6² + 8²) = √(36 + 64) = √100 = 10.'}],
+  t2:[{q:'A matrix has 3 customers (rows) and 2 features (columns). What is its shape?',o:['(2, 3)','(3, 2)','(6, 1)','(3, 3)'],a:1,e:'Shape is (rows, columns) → (3, 2).'},
+      {q:'Can a (2 × 3) matrix be multiplied by a (2 × 3) matrix?',o:['Yes, they have the same shape','No, the inside numbers (3 and 2) don\'t match','Yes, the answer is (2 × 3)','Only if all numbers are positive'],a:1,e:'For A·B the columns of A (3) must equal the rows of B (2). They don\'t.'}],
+  t3:[{q:'X = [2, 5] and W = [100, 10], bias = 0. What is the prediction?',o:['R117','R250','R1,000','R700'],a:1,e:'(2 × 100) + (5 × 10) = 200 + 50 = 250.'},
+      {q:'What does the bias do?',o:['It multiplies every feature','It adds a fixed amount so predictions don\'t have to pass through zero','It removes outliers','It sets the learning rate'],a:1,e:'The bias is a constant added to every prediction, like a base fee.'}],
+  t4:[{q:'Errors are 10, 20 and 30. What is the MSE?',o:['20','466.67','1,400','60'],a:1,e:'(100 + 400 + 900) ÷ 3 = 1,400 ÷ 3 ≈ 466.67.'},
+      {q:'Model A has MSE 466.67 and Model B has MSE 50. Which is better?',o:['Model A, since a bigger number means more learning','Model B, since lower loss means smaller errors','They are equal','You can\'t compare them'],a:1,e:'Lower loss = predictions closer to the actual values.'}],
+  t5:[{q:'What is the slope between (1, 3) and (3, 7)?',o:['2','4','0.5','10'],a:0,e:'(7 − 3) ÷ (3 − 1) = 4 ÷ 2 = 2.'},
+      {q:'The gradient of the loss is positive. What should happen to the weight?',o:['Increase it','Decrease it','Set it to zero','Nothing'],a:1,e:'Positive gradient = loss rises as w rises, so move w down.'}],
+  t6:[{q:'Current weight = 50, learning rate = 0.1, gradient = −20. What is the new weight?',o:['48','52','70','30'],a:1,e:'w = 50 − 0.1 × (−20) = 50 + 2 = 52. Subtracting a negative increases the weight.'},
+      {q:'During training the loss bounces up and down and keeps getting bigger. What is the most likely cause?',o:['Learning rate too small','Learning rate too large','Too few features','The bias is zero'],a:1,e:'Giant steps overshoot the minimum more each time, so the loss diverges.'}],
+  t7:[{q:'What is the correct order of one training iteration?',o:['Update → Predict → Gradient → Loss','Predict → Loss → Gradient → Update','Loss → Predict → Update → Gradient','Gradient → Update → Loss → Predict'],a:1,e:'Predict, measure the loss, compute the gradient, then update the weight.'},
+      {q:'After training, w ≈ 100. What does the model predict for 6 products?',o:['R106','R600','R16.67','R60'],a:1,e:'ŷ = w × x = 100 × 6 = R600.'}]
+};
+function renderQC(){
+  $$('[data-qc]').forEach(box=>{
+    const tid=box.dataset.qc,items=QC[tid];
+    box.innerHTML=`<div class="qc-head"><span class="lab-tag">✅ Quick check</span><h3>Test yourself</h3></div><p style="color:var(--muted);font-size:.9rem;margin:0 0 4px">Get it right on the first try for +20 XP each.</p>`+
+      items.map((it,k)=>`<div class="qc-item" data-k="${k}"><div class="qc-q">${k+1}. ${it.q}</div><div class="opts">${it.o.map((o,j)=>`<button class="opt" data-j="${j}"><kbd>${'ABCD'[j]}</kbd><span>${o}</span></button>`).join('')}</div><div class="fbx"></div></div>`).join('');
+    $$('.qc-item',box).forEach(item=>{
+      const k=+item.dataset.k,it=items[k];let tries=0;
+      $$('.opt',item).forEach(b=>b.onclick=()=>{
+        const j=+b.dataset.j;tries++;
+        if(j===it.a){b.classList.add('right');$$('.opt',item).forEach(x=>x.disabled=true);
+          $('.fbx',item).innerHTML=`<div class="fb ok"><b>Correct!</b> ${it.e}</div>`;
+          if(tries===1)award(`qc-${tid}-${k}`,20,'Quick check');
+        } else {b.classList.add('wrong','shake');b.disabled=true;$('.fbx',item).innerHTML=`<div class="fb no"><b>Not quite. Try again.</b></div>`;}
+      });
+    });
+  });
+}
+
+/* ================================================================
+   Glossary
+================================================================ */
+const GLOSS=[['Dataset','A collection of information used by a model, usually a matrix.'],['Feature','An input variable used to make predictions (e.g. products ordered).'],['Target','The value the model is trying to predict (e.g. amount spent).'],['Weight','A number showing how much a feature influences the prediction.'],['Bias','A fixed amount added to the prediction.'],['Prediction','The model\'s estimated answer, written ŷ ("y-hat").'],['Loss','A single number measuring how wrong the predictions are.'],['Gradient','The direction and rate of change of the loss as a weight changes.'],['Learning rate','Controls the size of each weight update (α).'],['Iteration','One pass of predict → loss → gradient → update.'],['Optimisation','Finding the parameters that make the loss as small as possible.'],['Vector','An ordered list of numbers describing one observation.'],['Matrix','A grid of numbers: rows = observations, columns = features.'],['Dot product','Multiply matching numbers and add them up.']];
+function renderGloss(){
+  $('#flips').innerHTML=GLOSS.map(g=>`<button class="flip"><div class="flip-in"><div class="flip-f"><b>${g[0]}</b><small>Tap to reveal</small></div><div class="flip-b">${g[1]}</div></div></button>`).join('');
+  $$('.flip').forEach(f=>f.onclick=()=>f.classList.toggle('on'));
+}
+
+/* ================================================================
+   QUIZ — question generators
+================================================================ */
+function Q(topic,text,correct,distractors,explain,extra){
+  correct=String(correct);const seen=new Set([correct]),ds=[];
+  for(const d of distractors.concat(extra||[])){if(d==null)continue;const s=String(d);if(!seen.has(s)){seen.add(s);ds.push(s);}if(ds.length===3)break;}
+  const opts=shuffle([correct,...ds]);return {topic,text,opts,ans:opts.indexOf(correct),explain};
+}
+const near=(v,f)=>[v+10,v-10,v*2,v+1,v-1,v+5,v+100,v/2].map(f||(x=>fmt(x)));
+const vstr=a=>'['+a.map(v=>fmt(v)).join(', ')+']';
+const matHTML=M=>`<span class="mat" style="grid-template-columns:repeat(${M[0].length},auto)">${M.flat().map(v=>`<span>${v}</span>`).join('')}</span>`;
+const GEN={
+ t1:[
+  d=>{const p=ri(1,6),km=ri(7,30);let r;do{r=ri(1,5);}while(r===p);return Q('t1',`A customer orders <b>${p} products</b>, lives <b>${km} km</b> away and gave a rating of <b>${r}</b>. Using the order [products, distance, rating], what is their feature vector?`,
+    `[${p}, ${km}, ${r}]`,[`[${km}, ${p}, ${r}]`,`[${r}, ${km}, ${p}]`,`[${p+km+r}]`,`[${p}, ${r}, ${km}]`,`[${km}, ${r}, ${p}]`],`Each position holds one feature in the agreed order: products = ${p}, distance = ${km}, rating = ${r}.`);},
+  d=>{const n=d===2?3:2,lo=d===0?1:-9,hi=d===0?9:20;const A=Array.from({length:n},()=>ri(lo,hi)),B=Array.from({length:n},()=>ri(lo,hi));const S=A.map((v,i)=>v+B[i]);
+    return Q('t1',`What is <span class="m">${vstr(A)} + ${vstr(B)}</span>?`,vstr(S),[vstr(A.map((v,i)=>v*B[i])),vstr(A.map((v,i)=>v-B[i])),n===2?vstr([A[0]+A[1],B[0]+B[1]]):vstr([S[0]+S[1]+S[2]]),vstr(S.map(v=>v+1))],`Add position by position: ${A.map((v,i)=>`${fmt(v)} + ${fmt(B[i])} = ${fmt(S[i])}`).join(', ')}.`);},
+  d=>{const T=[[[3,4,5],[6,8,10]],[[5,12,13],[9,12,15],[8,6,10]],[[8,15,17],[7,24,25],[12,16,20],[20,21,29]]][d];let [a,b,c]=pick(T);if(d===2&&Math.random()<.5)a=-a;
+    return Q('t1',`What is the magnitude (length) of the vector <span class="m">[${fmt(a)}, ${fmt(b)}]</span>?`,fmt(c),[fmt(Math.abs(a)+b),fmt(a*a+b*b),fmt(Math.abs(Math.abs(a)-b)),fmt(c+1)],`|v| = √(${fmt(a)}² + ${b}²) = √(${a*a} + ${b*b}) = √${a*a+b*b} = ${c}.`);},
+  d=>pick([
+    ()=>Q('t1','In machine learning, a single vector usually represents…','One observation, such as one customer or order',['The whole dataset','One feature for every customer','The model\'s total error'],'A vector holds the features of <b>one</b> thing. A matrix holds many.'),
+    ()=>Q('t1','Can you add the vectors [2, 5] and [1, 4, 7]?','No, vectors must have the same number of elements',['Yes, the answer is [3, 9, 7]','Yes, the answer is [3, 9]','Yes, but only the first two elements'],'Vector addition matches positions one-to-one, so both need the same length.'),
+    ()=>Q('t1','Why does the order of numbers in a feature vector matter?','The model expects each feature in the same position every time',['It doesn\'t matter at all','Larger numbers must come first','Vectors are always sorted'],'Position 1 always means "products", position 2 always means "distance", and so on.')
+  ])()
+ ],
+ t2:[
+  d=>{const r=ri(2,d?5:4),c=ri(2,d?4:3);const M=Array.from({length:r},()=>Array.from({length:c},()=>ri(1,20)));
+    return Q('t2',`What is the shape of this matrix?<div class="eq" style="margin:10px 0 0">${matHTML(M)}</div>`,`(${r}, ${c})`,[`(${c}, ${r})`,`(${r*c}, 1)`,`(${r}, ${r})`,`(${c}, ${c})`,`(${r+1}, ${c})`,`(${r}, ${c+1})`,`(${r-1}, ${c})`],`Count rows first (${r}), then columns (${c}) → (${r}, ${c}).`);},
+  d=>{const r=ri(2,6),k=ri(2,5),c=ri(1,4);let k2=k;if(Math.random()<.35){do{k2=ri(2,5);}while(k2===k);}const NO='Not possible: the inside sizes don\'t match';
+    return Q('t2',`A has shape <b>(${r}, ${k})</b> and B has shape <b>(${k2}, ${c})</b>. What is the shape of <span class="m">A · B</span>?`,k===k2?`(${r}, ${c})`:NO,[`(${k}, ${k2})`,`(${c}, ${r})`,`(${r}, ${k})`,k===k2?NO:`(${r}, ${c})`,`(${k2}, ${c})`,`(${r}, ${k2})`,`(${k2}, ${k})`,`(${c}, ${k})`,`(${r+1}, ${c})`,`(${r}, ${c+1})`,`(${r*2}, ${c})`],
+      k===k2?`Inside numbers match (${k} = ${k2}) ✓. The answer takes the outside numbers: (${r}, ${c}).`:`Columns of A (${k}) ≠ rows of B (${k2}), so they can't be multiplied.`);},
+  d=>{const A=[[ri(1,9),ri(1,9)],[ri(1,9),ri(1,9)]],B=[[ri(1,9),ri(1,9)],[ri(1,9),ri(1,9)]];const i=ri(0,1),j=ri(0,1),pos=['top','bottom'][i]+'-'+['left','right'][j];
+    return Q('t2',`What is the <b>${pos}</b> number of <span class="m">A + B</span>?<div class="eq" style="margin:10px 0 0">A = ${matHTML(A)} &nbsp; B = ${matHTML(B)}</div>`,A[i][j]+B[i][j],[A[i][j]*B[i][j],A[i][1-j]+B[i][1-j],A[1-i][j]+B[1-i][j],A[i][j]+B[i][j]+1],`Add matching positions: ${A[i][j]} + ${B[i][j]} = ${A[i][j]+B[i][j]}.`,near(A[i][j]+B[i][j]));},
+  d=>pick([
+    ()=>Q('t2','In a dataset matrix, each <b>row</b> usually represents…','One observation (e.g. one customer)',['One feature','The weights','The loss'],'Rows = observations, columns = features.'),
+    ()=>Q('t2','In a dataset matrix, each <b>column</b> usually represents…','One feature (e.g. distance for every customer)',['One customer','The predictions','The learning rate'],'A column holds the same kind of information for everyone.'),
+    ()=>Q('t2','Why do ML models use matrix multiplication?','To make predictions for many observations at once',['To sort the data','To remove outliers','To choose the learning rate'],'X (customers × features) · W (features × 1) gives one prediction per customer in a single step.')
+  ])()
+ ],
+ t3:[
+  d=>{let x,w,b=0;if(d===0){x=[ri(1,5),ri(1,20)];w=[pick([50,100,120,200]),pick([2,5,10])];}else if(d===1){x=[ri(1,6),ri(1,25)];w=[pick([60,80,100,150]),pick([2,4,5,10])];b=pick([20,50,100]);}
+    else{x=[ri(1,6),ri(1,25),ri(1,5)];w=[pick([80,100,150]),pick([-5,-3,4,5]),pick([10,20,-10])];b=pick([-50,30,50,80]);}
+    const parts=x.map((v,i)=>v*w[i]),dot=parts.reduce((a,c)=>a+c,0),tot=dot+b;
+    const swap=x.length===2?x[0]*w[1]+x[1]*w[0]+b:x[0]*w[2]+x[1]*w[1]+x[2]*w[0]+b;
+    return Q('t3',`Features <span class="m">X = ${vstr(x)}</span>, weights <span class="m">W = ${vstr(w)}</span>${b?`, bias <span class="m">b = ${fmt(b)}</span>`:' (no bias)'}. What is the prediction <span class="m">X · W${b?' + b':''}</span>?`,
+      money(tot),[b?money(dot):money(swap),money(x.reduce((a,c)=>a+c,0)+w.reduce((a,c)=>a+c,0)+b),money(swap),money(x.reduce((a,c)=>a+c,0)*w.reduce((a,c)=>a+c,0)+b)],
+      `Multiply matching pairs and add: ${x.map((v,i)=>`(${v} × ${fmt(w[i])})`).join(' + ')}${b?` + ${fmt(b)}`:''} = ${parts.map(fmt).join(' + ')}${b?` + ${fmt(b)}`:''} = ${money(tot)}.`,near(tot,money));},
+  d=>{const wt=pick([-5,-10,-3,4,8]),km=ri(2,6),ch=wt*km;
+    return Q('t3',`A model's weight for <b>delivery distance</b> is <span class="m">${fmt(wt)}</span>. A customer's distance goes up by <b>${km} km</b> (nothing else changes). What happens to the prediction?`,
+      `It ${ch<0?'drops':'rises'} by R${Math.abs(ch)}`,[`It ${ch<0?'rises':'drops'} by R${Math.abs(ch)}`,`It ${ch<0?'drops':'rises'} by R${Math.abs(wt)}`,'It doesn\'t change',`It ${ch<0?'drops':'rises'} by R${Math.abs(wt)+km}`],`Change = weight × change in feature = ${fmt(wt)} × ${km} = ${fmt(ch)}.`);},
+  d=>Math.random()<.5?(()=>{const p=ri(2,8)*50,b=pick([20,50,75,100]);return Q('t3',`Before the bias, the dot product gives <b>R${p}</b>. The bias is <b>R${b}</b>. What is the final prediction?`,money(p+b),[money(p),money(p*b),money(p-b),money(b)],`ŷ = X·W + b = ${p} + ${b} = R${p+b}.`);})()
+    :Q('t3','What does a <b>weight</b> tell the model?','How important a feature is for the prediction',['How many rows the dataset has','How wrong the prediction is','How big each training step is'],'Big weight = that feature moves the prediction a lot. Zero weight = the feature is ignored.')
+ ],
+ t4:[
+  d=>{const n=[2,3,4][d];const act=Array.from({length:n},(_,i)=>(i+1)*100),e=Array.from({length:n},()=>ri(1,d?6:4)*10*(d===2&&Math.random()<.4?-1:1)),pred=act.map((a,i)=>a-e[i]);
+    const sq=e.map(v=>v*v),mse=sq.reduce((a,c)=>a+c,0)/n,mae=e.reduce((a,c)=>a+Math.abs(c),0)/n,me=e.reduce((a,c)=>a+c,0)/n;
+    const tbl=`<table class="t" style="max-width:360px;margin:8px 0 0"><tr><th>Actual</th><th>Predicted</th></tr>${act.map((a,i)=>`<tr><td>${a}</td><td>${pred[i]}</td></tr>`).join('')}</table>`;
+    return Q('t4',`Calculate the <b>MSE</b> for these predictions:${tbl}`,fmt(mse),[fmt(mae),fmt(mse*n),fmt(me*me),fmt(mse/2)],`Errors: ${e.map(fmt).join(', ')}. Squared: ${sq.join(', ')}. Sum = ${sq.reduce((a,c)=>a+c,0)}. MSE = ${sq.reduce((a,c)=>a+c,0)} ÷ ${n} = ${fmt(mse)}.`,near(mse));},
+  d=>{const n=[3,3,4][d];const e=Array.from({length:n},()=>ri(1,9)*(d?5:10)*(d&&Math.random()<.5?-1:1)),mae=e.reduce((a,c)=>a+Math.abs(c),0)/n,mse=e.reduce((a,c)=>a+c*c,0)/n,me=e.reduce((a,c)=>a+c,0)/n;
+    return Q('t4',`A model's errors are <span class="m">${e.map(fmt).join(', ')}</span>. What is the <b>MAE</b>?`,fmt(mae),[fmt(mse),fmt(mae*n),fmt(me),fmt(mae+5)],`Drop the signs: ${e.map(v=>Math.abs(v)).join(' + ')} = ${e.reduce((a,c)=>a+Math.abs(c),0)}. Divide by ${n}: MAE = ${fmt(mae)}.`,near(mae));},
+  d=>{const a=ri(3,60)*50;let b;do{b=ri(3,60)*50;}while(b===a);
+    return Q('t4',`On the same data, Model A has MSE <b>${comma(a)}</b> and Model B has MSE <b>${comma(b)}</b>. Which model makes smaller errors?`,`Model ${a<b?'A':'B'}`,[`Model ${a<b?'B':'A'}`,'They perform the same','MSE can\'t be compared'],`Lower loss = predictions closer to the truth. ${comma(Math.min(a,b))} < ${comma(Math.max(a,b))}.`);},
+  d=>pick([
+    ()=>Q('t4','One customer has a much bigger error than the others. Which loss is affected <b>more</b>?','MSE, because squaring makes big errors much bigger',['MAE, because it uses absolute values','Both change by exactly the same amount','Neither, since loss ignores outliers'],'An error of 100 adds 100 to the MAE sum but 10,000 to the MSE sum.'),
+    ()=>Q('t4','What does a loss of <b>zero</b> mean?','Every prediction exactly matches the actual value',['The model has not been trained','The learning rate is zero','All the weights are zero'],'Zero loss = zero error on every observation.')
+  ])(),
+  d=>{const y=ri(2,9)*100,yh=y+pick([-60,-40,-20,20,40,60]),e=y-yh;
+    return Q('t4',`Actual spend is <b>R${y}</b> and the model predicted <b>R${yh}</b>. What is the error (y − ŷ), and what does it mean?`,`${fmt(e)} (the model predicted too ${e<0?'high':'low'})`,[`${fmt(-e)} (the model predicted too ${e<0?'high':'low'})`,`${fmt(e)} (the model predicted too ${e<0?'low':'high'})`,`${fmt(-e)} (the model predicted too ${e<0?'low':'high'})`],`Error = ${y} − ${yh} = ${fmt(e)}. ${e<0?'Negative → prediction was above the actual value.':'Positive → prediction was below the actual value.'}`);}
+ ],
+ t5:[
+  d=>{const ms=d===0?[1,2,3]:d===1?[-3,-2,-1,1,2,3,4]:[-4,-3,-2,-1,0,1,2,3,0.5];const m=pick(ms),x1=ri(0,4),dx=pick(m===0.5?[2,4]:[1,2,3,4]),y1=ri(0,8),x2=x1+dx,y2=y1+m*dx;
+    return Q('t5',`What is the slope of the line through <span class="m">(${x1}, ${fmt(y1)})</span> and <span class="m">(${x2}, ${fmt(y2)})</span>?`,fmt(m),[m?fmt(1/m,2):fmt(dx),fmt(-m)==fmt(m)?fmt(m+1):fmt(-m),fmt(m*dx)==fmt(m)?fmt(m+2):fmt(m*dx),fmt(y2+y1)],`m = (${fmt(y2)} − ${fmt(y1)}) ÷ (${x2} − ${x1}) = ${fmt(y2-y1)} ÷ ${dx} = ${fmt(m)}.`,near(m));},
+  d=>{const s=pick(['pos','neg','zero']),g=s==='pos'?ri(2,90)*10:s==='neg'?-ri(2,90)*10:0;
+    const ans=s==='pos'?'Decrease the weight':s==='neg'?'Increase the weight':'Stop: the curve is flat here (maybe the minimum)';
+    return Q('t5',`At the current weight, the gradient of the loss is <b>${fmt(g)}</b>. To reduce the loss, what should the model do?`,ans,['Decrease the weight','Increase the weight','Stop: the curve is flat here (maybe the minimum)','Double the learning rate'],
+      s==='pos'?'Positive gradient: loss rises as w rises, so go the other way (down).':s==='neg'?'Negative gradient: loss falls as w rises, so increase w.':'Zero gradient = flat ground: no direction lowers the loss locally.');},
+  d=>{if(d===0)return null;const x=ri(1,4),p=pick([50,100,120]),y=p*x,w=pick([40,60,80,120,150]),yh=w*x,g=2*x*(yh-y);
+    return Q('t5',`Model <span class="m">ŷ = w·x</span>, one customer with x = ${x}, y = ${y}. Current w = ${w}. Using <span class="m">dL/dw = 2x(ŷ − y)</span>, what is the gradient?`,fmt(g),[fmt(2*(yh-y)),fmt(-g),fmt(x*(yh-y)),fmt(g/2)],`ŷ = ${w} × ${x} = ${yh}. Gradient = 2 × ${x} × (${yh} − ${y}) = ${fmt(g)}. ${g<0?'Negative → increase w.':'Positive → decrease w.'}`,near(g));}
+ ],
+ t6:[
+  d=>{const w=ri(10,120),a=pick(d===0?[0.1]:d===1?[0.1,0.01,0.5]:[0.05,0.2,0.01,0.02]),g=(ri(1,40)*(Math.random()<.5?-1:1))*(a===0.01||a===0.02?50:10),nw=w-a*g;
+    return Q('t6',`Weight = <b>${w}</b>, learning rate α = <b>${a}</b>, gradient = <b>${fmt(g)}</b>. What is the new weight?`,fmt(nw,3),[fmt(w+a*g,3),fmt(w-g,3),fmt(a*g,3),fmt(w-a,3)],`w_new = ${w} − ${a} × (${fmt(g)}) = ${w} ${a*g<0?'+':'−'} ${fmt(Math.abs(a*g),3)} = ${fmt(nw,3)}.`,near(nw,x=>fmt(x,3)));},
+  d=>{const sc=pick([['The loss jumps up and down and gets bigger every iteration.','The learning rate is too large'],['After 1,000 iterations the loss is still falling very slowly.','The learning rate is too small'],['The loss drops quickly and then settles at a low value.','The learning rate is about right']]);
+    return Q('t6',`${sc[0]} What is the most likely explanation?`,sc[1],['The learning rate is too large','The learning rate is too small','The learning rate is about right','The dataset has too many columns'],'Too large → overshooting/diverging. Too small → painfully slow. Well chosen → fast and stable.');},
+  d=>pick([
+    ()=>Q('t6','In <span class="m">w_new = w_old − α · dL/dw</span>, why is there a <b>minus</b> sign?','To step opposite to the gradient, which is downhill',['To keep weights negative','To make the learning rate smaller','It\'s a typo; it should be plus'],'The gradient points uphill (towards more loss), so we move the other way.'),
+    ()=>Q('t6','What does the learning rate α control?','How big each weight update is',['How many features there are','The final prediction','How many customers are in the data'],'Small α = small steps, large α = big steps.')
+  ])()
+ ],
+ t7:[
+  d=>Q('t7','What is the correct order of one training iteration?','Predict → Loss → Gradient → Update',['Update → Predict → Gradient → Loss','Loss → Predict → Update → Gradient','Gradient → Update → Loss → Predict'],'You need a prediction to measure loss, loss to get a gradient, and a gradient to update.'),
+  d=>{const g=pick(GLOSS.slice(0,11)),others=shuffle(GLOSS.filter(x=>x!==g)).slice(0,5).map(x=>x[0]);return Q('t7',`Which term means: <i>"${g[1]}"</i>`,g[0],others,`<b>${g[0]}</b>: ${g[1]}`);},
+  d=>{const w=pick([100,120,85,150,60]),n=ri(2,9),b=d===2?pick([20,50,-30]):0,p=w*n+b;
+    return Q('t7',`After training, <span class="m">w = ${w}</span>${b?` and <span class="m">b = ${fmt(b)}</span>`:''}. What does the model predict for a customer who orders <b>${n} products</b>?`,money(p),[money(w+n+b),money(w*n),money(w/n),money(p+w)],`ŷ = ${w} × ${n}${b?` + ${fmt(b)}`:''} = ${money(p)}.`,near(p,money));},
+  d=>Q('t7','In training, what is <b>one iteration</b>?','One full pass of predict → loss → gradient → update',['Adding one new customer to the data','One feature in the dataset','The final prediction'],'Training repeats the loop many times. Each repeat is one iteration.')
+ ]
+};
+
+/* ================================================================
+   QUIZ — engine
+================================================================ */
+const quiz={active:false,mode:'practice',diff:0,count:10,topics:new Set(TOPICS.map(t=>t.id)),qs:[],i:0,score:0,streak:0,best:0,lives:3,correct:0,per:{},miss:[],timer:null,tLeft:0,tMax:0,answered:false};
+function chipGroup(sel,cb,multi){$$(sel+' [data-v]').forEach(b=>b.onclick=()=>{if(multi){b.classList.toggle('sel');}else{$$(sel+' [data-v]').forEach(x=>x.classList.toggle('sel',x===b));}cb(b);});}
+function showSetup(){quiz.active=false;stopTimer();$('#qSetup').classList.remove('hidden');$('#qPlay').classList.add('hidden');$('#qResult').classList.add('hidden');$('#qBest').textContent=state.best?`🏆 Best score: ${comma(state.best)}`:'';}
+function buildQuiz(){
+  const ts=[...quiz.topics];const order=[];while(order.length<quiz.count)order.push(...shuffle(ts.slice()));order.length=quiz.count;
+  const used=new Set();const qs=[];
+  order.forEach(t=>{let q=null;for(let k=0;k<25&&!q;k++){const c=pick(GEN[t])(quiz.diff);if(c&&!used.has(c.text)){q=c;}}if(!q){for(let k=0;k<25&&!q;k++)q=pick(GEN[t])(quiz.diff);}used.add(q.text);qs.push(q);});
+  return shuffle(qs);
+}
+function startQuiz(){
+  if(!quiz.topics.size){toast('Pick at least one topic');return;}
+  Object.assign(quiz,{active:true,qs:buildQuiz(),i:0,score:0,streak:0,best:0,lives:3,correct:0,per:{},miss:[]});
+  quiz.tMax=[30,25,20][quiz.diff];
+  $('#qSetup').classList.add('hidden');$('#qResult').classList.add('hidden');$('#qPlay').classList.remove('hidden');
+  $('#qLivesBox').classList.toggle('hidden',quiz.mode!=='challenge');$('#qTimer').classList.toggle('hidden',quiz.mode!=='challenge');
+  showQ();window.scrollTo(0,0);
+}
+function hudQ(){
+  $('#qNum').textContent=`${quiz.i+1}/${quiz.qs.length}`;$('#qScore').textContent=comma(quiz.score);
+  $('#qStreak').textContent=(quiz.streak>=3?'🔥 ':'')+quiz.streak;$('#qLives').textContent='❤️'.repeat(quiz.lives)+'🤍'.repeat(3-quiz.lives);
+  $('#qProg').style.width=(quiz.i/quiz.qs.length*100)+'%';
+}
+function showQ(){
+  const q=quiz.qs[quiz.i];quiz.answered=false;hudQ();
+  $('#qTag').textContent=TOPICS.find(t=>t.id===q.topic).title;$('#qText').innerHTML=q.text;
+  $('#qOpts').innerHTML=q.opts.map((o,j)=>`<button class="opt" data-j="${j}"><kbd>${j+1}</kbd><span>${o}</span></button>`).join('');
+  $$('#qOpts .opt').forEach(b=>b.onclick=()=>answer(+b.dataset.j));
+  $('#qFb').innerHTML='';$('#qNextRow').classList.add('hidden');
+  if(quiz.mode==='challenge')startTimer();
+}
+function startTimer(){stopTimer();quiz.tLeft=quiz.tMax;const fill=$('#qTimerFill'),bar=$('#qTimer');
+  quiz.timer=setInterval(()=>{quiz.tLeft-=0.1;fill.style.width=Math.max(0,quiz.tLeft/quiz.tMax*100)+'%';bar.classList.toggle('low',quiz.tLeft<6);if(quiz.tLeft<=0){stopTimer();answer(-1);}},100);}
+function stopTimer(){if(quiz.timer){clearInterval(quiz.timer);quiz.timer=null;}}
+function answer(j){
+  if(quiz.answered)return;quiz.answered=true;stopTimer();
+  const q=quiz.qs[quiz.i],ok=j===q.ans;const per=quiz.per[q.topic]||(quiz.per[q.topic]={c:0,n:0});per.n++;
+  $$('#qOpts .opt').forEach((b,k)=>{b.disabled=true;if(k===q.ans)b.classList.add('right');else if(k===j)b.classList.add('wrong');});
+  let gained=0;
+  if(ok){per.c++;quiz.correct++;quiz.streak++;quiz.best=Math.max(quiz.best,quiz.streak);
+    const mult=quiz.streak>=5?2:quiz.streak>=3?1.5:1;const tb=quiz.mode==='challenge'?Math.round(quiz.tLeft*3):0;gained=Math.round(100*mult*(1+quiz.diff*.5))+tb;quiz.score+=gained;
+    $('#qScore').classList.remove('pop');void $('#qScore').offsetWidth;$('#qScore').classList.add('pop');
+    $('#qFb').innerHTML=`<div class="fb ok"><b>✓ Correct! +${gained}</b>${mult>1?` <span class="streak">(🔥 ×${mult} streak)</span>`:''}${tb?` <span style="color:var(--muted)">incl. ${tb} time bonus</span>`:''}<div style="margin-top:4px">${q.explain}</div></div>`;
+  } else {quiz.streak=0;if(quiz.mode==='challenge')quiz.lives--;quiz.miss.push(q);
+    $('#qCard').classList.remove('shake');void $('#qCard').offsetWidth;$('#qCard').classList.add('shake');
+    $('#qFb').innerHTML=`<div class="fb no"><b>${j<0?'⏰ Time\'s up!':'✗ Not quite.'}</b> The answer is <b>${q.opts[q.ans]}</b>.<div style="margin-top:4px">${q.explain}</div></div>`;}
+  hudQ();$('#qNextRow').classList.remove('hidden');$('#qNext').textContent=(quiz.i===quiz.qs.length-1||quiz.lives<=0)?'See results →':'Next →';$('#qNext').focus({preventScroll:true});
+}
+function nextQ(){if(quiz.lives<=0||quiz.i>=quiz.qs.length-1){finish();return;}quiz.i++;showQ();}
+function finish(){
+  stopTimer();quiz.active=false;
+  const n=quiz.i+1,acc=Math.round(quiz.correct/n*100),gameOver=quiz.lives<=0&&quiz.i<quiz.qs.length-1;
+  const newBest=quiz.score>state.best;if(newBest){state.best=quiz.score;}
+  const xp=quiz.correct*5;state.xp+=xp;save();renderHud();
+  $('#qPlay').classList.add('hidden');$('#qResult').classList.remove('hidden');
+  $('#qRank').textContent=gameOver?'💔 Out of lives':acc>=90?'🏆 Gradient Guru':acc>=70?'🚀 Model Builder':acc>=50?'📈 Data Apprentice':'🌱 Keep training';
+  $('#qFinal').textContent=comma(quiz.score);
+  $('#qSummary').innerHTML=`${quiz.correct} of ${n} correct (${acc}%) · longest streak ${quiz.best} · +${xp} XP${newBest?' · <b style="color:var(--accent)">New best score!</b>':''}`;
+  $('#qBars').innerHTML=Object.keys(quiz.per).map(t=>{const p=quiz.per[t],pc=Math.round(p.c/p.n*100),col=pc>=80?'good':pc>=50?'warn':'bad';
+    return `<div class="tbar"><span>${TOPICS.find(x=>x.id===t).title}</span><div class="tr"><i style="width:0;background:var(--${col})" data-w="${pc}"></i></div><b class="num">${p.c}/${p.n}</b></div>`;}).join('');
+  requestAnimationFrame(()=>setTimeout(()=>$$('#qBars i').forEach(i=>i.style.width=Math.max(3,+i.dataset.w)+'%'),50));
+  $('#qMissWrap').classList.toggle('hidden',!quiz.miss.length);
+  $('#qMiss').innerHTML=quiz.miss.map(q=>`<div class="miss"><span class="qtag">${TOPICS.find(t=>t.id===q.topic).title}</span><div style="margin:6px 0">${q.text}</div><div>Answer: <span class="ans">${q.opts[q.ans]}</span></div><div style="color:var(--muted);margin-top:4px">${q.explain}</div><div style="margin-top:6px"><a href="#${q.topic}">Revisit this topic →</a></div></div>`).join('');
+  if(acc===100&&n>=10)award('quiz-perfect',100,'Perfect quiz round!');
+  window.scrollTo(0,0);
+}
+function initQuiz(){
+  $('#qTopics').innerHTML=TOPICS.map((t,i)=>`<button class="chip sel" data-v="${t.id}">${i+1}. ${t.title}</button>`).join('');
+  $$('#qMode .mode').forEach(b=>b.onclick=()=>{quiz.mode=b.dataset.v;$$('#qMode .mode').forEach(x=>x.classList.toggle('sel',x===b));});
+  chipGroup('#qDiff',b=>quiz.diff=+b.dataset.v);chipGroup('#qCount',b=>quiz.count=+b.dataset.v);
+  chipGroup('#qTopics',b=>{b.classList.contains('sel')?quiz.topics.add(b.dataset.v):quiz.topics.delete(b.dataset.v);},true);
+  $('#qStart').onclick=startQuiz;$('#qNext').onclick=nextQ;$('#qAgain').onclick=startQuiz;$('#qSetupBtn').onclick=showSetup;
+  $('#qQuit').onclick=()=>{if(confirm('Quit this round? Your progress in this round will be lost.'))showSetup();};
+  document.addEventListener('keydown',e=>{
+    if(location.hash!=='#quiz'||$('#qPlay').classList.contains('hidden'))return;
+    if(!quiz.answered&&/^[1-4]$/.test(e.key)){const j=+e.key-1;if(j<quiz.qs[quiz.i].opts.length)answer(j);}
+    else if(quiz.answered&&e.key==='Enter'){e.preventDefault();nextQ();}
+  });
+}
+
+/* ================================================================
+   Boot
+================================================================ */
+applyTheme();buildNav();renderChallenges();renderQC();renderGloss();initCode();
+drawHero();drawCycle($('#cycleHome'),-1);
+initVec();initMat();initDot();initLoss();initSlope();initGD();initLoop();initQuiz();
+renderHud();route();labsReady=true;
+</script>
+</body>
+</html>
