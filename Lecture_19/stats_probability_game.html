@@ -1,0 +1,848 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stats & Probability Arena</title>
+<style>
+:root{
+  --bg:#f4f6fb; --card:#fff; --ink:#1b2333; --muted:#66708a; --line:#dfe4f0;
+  --accent:#4f46e5; --accent-ink:#fff; --good:#16a34a; --good-bg:#dcfce7;
+  --bad:#dc2626; --bad-bg:#fee2e2; --warn:#d97706; --shadow:0 4px 18px rgba(30,40,80,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0f1420; --card:#181f31; --ink:#e8ecf7; --muted:#97a2bf; --line:#2a3350;
+    --accent:#818cf8; --accent-ink:#0f1420; --good:#4ade80; --good-bg:#12361f;
+    --bad:#f87171; --bad-bg:#431a1a; --warn:#fbbf24; --shadow:none; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:1.7rem;margin:.2em 0}
+h2{font-size:1.2rem;margin:1.2em 0 .5em}
+.sub{color:var(--muted);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+.hidden{display:none!important}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:12px;padding:12px 20px;font-weight:600}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.mode{text-align:left;background:var(--card);color:var(--ink);border:2px solid var(--line);border-radius:14px;padding:14px}
+.mode.sel{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
+.mode b{display:block;font-size:1.05rem}
+.mode span{color:var(--muted);font-size:.9rem}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 14px;font-size:.9rem}
+.chip.sel{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.hud{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;justify-content:space-between;margin-bottom:12px;font-weight:600}
+.hud small{color:var(--muted);font-weight:500;display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:16px}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.tag{display:inline-block;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);font-weight:700;margin-bottom:6px}
+.q{font-size:1.2rem;margin:0 0 16px}
+.q .nums{display:inline-block;font-weight:700;font-variant-numeric:tabular-nums}
+.opts{display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:center;text-align:left;background:var(--card);color:var(--ink);
+  border:2px solid var(--line);border-radius:12px;padding:12px 14px;font-size:1.05rem}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt kbd{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:0 8px;font-size:.85rem;color:var(--muted)}
+.opt.right{border-color:var(--good);background:var(--good-bg)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.opt:disabled{cursor:default}
+.fb{margin-top:16px;padding:14px;border-radius:12px;border:1px solid var(--line)}
+.fb.ok{background:var(--good-bg);border-color:var(--good)}
+.fb.no{background:var(--bad-bg);border-color:var(--bad)}
+.fb h3{margin:0 0 6px;font-size:1rem}
+.fb .steps{font-size:.95rem}
+.fb .steps div{margin:2px 0}
+.lives{letter-spacing:3px}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{border-bottom:1px solid var(--line);padding:8px;text-align:left}
+th{color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+code{background:var(--bg);padding:1px 6px;border-radius:6px;font-size:.92em}
+.big{font-size:3rem;font-weight:800;margin:0;color:var(--accent)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.miss{border-top:1px solid var(--line);padding:12px 0}
+.timer.low{color:var(--bad)}
+.pop{animation:pop .3s}
+@keyframes pop{50%{transform:scale(1.12)}}
+@media (prefers-reduced-motion: reduce){.pop{animation:none}.bar i{transition:none}}
+
+.toc-part{margin:22px 0 8px;font-size:.8rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700}
+.lesson-item{display:flex;gap:14px;align-items:center;width:100%;text-align:left;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
+.lesson-item:hover{border-color:var(--accent)}
+.lesson-item .n{flex:none;width:34px;height:34px;border-radius:50%;background:var(--bg);display:grid;place-items:center;font-weight:700;color:var(--accent)}
+.lesson-item.done .n{background:var(--good);color:#fff}
+.lesson-item b{display:block}
+.lesson-item span.s{color:var(--muted);font-size:.9rem}
+.prose h2{margin-top:1.4em}
+.prose h3{font-size:1.02rem;margin:1.2em 0 .3em}
+.prose p{margin:.5em 0}
+.formula{background:var(--bg);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:10px 14px;margin:10px 0;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:1rem;overflow-x:auto}
+.ex{background:color-mix(in srgb,var(--accent) 8%,var(--card));border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:12px 0}
+.ex>b:first-child{display:block;color:var(--accent);font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.warn{background:var(--bad-bg);border:1px solid var(--bad);border-radius:12px;padding:12px 14px;margin:12px 0}
+.tip{background:var(--good-bg);border:1px solid var(--good);border-radius:12px;padding:12px 14px;margin:12px 0}
+.mocks{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.mock{border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center;background:var(--bg)}
+.mock .btnm{display:inline-block;margin-top:8px;padding:8px 18px;border-radius:8px;color:#fff;font-weight:700}
+.prose ul,.prose ol{padding-left:22px;margin:.4em 0}
+.sig{display:flex;height:34px;border-radius:8px;overflow:hidden;font-size:.8rem;font-weight:700;color:#fff;margin:10px 0}
+.sig div{display:grid;place-items:center}
+.flow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.flow div{flex:1 1 150px;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--bg);font-size:.9rem}
+.flow b{display:block;color:var(--accent)}
+.lnav{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HUB / CONTENTS -->
+<section id="hub">
+  <h1>📚 Stats, Probability &amp; A/B Testing</h1>
+  <p class="sub">Study the lessons first, then practise with generated questions. Each lesson ends with a button to practise that topic.</p>
+  <div class="row" style="margin:0 0 6px">
+    <button class="btn" id="hubStart">▶ Start learning</button>
+    <button class="btn ghost" id="hubPractice">🎮 Go to practice</button>
+    <button class="btn ghost" id="hubCheat">📒 Cheat sheet</button>
+  </div>
+  <p class="sub" id="hubProg" style="margin:10px 0 0"></p>
+  <div id="toc"></div>
+</section>
+
+<!-- LESSON -->
+<section id="lesson" class="hidden">
+  <div class="lnav">
+    <button class="btn ghost" id="lToc" style="padding:8px 14px">☰ Contents</button>
+    <span class="sub" id="lProg" style="margin:0"></span>
+  </div>
+  <div class="card prose" id="lBody"></div>
+  <div class="row" style="justify-content:space-between">
+    <button class="btn ghost" id="lPrev">◀ Previous</button>
+    <button class="btn" id="lPractice" style="background:var(--good);color:#fff">🎮 Practice this lesson</button>
+    <button class="btn" id="lNext">Next ▶</button>
+  </div>
+</section>
+
+<!-- HOME -->
+<section id="home" class="hidden">
+  <button class="btn ghost" id="homeToc" style="padding:8px 14px;margin-bottom:10px">☰ Contents</button>
+  <h1>📊 Stats & Probability Arena</h1>
+  <p class="sub">Statistics, probability, A/B testing, p-values and inference. Every question is freshly generated, so no two games are the same. Pick a mode and topics, then play.</p>
+
+  <div class="card">
+    <h2 style="margin-top:0">1. Choose a mode</h2>
+    <div class="modes" id="modes"></div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-top:0">2. Choose topics</h2>
+    <div class="chips" id="topics"></div>
+    <div class="row">
+      <button class="chip" id="allBtn">Select all</button>
+      <button class="chip" id="noneBtn">Clear</button>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top:0">
+    <button class="btn" id="startBtn">Start game ▶</button>
+    <button class="btn ghost" id="cheatBtn">📒 Cheat sheet</button>
+  </div>
+  <p class="sub" style="margin-top:16px" id="bestLine"></p>
+</section>
+
+<!-- CHEAT SHEET -->
+<section id="cheat" class="hidden">
+  <h1>📒 Equations cheat sheet</h1>
+  <div class="card">
+    <table>
+      <tr><th>Concept</th><th>Equation</th><th>Quick example</th></tr>
+      <tr><td>Mean</td><td><code>Σx / n</code></td><td>60,70,80,90,100 → 400/5 = 80</td></tr>
+      <tr><td>Median</td><td>Middle value (average the two middle if even)</td><td>50,60,70,80 → 65</td></tr>
+      <tr><td>Mode</td><td>Most frequent value</td><td>50,60,60,70,60 → 60</td></tr>
+      <tr><td>Range</td><td><code>Highest − Lowest</code></td><td>40…90 → 50</td></tr>
+      <tr><td>Population variance</td><td><code>Σ(x−μ)² / N</code></td><td>2,4,6 → 8/3 = 2.67</td></tr>
+      <tr><td>Population std. deviation</td><td><code>√( Σ(x−μ)² / N )</code></td><td>√2.67 = 1.63</td></tr>
+      <tr><td>Basic probability</td><td><code>Favourable / Total</code></td><td>Roll a 4 → 1/6 = 16.7%</td></tr>
+      <tr><td>Complement</td><td><code>P(not A) = 1 − P(A)</code></td><td>1 − 0.30 = 0.70</td></tr>
+      <tr><td>Addition (exclusive)</td><td><code>P(A) + P(B)</code></td><td>2 or 5 → 1/6 + 1/6 = 1/3</td></tr>
+      <tr><td>Addition (general)</td><td><code>P(A) + P(B) − P(A∩B)</code></td><td>Don't double count overlap</td></tr>
+      <tr><td>Multiplication (independent)</td><td><code>P(A) × P(B)</code></td><td>H then H → 1/2 × 1/2 = 25%</td></tr>
+      <tr><td>Conversion rate</td><td><code>Conversions / Visitors × 100</code></td><td>10 / 100 → 10%</td></tr>
+      <tr><td>Relative improvement</td><td><code>(B − A) / A × 100</code></td><td>(20−10)/10 → 100%</td></tr>
+      <tr><td>Hypotheses</td><td><code>H₀: pA = pB</code> · <code>H₁: pA ≠ pB</code></td><td>No difference vs a difference</td></tr>
+      <tr><td>Standard error (proportion)</td><td><code>√( p̂(1−p̂) / n )</code></td><td>p̂=0.8, n=500 → 0.0179</td></tr>
+      <tr><td>95% confidence interval</td><td><code>p̂ ± 1.96 × SE</code></td><td>0.8 ± 0.035 → 76.5%–83.5%</td></tr>
+      <tr><td>Significance decision</td><td><code>p &lt; 0.05 ⇒ reject H₀</code></td><td>p=0.15 → fail to reject</td></tr>
+    </table>
+    <p class="sub" style="margin-top:12px">The p-value comes from a test (two-proportion z-test or chi-square), not from just comparing two rates. Significant does not always mean commercially worthwhile.</p>
+    <p class="sub" style="margin-top:12px">Probability goes from 0 (impossible) through 0.5 (equal chance) to 1 (certain).</p>
+  </div>
+  <button class="btn" id="cheatBack">◀ Back</button>
+</section>
+
+<!-- GAME -->
+<section id="game" class="hidden">
+  <div class="hud">
+    <div><small>Score</small><span id="hScore">0</span></div>
+    <div><small>Streak 🔥</small><span id="hStreak">0</span></div>
+    <div id="hExtraWrap"><small id="hExtraLbl"></small><span id="hExtra"></span></div>
+    <button class="btn ghost" id="quitBtn" style="padding:6px 12px">Quit</button>
+  </div>
+  <div class="bar"><i id="bar"></i></div>
+  <div class="card">
+    <div class="tag" id="qTag"></div>
+    <p class="q" id="qText"></p>
+    <div class="opts" id="qOpts"></div>
+    <div class="fb hidden" id="fb"></div>
+    <div class="row hidden" id="nextRow"><button class="btn" id="nextBtn">Next ▶ <small>(Enter)</small></button></div>
+  </div>
+</section>
+
+<!-- RESULT -->
+<section id="result" class="hidden">
+  <div class="card" style="text-align:center">
+    <div class="sub" id="rTitle"></div>
+    <p class="big" id="rScore"></p>
+    <p id="rLine"></p>
+    <p class="sub" id="rBest"></p>
+    <div class="row" style="justify-content:center">
+      <button class="btn" id="againBtn">Play again</button>
+      <button class="btn ghost" id="homeBtn">Change mode</button>
+      <button class="btn ghost" id="tocBtn2">☰ Contents</button>
+    </div>
+  </div>
+  <div class="card hidden" id="missCard">
+    <h2 style="margin-top:0">Review your misses</h2>
+    <div id="missList"></div>
+  </div>
+</section>
+
+</div>
+
+<script>
+"use strict";
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const rnd = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const pick = arr => arr[rnd(0,arr.length-1)];
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]];} return a; };
+const r2 = n => Math.round(n*100)/100;
+const num = n => String(r2(n));
+const pct = p => (Math.round(p*1000)/10) + "%";
+const sum = a => a.reduce((s,x)=>s+x,0);
+const list = a => a.join(", ");
+const gcd = (a,b)=> b?gcd(b,a%b):a;
+const frac = (a,b)=>{const g=gcd(a,b);return (a/g)+"/"+(b/g)};
+const nums = a => `<span class="nums">${list(a)}</span>`;
+
+/* Build 4 unique options. cands: wrong-answer candidates (numbers). */
+function numOpts(correct, cands, fmt, opts={}){
+  const step = opts.step || 1, min = opts.min ?? -Infinity, max = opts.max ?? Infinity;
+  const set = new Map(); set.set(fmt(correct), true);
+  const wrong = [];
+  const add = v => { if(!isFinite(v)||v<min||v>max) return; const s=fmt(v); if(!set.has(s)){set.set(s,true);wrong.push(s);} };
+  shuffle(cands).forEach(add);
+  let guard=0;
+  while(wrong.length<3 && guard++<200) add(correct + rnd(-4,4)*step);
+  const options = shuffle([fmt(correct), ...wrong.slice(0,3)]);
+  return {opts:options, correct:fmt(correct)};
+}
+const step = (...lines) => lines.map(l=>`<div>${l}</div>`).join("");
+
+/* ---------- question generators ---------- */
+const TOPICS = {
+  mean:{label:"Mean", gen:genMean},
+  median:{label:"Median", gen:genMedian},
+  mode:{label:"Mode", gen:genMode},
+  range:{label:"Range", gen:genRange},
+  variance:{label:"Variance", gen:genVariance},
+  sd:{label:"Std. deviation", gen:genSD},
+  prob:{label:"Basic probability", gen:genProb},
+  complement:{label:"Complement rule", gen:genComplement},
+  addition:{label:"Addition rule", gen:genAddition},
+  multiplication:{label:"Multiplication rule", gen:genMultiplication},
+  concepts:{label:"Concepts", gen:genConcept},
+  conversion:{label:"A/B: Conversion rate", gen:genConversion},
+  improvement:{label:"A/B: Improvement", gen:genImprovement},
+  pvalue:{label:"P-value decisions", gen:genPDecision},
+  popsample:{label:"Population & sample", gen:genPopSample},
+  se:{label:"Standard error", gen:genSE},
+  ci:{label:"Confidence interval", gen:genCI},
+  abconcepts:{label:"A/B & inference concepts", gen:genABConcept},
+};
+
+/* ---- A/B testing, p-values and inference ---- */
+function genConversion(){
+  const vis=pick([100,200,250,400,500,800,1000,2000]);
+  const conv=Math.round(vis*pick([.04,.05,.08,.1,.12,.15,.18,.2,.25,.3]));
+  const rate=conv/vis*100, f=v=>num(v)+"%";
+  const o=numOpts(rate,[100-rate, conv/(vis-conv)*100, conv/10, rate*2, rate/2],f,{step:2,min:0,max:100});
+  return {topic:"A/B testing",q:`Version A of a landing page was shown to <b>${vis}</b> visitors and <b>${conv}</b> of them signed up. What is its conversion rate?`,...o,
+    explain:step(`Conversion rate = Conversions ÷ Total visitors × 100`,`${conv} ÷ ${vis} × 100 = <b>${f(rate)}</b>`)};
+}
+function genImprovement(){
+  const a=pick([5,8,10,12,15,20,25,40]), b=a+pick([2,4,5,6,8,10,15]);
+  const rel=(b-a)/a*100, abs=b-a, askRel=Math.random()<.65, f=v=>num(v)+(askRel?"%":" points");
+  const ans=askRel?rel:abs;
+  const o=numOpts(ans,askRel?[abs,b/a*100,(b-a)/b*100,b]:[rel,b,a,b/a*100],f,{step:askRel?5:1,min:1});
+  return {topic:"A/B testing",q:askRel
+    ?`Version A converts at ${a}% and Version B at ${b}%. What is the <b>relative improvement</b> of B over A?`
+    :`Version A converts at ${a}% and Version B at ${b}%. By how many <b>percentage points</b> did the rate increase?`,...o,
+    explain:askRel
+      ?step(`Improvement = (B − A) ÷ A × 100`,`(${b} − ${a}) ÷ ${a} × 100 = ${abs} ÷ ${a} × 100 = <b>${f(rel)}</b>`,`Note: the absolute increase is only ${abs} percentage points.`)
+      :step(`Absolute increase = B − A`,`${b}% − ${a}% = <b>${abs} percentage points</b>`,`Relative improvement would be ${num(rel)}%, so keep the two ideas apart.`)};
+}
+function genPDecision(){
+  const alpha=pick([0.05,0.05,0.05,0.01,0.10]);
+  let p; do{ p=pick([0.001,0.003,0.008,0.01,0.02,0.03,0.049,0.06,0.08,0.12,0.15,0.2,0.35,0.5,0.75]); }while(p===alpha);
+  const sig=p<alpha;
+  const R="Reject H₀: the result is statistically significant", F="Fail to reject H₀: not statistically significant",
+        A="Accept H₀: there is definitely no difference", C="Conclude that B is proven better with 100% certainty";
+  return {topic:"P-values",q:`An A/B test gives p = <b>${p}</b>. The significance level is <b>${alpha}</b>. What is the correct decision?`,
+    opts:shuffle([R,F,A,C]),correct:sig?R:F,
+    explain:step(`Compare the p-value with the significance level.`,`${p} ${sig?"&lt;":"&gt;"} ${alpha}`,
+      sig?`p is below the threshold, so we <b>reject H₀</b>: significant evidence of a difference.`
+         :`p is above the threshold, so we <b>fail to reject H₀</b>. We say “fail to reject”, not “accept”: a non-significant result does not prove the versions are identical.`)};
+}
+function genPopSample(){
+  const N=pick([2000,5000,10000,20000]), n=pick([100,200,400,500]), k=Math.round(n*pick([.6,.7,.75,.8,.85,.9]));
+  const items=[
+    {term:"population",a:`All ${N.toLocaleString()} customers`,e:"The population is the entire group you want to study."},
+    {term:"sample",a:`The ${n} customers who were surveyed`,e:"A sample is the smaller group selected from the population."},
+    {term:"statistic",a:`${num(k/n*100)}% of the surveyed customers are satisfied`,e:"A statistic is a number calculated from the sample."},
+    {term:"parameter",a:`The true % of all ${N.toLocaleString()} customers who are satisfied`,e:"A parameter describes the whole population (and is usually unknown)."},
+  ];
+  const t=pick(items);
+  return {topic:"Statistical inference",q:`A business has ${N.toLocaleString()} customers. It surveys ${n} of them and finds ${k} are satisfied (${num(k/n*100)}%). Which option is the <b>${t.term}</b>?`,
+    opts:shuffle(items.map(x=>x.a)),correct:t.a,
+    explain:step(t.e,`Here that is: <b>${t.a}</b>.`)};
+}
+function genSE(){
+  const p=pick([.2,.3,.4,.5,.6,.7,.8,.9]), n=pick([100,200,400,500,900,1000]);
+  const se=Math.sqrt(p*(1-p)/n), f=v=>(Math.round(v*10000)/10000).toFixed(4);
+  const o=numOpts(se,[p*(1-p)/n, Math.sqrt(p*(1-p)), Math.sqrt(p/n), se*2, se/2],f,{step:.002,min:.0001});
+  return {topic:"Standard error",q:`A sample of <b>n = ${n}</b> has a proportion <b>p̂ = ${p}</b>. Calculate the standard error SE = √(p̂(1−p̂)/n). (4 decimal places)`,...o,
+    explain:step(`SE = √( p̂(1−p̂) ÷ n )`,`p̂(1−p̂) = ${p} × ${r2(1-p)} = ${r2(p*(1-p))}`,`${r2(p*(1-p))} ÷ ${n} = ${(p*(1-p)/n).toFixed(6)}`,`√${(p*(1-p)/n).toFixed(6)} = <b>${f(se)}</b>`)};
+}
+function genCI(){
+  const p=pick([.3,.4,.5,.6,.7,.75,.8,.85]), n=pick([100,200,400,500,1000]);
+  const se=Math.sqrt(p*(1-p)/n), m=1.96*se, r1=v=>(Math.round(v*1000)/10).toFixed(1);
+  const f=mm=>`${r1(p-mm)}% to ${r1(p+mm)}%`;
+  const o=numOpts(m,[se,2.58*se,m/2,m*2,1.645*se],f,{step:.005,min:.002});
+  return {topic:"Confidence interval",q:`In a sample of ${n}, ${Math.round(p*n)} people are satisfied (p̂ = ${p}). What is the <b>95% confidence interval</b> for the true proportion?`,...o,
+    explain:step(`CI = p̂ ± 1.96 × SE`,`SE = √(${p} × ${r2(1-p)} ÷ ${n}) = ${se.toFixed(4)}`,`Margin = 1.96 × ${se.toFixed(4)} = ${m.toFixed(4)}`,
+      `${p} ± ${m.toFixed(4)} → (${(p-m).toFixed(4)}, ${(p+m).toFixed(4)}) = <b>${f(m)}</b>`)};
+}
+const AB_CONCEPTS=[
+  {q:"What is the main purpose of A/B testing?",a:"To compare two versions and see which performs better",w:["To collect customer names","To calculate the average","To increase website visitors automatically"],e:"A/B testing is an experiment comparing Version A (original) against Version B (changed)."},
+  {q:"What does a p-value of 0.02 mean?",a:"Assuming H₀ is true, there is a 2% chance of results at least this extreme",w:["There is a 2% chance the null hypothesis is true","There is a 98% chance Version B is better","The experiment is 98% accurate"],e:"The p-value is calculated <i>assuming no real difference</i>. It is not the probability that H₀ or B is true."},
+  {q:"What does the null hypothesis (H₀) usually state?",a:"There is no difference or no effect",w:["There is a difference between the versions","Version B is better","The sample is representative"],e:"H₀: p<sub>A</sub> = p<sub>B</sub>. H₁ says there is a difference."},
+  {q:"What is the alternative hypothesis (H₁) in an A/B test?",a:"The conversion rates of A and B are different",w:["The conversion rates are equal","The sample size is too small","The p-value equals 0.05"],e:"H₁: p<sub>A</sub> ≠ p<sub>B</sub>."},
+  {q:"Why do we say “fail to reject H₀” instead of “accept H₀”?",a:"A non-significant result does not prove the versions are identical",w:["Because p-values are always above 0.05","Because H₀ is always false","Because the sample is always too small"],e:"Lack of evidence for a difference is not proof of no difference."},
+  {q:"Which statement about p = 0.03 is correct?",a:"If there were truly no difference, results this extreme would occur about 3% of the time",w:["There is a 3% chance the results are wrong","There is a 97% chance Version B is better","B is 3% better than A"],e:"The p-value is about the data under H₀, not the probability a hypothesis is true."},
+  {q:"A result is statistically significant. Does that automatically mean the change is worth implementing?",a:"No, you must also consider cost and whether the improvement is large enough to matter",w:["Yes, always","Yes, if p is below 0.5","No, significant results are never reliable"],e:"Statistical significance is not the same as commercial value."},
+  {q:"Which tests are commonly used to compare two conversion rates?",a:"A two-proportion z-test or a chi-square test",w:["Calculating the range","Calculating the median","Comparing the two rates by eye"],e:"The p-value comes from the chosen statistical test, not from simply comparing two percentages."},
+  {q:"In an A/B test, which version is usually the original?",a:"Version A",w:["Version B","Both","Neither"],e:"A is the original (control); B is the new or changed version."},
+  {q:"What is statistical inference?",a:"Using a sample to draw conclusions about a larger population",w:["Collecting every value in a population","Calculating only the median","Choosing a significance level"],e:"We study a smaller representative group and estimate something about the whole population."},
+  {q:"What is a population in statistics?",a:"The entire group you want to study",w:["A small group selected for testing","The average of the data","The most common number"],e:"The sample is the smaller group; the population is the whole group."},
+  {q:"What does a 95% confidence interval represent?",a:"A range from a method that captures the true value in about 95% of repeated samples",w:["The sample is 95% correct","There is always a 95% chance the sample mean is correct","95% of people gave the same answer"],e:"The 95% describes the long-run reliability of the method."},
+  {q:"What does the number 1.96 represent in a 95% confidence interval?",a:"The critical value for 95% confidence",w:["The sample size","The standard error","The conversion rate"],e:"CI = p̂ ± 1.96 × SE."},
+  {q:"If you increase the sample size (and p̂ stays the same), the confidence interval becomes…",a:"Narrower",w:["Wider","Unchanged","Negative"],e:"SE = √(p̂(1−p̂)/n) shrinks as n grows, so the margin shrinks."},
+  {q:"Why use a sample instead of surveying everybody?",a:"It is cheaper and faster, and inference lets us estimate the whole population",w:["Samples are always exactly right","Populations cannot be measured in statistics","It removes all uncertainty"],e:"The trade-off is some uncertainty, which confidence intervals describe."},
+  {q:"Version A converts at 10% and B at 20%. Which statement is correct?",a:"B has a 100% relative improvement, a 10 percentage-point absolute increase",w:["B has a 10% relative improvement","B has a 200% absolute increase","B improved by 20 percentage points"],e:"Relative: (20−10)/10 = 100%. Absolute: 20% − 10% = 10 points."},
+];
+let lastAB=-1;
+function genABConcept(){
+  let i; do{ i=rnd(0,AB_CONCEPTS.length-1);}while(i===lastAB); lastAB=i;
+  const c=AB_CONCEPTS[i];
+  return {topic:"A/B testing & inference",q:c.q,opts:shuffle([c.a,...c.w]),correct:c.a,explain:step(c.e)};
+}
+
+function genMean(){
+  let a,n;
+  do{ n=rnd(4,6); a=Array.from({length:n},()=>rnd(30,100)); }while(sum(a)%n!==0);
+  const m=sum(a)/n, sorted=a.slice().sort((x,y)=>x-y);
+  const o=numOpts(m,[sum(a), m+5, m-5, Math.max(...a)-Math.min(...a), sorted[Math.floor(n/2)]],num,{step:2,min:0});
+  return {topic:"Mean",q:`A class scores ${nums(a)}. What is the mean mark?`,...o,
+    explain:step(`Mean = Σx ÷ n`,`Add: ${a.join(" + ")} = <b>${sum(a)}</b>`,`Divide by ${n}: ${sum(a)} ÷ ${n} = <b>${m}</b>`)};
+}
+function genMedian(){
+  const n=rnd(5,8), a=shuffle(Array.from({length:40},(_, i)=>i*3+10)).slice(0,n);
+  const s=a.slice().sort((x,y)=>x-y);
+  let med, how;
+  if(n%2){ med=s[(n-1)/2]; how=`${n} values (odd), so take the middle one: <b>${med}</b>`; }
+  else { const x=s[n/2-1], y=s[n/2]; med=(x+y)/2; how=`${n} values (even), so average the two middle ones: (${x} + ${y}) ÷ 2 = <b>${num(med)}</b>`; }
+  const o=numOpts(med,[sum(a)/n, a[Math.floor(n/2)], s[0], s[n-1], med+3],num,{step:3,min:0});
+  return {topic:"Median",q:`Find the median of ${nums(a)}.`,...o,
+    explain:step(`First sort the numbers: ${list(s)}`,how)};
+}
+function genMode(){
+  const pool=shuffle([40,45,50,55,60,65,70,75,80,85,90]);
+  const m=pool[0], others=pool.slice(1,rnd(4,5));
+  const a=shuffle([m,m,m,...others,...(others.length>3?[others[0]]:[])]);
+  const counts={}; a.forEach(x=>counts[x]=(counts[x]||0)+1);
+  const o=numOpts(m,[...others, Math.round(sum(a)/a.length), Math.max(...a)],num,{step:5,min:0});
+  return {topic:"Mode",q:`What is the mode of ${nums(a)}?`,...o,
+    explain:step(`The mode is the value that appears most often.`,`${m} appears <b>${counts[m]} times</b>, more than any other value.`)};
+}
+function genRange(){
+  const a=Array.from({length:rnd(4,6)},()=>rnd(20,100));
+  const hi=Math.max(...a), lo=Math.min(...a), r=hi-lo;
+  const o=numOpts(r,[hi,lo,hi+lo,Math.round(sum(a)/a.length)],num,{step:5,min:1});
+  return {topic:"Range",q:`What is the range of ${nums(a)}?`,...o,
+    explain:step(`Range = Highest − Lowest`,`Highest = ${hi}, Lowest = ${lo}`,`${hi} − ${lo} = <b>${r}</b>`)};
+}
+function varianceSet(){
+  let d1,d2;
+  do{ d1=rnd(-4,4); d2=rnd(-4,4); }while(d1===0&&d2===0 || (d1===0&&d2===0));
+  const mu=rnd(3,12), d=[d1,d2,-(d1+d2)];
+  const x=shuffle(d.map(v=>v+mu));
+  const sq=x.map(v=>(v-mu)**2);
+  return {x,mu,sq,ss:sum(sq)};
+}
+function genVariance(){
+  const {x,mu,sq,ss}=varianceSet(), v=ss/3;
+  const o=numOpts(v,[ss, ss/2, Math.sqrt(v), v+1, ss/4],num,{step:1,min:0.01});
+  return {topic:"Variance",q:`Find the <b>population variance</b> of ${nums(x)}.`,...o,
+    explain:step(`Mean μ = (${x.join(" + ")}) ÷ 3 = <b>${mu}</b>`,
+      `Squared differences: ${x.map((v,i)=>`(${v}−${mu})² = ${sq[i]}`).join(", ")}`,
+      `Σ(x−μ)² = <b>${ss}</b>`,`Divide by N = 3: ${ss} ÷ 3 = <b>${num(v)}</b>`)};
+}
+function genSD(){
+  const {x,mu,sq,ss}=varianceSet(), v=ss/3, s=Math.sqrt(v);
+  const o=numOpts(s,[v, ss, Math.sqrt(ss/2), s+0.5, s*2],num,{step:0.25,min:0.01});
+  return {topic:"Standard deviation",q:`Find the <b>population standard deviation</b> of ${nums(x)}. (2 decimal places)`,...o,
+    explain:step(`Mean μ = <b>${mu}</b>`,`Σ(x−μ)² = ${sq.join(" + ")} = ${ss}`,
+      `Variance = ${ss} ÷ 3 = ${num(v)}`,`σ = √${num(v)} = <b>${num(s)}</b>`)};
+}
+function genProb(){
+  const kind=rnd(1,4);
+  let q,fav,tot,why;
+  if(kind===1){
+    const ev=pick([["an even number",[2,4,6]],["an odd number",[1,3,5]],["a number greater than 4",[5,6]],["a prime number",[2,3,5]],["a number less than 3",[1,2]],["exactly 4",[4]]]);
+    q=`You roll a fair six-sided dice. What is the probability of getting ${ev[0]}?`; fav=ev[1].length; tot=6;
+    why=`Favourable outcomes: ${list(ev[1])} → ${fav}. Total outcomes: 6.`;
+  } else if(kind===2){
+    const c=shuffle([["red",rnd(1,6)],["blue",rnd(1,6)],["green",rnd(1,6)]]);
+    tot=sum(c.map(x=>x[1])); const t=pick(c); fav=t[1];
+    q=`A bag holds ${c.map(x=>`${x[1]} ${x[0]}`).join(", ")} balls. What is the probability of picking a <b>${t[0]}</b> ball?`;
+    why=`Favourable: ${fav} ${t[0]} balls. Total balls: ${c.map(x=>x[1]).join(" + ")} = ${tot}.`;
+  } else if(kind===3){
+    const t=pick([["a heart",13],["a king",4],["a red card",26],["the ace of spades",1],["a face card (J, Q, K)",12],["a spade",13]]);
+    q=`A card is drawn from a standard 52-card deck. What is the probability of drawing ${t[0]}?`; fav=t[1]; tot=52;
+    why=`Favourable: ${fav}. Total cards: 52.`;
+  } else {
+    tot=rnd(20,40); fav=rnd(3,tot-5);
+    q=`A class has ${tot} students and ${fav} of them wear glasses. If one student is picked at random, what is the probability they wear glasses?`;
+    why=`Favourable: ${fav}. Total: ${tot}.`;
+  }
+  const p=fav/tot;
+  const o=numOpts(p,[1-p, fav/(tot-fav), (fav+1)/tot, 1/tot, fav/(tot+1)],pct,{step:0.05,min:0,max:1});
+  return {topic:"Basic probability",q,...o,
+    explain:step(`P(A) = Favourable ÷ Total`,why,`${fav}/${tot} = ${frac(fav,tot)} = <b>${pct(p)}</b>`)};
+}
+function genComplement(){
+  const p=pick([5,10,15,20,25,30,35,40,45,60,65,70,75,80,85,90]);
+  const ctx=pick([["it will rain tomorrow","it will NOT rain"],["a student passes the exam","a student does NOT pass"],["a bus arrives on time","the bus does NOT arrive on time"],["a customer buys a product","a customer does NOT buy"],["a seed grows","a seed does NOT grow"]]);
+  const o=numOpts(100-p,[p, 100-p+10, 100-p-10, 50, 100-p*2],v=>v+"%",{step:5,min:0,max:100});
+  return {topic:"Complement rule",q:`The probability that ${ctx[0]} is ${p}%. What is the probability that ${ctx[1]}?`,...o,
+    explain:step(`P(not A) = 1 − P(A)`,`1 − ${p/100} = ${r2(1-p/100)}`,`= <b>${100-p}%</b>`)};
+}
+function genAddition(){
+  if(Math.random()<.5){
+    // mutually exclusive on a dice
+    const ns=shuffle([1,2,3,4,5,6]).slice(0,rnd(2,3)); const p=ns.length/6;
+    const o=numOpts(p,[1/6, p*2, ns.length/36, (ns.length+1)/6],pct,{step:1/6,min:0.01,max:1});
+    return {topic:"Addition rule",q:`You roll a fair dice. What is the probability of getting ${ns.slice(0,-1).join(", ")} <b>or</b> ${ns[ns.length-1]}?`,...o,
+      explain:step(`These can't happen together, so P(A or B) = P(A) + P(B)`,
+        `${ns.map(()=>"1/6").join(" + ")} = ${ns.length}/6 = ${frac(ns.length,6)}`,`= <b>${pct(p)}</b>`)};
+  }
+  // overlapping events
+  const k=rnd(2,5), A=[2,4,6], B=[1,2,3,4,5,6].filter(v=>v>k);
+  const both=A.filter(v=>B.includes(v)), union=new Set([...A,...B]).size, p=union/6;
+  const naive=(A.length+B.length)/6;
+  const o=numOpts(p,[naive, A.length/6, B.length/6, both.length/6],pct,{step:1/6,min:0.01,max:1});
+  return {topic:"Addition rule",q:`You roll a fair dice. What is the probability of getting an <b>even number</b> <b>or</b> a number <b>greater than ${k}</b>?`,...o,
+    explain:step(`These overlap, so P(A∪B) = P(A) + P(B) − P(A∩B)`,
+      `A (even) = {2,4,6} → 3/6. B (&gt;${k}) = {${B.join(",")}} → ${B.length}/6.`,
+      `Both: {${both.join(",")||"none"}} → ${both.length}/6`,
+      `3/6 + ${B.length}/6 − ${both.length}/6 = ${union}/6 = <b>${pct(p)}</b>`)};
+}
+function genMultiplication(){
+  const t=rnd(1,3);
+  if(t===1){
+    const n=rnd(2,4), p=Math.pow(.5,n);
+    const o=numOpts(p,[n*.5, .5/n, Math.pow(.5,n-1), Math.pow(.5,n+1), 1/n],pct,{step:.05,min:0.001,max:1});
+    return {topic:"Multiplication rule",q:`You toss a fair coin ${n} times. What is the probability of getting heads every time?`,...o,
+      explain:step(`Independent events: multiply the probabilities.`,Array(n).fill("1/2").join(" × ")+` = 1/${2**n}`,`= <b>${pct(p)}</b>`)};
+  }
+  if(t===2){
+    const a=pick([1,2,3,4,5,6]), b=pick([1,2,3,4,5,6]), p=1/36;
+    const o=numOpts(p,[2/6, 1/6, 1/12, 1/18],pct,{step:.01,min:0.001,max:1});
+    return {topic:"Multiplication rule",q:`You roll a fair dice twice. What is the probability of getting a ${a} first and then a ${b}?`,...o,
+      explain:step(`Independent events: P(A and B) = P(A) × P(B)`,`1/6 × 1/6 = 1/36`,`= <b>${pct(p)}</b>`)};
+  }
+  const pa=pick([20,30,40,50,60,70,80]), pb=pick([20,40,50,60,80]), p=pa*pb/10000;
+  const o=numOpts(p,[(pa+pb)/200, pa/100, pb/100, Math.min(1,(pa+pb)/100)],pct,{step:.05,min:0.01,max:1});
+  return {topic:"Multiplication rule",q:`Event A has a ${pa}% chance and independent event B has a ${pb}% chance. What is the probability that <b>both</b> happen?`,...o,
+    explain:step(`P(A and B) = P(A) × P(B)`,`${pa/100} × ${pb/100} = ${r2(pa*pb/10000)}`,`= <b>${pct(p)}</b>`)};
+}
+
+const CONCEPTS = [
+  {q:"Which one is about calculating how likely something is to happen?",a:"Probability",w:["Statistics","Mean","Range"],e:"Probability studies possible outcomes: what <i>might</i> happen."},
+  {q:"Which one is about collecting, organising and analysing data?",a:"Statistics",w:["Probability","Complement rule","Multiplication rule"],e:"Statistics helps us understand what <i>has</i> happened."},
+  {q:"A probability of 0 means the event is…",a:"Impossible",w:["Certain","Equally likely","Very likely"],e:"0 = impossible, 0.5 = equal chance, 1 = certain."},
+  {q:"A probability of 1 (100%) means the event is…",a:"Certain",w:["Impossible","Equally likely","Unlikely"],e:"1 = certain."},
+  {q:"A probability of 0.5 means the event is…",a:"Equally likely to happen or not",w:["Impossible","Certain","Twice as likely as not"],e:"0.5 = 50% = equal chance."},
+  {q:"Which measure is the middle value after sorting?",a:"Median",w:["Mean","Mode","Range"],e:"The median is the middle number once the data is ordered."},
+  {q:"Which measure is the most frequent value?",a:"Mode",w:["Median","Mean","Variance"],e:"The mode is the value that appears most often."},
+  {q:"Which measure is the difference between the highest and lowest values?",a:"Range",w:["Variance","Mean","Median"],e:"Range = Highest − Lowest."},
+  {q:"A <b>small</b> standard deviation tells us the numbers are…",a:"Close to the average",w:["Far from the average","All identical, always","Negative"],e:"Small SD = close to the mean. Large SD = spread far apart."},
+  {q:"A <b>large</b> standard deviation tells us the numbers are…",a:"Spread far from the average",w:["Close to the average","The same as the median","Always positive integers"],e:"Large SD means high spread."},
+  {q:"What does standard deviation give us that variance does not?",a:"The spread in the original units of the data",w:["The middle value","The most common value","A probability between 0 and 1"],e:"σ = √variance, so it is back in the original units."},
+  {q:"Which formula calculates the probability something does NOT happen?",a:"1 − P(A)",w:["P(A) × P(B)","P(A) + P(B)","Σx ÷ n"],e:"Complement rule: P(not A) = 1 − P(A)."},
+  {q:"Which rule do you use for the probability of two <i>independent</i> events <b>both</b> happening?",a:"Multiplication rule",w:["Addition rule","Complement rule","Range rule"],e:"P(A and B) = P(A) × P(B) for independent events."},
+  {q:"Why do we subtract P(A∩B) in the general addition rule?",a:"To avoid counting the overlap twice",w:["To make the answer smaller than 0.5","Because events are independent","To convert to a percentage"],e:"Outcomes in both A and B would otherwise be counted two times."},
+  {q:"In the variance formula σ² = Σ(x−μ)² ÷ N, what does μ stand for?",a:"The population mean",w:["The number of values","The standard deviation","The median"],e:"μ (mu) is the population mean; N is the number of values."},
+  {q:"Which of these can <b>never</b> be a probability?",a:"1.4",w:["0","0.5","1"],e:"Probabilities must lie between 0 and 1."},
+  {q:"What does the basic probability formula divide by?",a:"Total outcomes",w:["Favourable outcomes","The mean","The range"],e:"P(A) = Favourable outcomes ÷ Total outcomes."},
+];
+const CLASSIFY = [
+  ["Working out last term's average test mark","Statistics"],
+  ["Finding the chance of getting heads on a coin toss","Probability"],
+  ["Calculating the median salary at a company","Statistics"],
+  ["Estimating the chance of rain tomorrow","Probability"],
+  ["Finding the range of marks in a class","Statistics"],
+  ["Calculating the chance of rolling a 6","Probability"],
+  ["Measuring how spread out the heights of players are","Statistics"],
+  ["Working out the chance of winning a raffle","Probability"],
+  ["Finding the most common shoe size sold last month","Statistics"],
+  ["Calculating the chance of passing an exam","Probability"],
+];
+let lastConcept=-1;
+function genConcept(){
+  if(Math.random()<.35){
+    const [s,a]=pick(CLASSIFY);
+    return {topic:"Statistics vs Probability",q:`Is this <b>Statistics</b> or <b>Probability</b>?<br>“${s}”`,opts:["Statistics","Probability"],correct:a,
+      explain:step(a==="Statistics"?"It analyses data that was <i>already collected</i>, so it is <b>Statistics</b>.":"It asks how likely something is <i>to happen</i>, so it is <b>Probability</b>.")};
+  }
+  let i; do{ i=rnd(0,CONCEPTS.length-1);}while(i===lastConcept); lastConcept=i;
+  const c=CONCEPTS[i];
+  return {topic:"Concepts",q:c.q,opts:shuffle([c.a,...c.w]),correct:c.a,explain:step(c.e)};
+}
+
+/* ---------- game engine ---------- */
+const MODES = {
+  classic:{name:"Classic",desc:"10 questions. Aim for a perfect score.",total:10},
+  survival:{name:"Survival",desc:"3 lives. How long can your streak last?",lives:3},
+  blitz:{name:"Blitz",desc:"60 seconds. Answer as many as you can.",time:60},
+};
+let mode="classic", active=new Set(Object.keys(TOPICS));
+let S=null, timerId=null;
+
+function renderHome(){
+  $("modes").innerHTML = Object.entries(MODES).map(([k,m])=>
+    `<button class="mode ${k===mode?"sel":""}" data-m="${k}"><b>${m.name}</b><span>${m.desc}</span></button>`).join("");
+  $("topics").innerHTML = Object.entries(TOPICS).map(([k,t])=>
+    `<button class="chip ${active.has(k)?"sel":""}" data-t="${k}">${t.label}</button>`).join("");
+  const best=loadBest();
+  $("bestLine").textContent = Object.keys(MODES).map(k=>`${MODES[k].name} best: ${best[k]||0}`).join("  ·  ");
+}
+function loadBest(){ try{return JSON.parse(localStorage.getItem("spa-best")||"{}")}catch(e){return{}} }
+function saveBest(k,v){ try{ const b=loadBest(); b[k]=v; localStorage.setItem("spa-best",JSON.stringify(b)); }catch(e){} }
+let prevScreen="hub";
+function show(id){ ["hub","lesson","home","cheat","game","result"].forEach(s=>$(s).classList.toggle("hidden",s!==id)); window.scrollTo(0,0); }
+
+$("modes").onclick=e=>{const b=e.target.closest("[data-m]"); if(b){mode=b.dataset.m;renderHome();}};
+$("topics").onclick=e=>{const b=e.target.closest("[data-t]"); if(!b)return; const k=b.dataset.t;
+  active.has(k)?active.delete(k):active.add(k); renderHome();};
+$("allBtn").onclick=()=>{active=new Set(Object.keys(TOPICS));renderHome();};
+$("noneBtn").onclick=()=>{active=new Set();renderHome();};
+$("cheatBtn").onclick=()=>{prevScreen="home";show("cheat");};
+$("cheatBack").onclick=()=>show(prevScreen);
+$("startBtn").onclick=()=>{ if(!active.size){alert("Pick at least one topic.");return;} start(); };
+$("homeBtn").onclick=()=>{renderHome();show("home");};
+$("againBtn").onclick=start;
+$("quitBtn").onclick=()=>{ if(confirm("Quit this game?")) finish(true); };
+$("nextBtn").onclick=nextQ;
+
+function start(){
+  const m=MODES[mode];
+  S={score:0,streak:0,best:0,right:0,answered:0,lives:m.lives||0,time:m.time||0,missed:[],q:null,locked:false,lastKey:null,qn:0};
+  clearInterval(timerId);
+  if(mode==="blitz"){
+    timerId=setInterval(()=>{ S.time--; updateHud(); if(S.time<=0){ finish(); } },1000);
+  }
+  show("game"); nextQ();
+}
+function updateHud(){
+  $("hScore").textContent=S.score; $("hStreak").textContent=S.streak;
+  const m=MODES[mode];
+  if(mode==="classic"){ $("hExtraLbl").textContent="Question"; $("hExtra").textContent=`${Math.min(S.qn,m.total)} / ${m.total}`; $("bar").style.width=(S.answered/m.total*100)+"%"; }
+  if(mode==="survival"){ $("hExtraLbl").textContent="Lives"; $("hExtra").innerHTML=`<span class="lives">${"❤️".repeat(S.lives)}${"🖤".repeat(m.lives-S.lives)}</span>`; $("bar").style.width="100%"; }
+  if(mode==="blitz"){ $("hExtraLbl").textContent="Time"; $("hExtra").textContent=S.time+"s"; $("hExtra").className="timer"+(S.time<=10?" low":""); $("bar").style.width=(S.time/m.time*100)+"%"; }
+}
+function nextQ(){
+  const m=MODES[mode];
+  if(mode==="classic" && S.answered>=m.total) return finish();
+  const keys=[...active];
+  let k; do{ k=pick(keys);}while(keys.length>1 && k===S.lastKey); S.lastKey=k;
+  S.q=TOPICS[k].gen(); S.locked=false; S.qn++;
+  $("qTag").textContent=S.q.topic; $("qText").innerHTML=S.q.q;
+  $("qOpts").innerHTML=S.q.opts.map((o,i)=>`<button class="opt" data-i="${i}"><kbd>${i+1}</kbd><span>${o}</span></button>`).join("");
+  $("fb").classList.add("hidden"); $("nextRow").classList.add("hidden");
+  updateHud();
+}
+$("qOpts").onclick=e=>{const b=e.target.closest(".opt"); if(b) answer(+b.dataset.i);};
+function answer(i){
+  if(!S||S.locked||!S.q||i>=S.q.opts.length) return;
+  S.locked=true; S.answered++;
+  const q=S.q, ok=q.opts[i]===q.correct;
+  [...$("qOpts").children].forEach((b,j)=>{ b.disabled=true;
+    if(q.opts[j]===q.correct) b.classList.add("right"); else if(j===i) b.classList.add("wrong"); });
+  if(ok){ S.right++; S.streak++; S.best=Math.max(S.best,S.streak); S.score+=10+Math.min(S.streak-1,5)*2; }
+  else { S.streak=0; S.missed.push({q:q.q,correct:q.correct,yours:q.opts[i],explain:q.explain,topic:q.topic}); if(mode==="survival") S.lives--; }
+  updateHud(); if(ok) $("hScore").classList.add("pop"); setTimeout(()=>$("hScore").classList.remove("pop"),300);
+  if(mode==="blitz"){ setTimeout(()=>{ if(S&&S.time>0) nextQ(); },ok?500:1100); return; }
+  const fb=$("fb"); fb.className="fb "+(ok?"ok":"no");
+  fb.innerHTML=`<h3>${ok?"✅ Correct!"+(S.streak>2?` 🔥 ${S.streak} in a row`:""):"❌ Not quite. The answer is "+q.correct}</h3><div class="steps">${q.explain}</div>`;
+  $("nextRow").classList.remove("hidden");
+  const over=(mode==="survival"&&S.lives<=0)||(mode==="classic"&&S.answered>=MODES.classic.total);
+  $("nextBtn").innerHTML=over?"See results ▶":"Next ▶ <small>(Enter)</small>";
+  if(mode==="survival"&&S.lives<=0){ $("nextBtn").onclick=()=>finish(); } else $("nextBtn").onclick=nextQ;
+  $("nextBtn").focus();
+}
+function finish(quit){
+  clearInterval(timerId);
+  const m=MODES[mode], best=loadBest(), isBest=S.score>(best[mode]||0);
+  if(isBest&&S.score>0) saveBest(mode,S.score);
+  $("rTitle").textContent=`${m.name} mode ${quit?"(ended early)":"complete"}`;
+  $("rScore").textContent=S.score+" pts";
+  const acc=S.answered?Math.round(S.right/S.answered*100):0;
+  const msg=acc>=90?"Outstanding! 🏆":acc>=70?"Nice work! 👏":acc>=50?"Getting there. Review the misses below.":"Keep practising. The cheat sheet will help.";
+  $("rLine").innerHTML=`${S.right} of ${S.answered} correct (${acc}%) · best streak ${S.best}<br>${msg}`;
+  $("rBest").textContent=isBest&&S.score>0?"🎉 New personal best!":`Personal best: ${best[mode]||0}`;
+  $("missCard").classList.toggle("hidden",!S.missed.length);
+  $("missList").innerHTML=S.missed.map(x=>`<div class="miss"><div class="tag">${x.topic}</div><div>${x.q}</div>
+    <div style="margin:6px 0"><span style="color:var(--bad)">You: ${x.yours}</span> · <span style="color:var(--good)">Answer: ${x.correct}</span></div>
+    <div class="steps" style="font-size:.92rem;color:var(--muted)">${x.explain}</div></div>`).join("");
+  S.q=null; show("result");
+}
+document.addEventListener("keydown",e=>{
+  if($("game").classList.contains("hidden")||!S) return;
+  if(e.key>="1"&&e.key<="4"){ answer(+e.key-1); }
+  else if(e.key==="Enter"&&S.locked&&mode!=="blitz"&&!e.target.closest("#nextBtn")){ $("nextBtn").click(); }
+});
+/* ---------- study section ---------- */
+const FM = t => `<div class="formula">${t}</div>`;
+const EX = (t,b) => `<div class="ex"><b>${t}</b>${b}</div>`;
+const TB = (head,rows) => `<table><tr>${head.map(h=>`<th>${h}</th>`).join("")}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}</table>`;
+
+const LESSONS = [
+{part:"Part 1 · Statistics",title:"What is statistics? The mean",sum:"Collecting and analysing data; the average",topics:["mean","concepts"],html:`
+<h2>What is Statistics?</h2>
+<p>Statistics and probability are related but different:</p>
+<ul><li><b>Statistics</b> is about collecting, organising, analysing and understanding data.</li>
+<li><b>Probability</b> is about calculating how likely something is to happen.</li></ul>
+${EX("Example","You are a teacher with 5 students and want to know how they did in a maths test."+TB(["Student","Mark"],[["A","60"],["B","70"],["C","80"],["D","90"],["E","100"]])+"<p>Statistics lets you calculate the average mark, find the highest mark and understand how the class performed.</p>")}
+<h2>Mean (average)</h2>
+<p>The mean is the average of a group of numbers.</p>
+${FM("Mean = Σx ÷ n")}
+<ul><li>Σx = sum of all values</li><li>n = number of values</li></ul>
+${EX("Worked example","Scores: 60, 70, 80, 90, 100.<br>Step 1: add them: 60+70+80+90+100 = 400<br>Step 2: divide by 5 students: 400 ÷ 5 = <b>80</b><br>The average mark is 80.")}`},
+
+{part:"Part 1 · Statistics",title:"Median, mode and range",sum:"The middle, the most common and the spread",topics:["median","mode","range"],html:`
+<h2>Median</h2>
+<p>The median is the middle number when the numbers are arranged from smallest to largest.</p>
+${EX("Odd number of values","Marks: 50, 60, 70, 80, 90. The middle number is 70. <b>Median = 70</b>")}
+${EX("Even number of values","Marks: 50, 60, 70, 80. Two middle numbers: 60 and 70. Add and divide by 2:"+FM("(60 + 70) ÷ 2 = 65")+"<b>Median = 65</b>")}
+<h2>Mode</h2>
+<p>The mode is the number that appears most frequently.</p>
+${EX("Example","Marks: 50, 60, 60, 70, 80, 60, 90. The number 60 appears three times. <b>Mode = 60</b>")}
+<h2>Range</h2>
+<p>The range is the difference between the highest and lowest numbers.</p>
+${FM("Range = Highest value − Lowest value")}
+${EX("Example","Marks: 40, 50, 60, 70, 90. Range = 90 − 40 = <b>50</b>. The gap between the highest and lowest marks is 50.")}`},
+
+{part:"Part 1 · Statistics",title:"Variance and standard deviation",sum:"How spread out are the numbers?",topics:["variance","sd","concepts"],html:`
+<h2>Variance</h2>
+<p>Variance tells us how spread out numbers are from the mean. It shows whether numbers are close together or far apart.</p>
+${FM("σ² = Σ(x − μ)² ÷ N")}
+<ul><li>σ² = variance</li><li>x = each value</li><li>μ = population mean</li><li>N = number of values</li></ul>
+${EX("Worked example: marks 2, 4, 6","Mean: μ = (2+4+6) ÷ 3 = 4"+TB(["Value (x)","x − Mean","(x − Mean)²"],[["2","−2","4"],["4","0","0"],["6","2","4"],["<b>Total</b>","","<b>8</b>"]])+"Divide by the number of values: σ² = 8 ÷ 3 = <b>2.67</b>")}
+<h2>Standard deviation</h2>
+<p>Standard deviation also measures spread, but gives it in the <b>original units</b> of the data. It is the square root of the variance.</p>
+${FM("σ = √( Σ(x − μ)² ÷ N )")}
+${EX("Continuing the example","σ = √2.67 = <b>1.63</b>")}
+<div class="tip"><b>Remember:</b><ul><li>Small standard deviation = numbers are close to the average.</li><li>Large standard deviation = numbers are spread far apart.</li></ul></div>`},
+
+{part:"Part 2 · Probability",title:"What is probability?",sum:"Chances, the 0 to 1 scale and the basic formula",topics:["prob","concepts"],html:`
+<h2>What is Probability?</h2>
+<p>Probability is the chance that something will happen. For example: the chance of heads on a coin toss, of rolling a 6, or of winning a lottery. It is measured between 0 and 1 (or 0% and 100%).</p>
+${TB(["Value","Meaning"],[["<b>0</b> (0%)","Impossible"],["<b>0.5</b> (50%)","Equal chance of happening or not"],["<b>1</b> (100%)","Certain"]])}
+<h2>Basic probability formula</h2>
+${FM("P(A) = Favourable outcomes ÷ Total outcomes")}
+${EX("Example 1: tossing a coin","Outcomes: Heads, Tails (2 total). Favourable: 1.<br>P(Heads) = 1/2 = 0.5 = <b>50%</b>")}
+${EX("Example 2: rolling a dice","Outcomes: 1, 2, 3, 4, 5, 6. Chance of a 4: 1 favourable out of 6.<br>P(4) = 1/6 = 0.167 = <b>16.7%</b>")}
+${EX("Example 3: picking a ball","A bag holds 3 red, 2 blue and 1 green ball (6 in total).<br>P(Red) = 3/6 = 0.5 = <b>50%</b>")}`},
+
+{part:"Part 2 · Probability",title:"Important probability rules",sum:"Complement, addition, multiplication; stats vs probability",topics:["complement","addition","multiplication","concepts"],html:`
+<h2>1. Complement rule</h2>
+<p>Calculates the probability that something will <b>NOT</b> happen.</p>
+${FM("P(not A) = 1 − P(A)")}
+${EX("Example","The probability of rain tomorrow is 30%. P(no rain) = 1 − 0.30 = 0.70 = <b>70%</b>")}
+<h2>2. Addition rule (OR)</h2>
+<p>For events that cannot happen at the same time:</p>
+${FM("P(A or B) = P(A) + P(B)")}
+${EX("Example","Roll a dice. P(2 or 5) = 1/6 + 1/6 = 2/6 = 1/3 = <b>33.3%</b>")}
+<p>For events that can overlap, use the general formula:</p>
+${FM("P(A ∪ B) = P(A) + P(B) − P(A ∩ B)")}
+<p>The subtraction stops the overlapping outcomes being counted twice.</p>
+<h2>3. Multiplication rule (AND)</h2>
+<p>Use this for two <b>independent</b> events that both happen.</p>
+${FM("P(A and B) = P(A) × P(B)")}
+${EX("Example","Toss a coin twice. P(H, H) = 1/2 × 1/2 = 1/4 = <b>25%</b>")}
+<h2>Statistics vs probability</h2>
+${TB(["Statistics","Probability"],[["Studies collected data","Studies possible outcomes"],["Helps us understand what happened","Helps us understand what might happen"],["Calculates averages and patterns","Calculates chances and likelihoods"],["Example: average student mark","Example: chance of passing an exam"]])}`},
+
+{part:"Part 3 · A/B Testing",title:"What is A/B testing?",sum:"Comparing two versions: the website button example",topics:["abconcepts"],html:`
+<h2>What is A/B Testing?</h2>
+<p>A/B testing compares two different versions of something to find out which performs better.</p>
+<ul><li><b>Version A:</b> the original version.</li><li><b>Version B:</b> the new or changed version.</li></ul>
+<p>You show each version to a different group of people, collect their results and compare. In simple terms, it is an experiment to find out which option works best.</p>
+<h2>Real-life example: testing a website button</h2>
+<p>You own an online shop and want more customers to click “Buy Now”. You test two button colours:</p>
+<div class="mocks">
+ <div class="mock"><b>Version A</b><br>Online Store<br><span class="btnm" style="background:#2563eb">BUY NOW</span><br><small>Blue button</small></div>
+ <div class="mock"><b>Version B</b><br>Online Store<br><span class="btnm" style="background:#16a34a">BUY NOW</span><br><small>Green button</small></div>
+</div>
+<p>You split 200 website visitors into two groups: Group A sees the blue button and Group B sees the green button. Results:</p>
+${TB(["Results","Version A","Version B"],[["Visitors","100","100"],["People who clicked","10","20"],["People who did not click","90","80"],["Conversion rate","10%","20%"]])}
+<p>Version B appears to perform better. But is the green button <i>genuinely</i> better, or did the difference happen by chance? That is where <b>statistical significance and p-values</b> come in.</p>
+<h2>How A/B testing works</h2>
+<div class="flow">
+ <div><b>Step 1: audience</b>200 visitors split into Group A (100, blue) and Group B (100, green).</div>
+ <div><b>Step 2: collect</b>Measure clicks, purchases or sign-ups.</div>
+ <div><b>Step 3: analyse</b>Compare conversion rates and calculate statistical significance.</div>
+ <div><b>Step 4: decide</b>Decide whether the evidence supports changing to Version B.</div>
+</div>`},
+
+{part:"Part 3 · A/B Testing",title:"Conversion rate and improvement",sum:"Relative vs absolute improvement",topics:["conversion","improvement"],html:`
+<h2>Calculating the conversion rate</h2>
+<p>The conversion rate is the percentage of people who completed the action you wanted.</p>
+${FM("Conversion rate = Conversions ÷ Total visitors × 100")}
+<p>Version A: 10 ÷ 100 × 100 = <b>10%</b><br>Version B: 20 ÷ 100 × 100 = <b>20%</b><br>Version B has the higher conversion rate.</p>
+<h2>Calculating the improvement</h2>
+<p>The relative percentage improvement:</p>
+${FM("Improvement = (B − A) ÷ A × 100")}
+${EX("Substituting","(20 − 10) ÷ 10 × 100 = <b>100%</b><br>Version B achieved a <b>100% relative improvement</b> over Version A.")}
+<div class="warn"><b>Important distinction:</b> the <i>absolute</i> increase is only <b>10 percentage points</b> (20% − 10%). Always check whether a result is reported as relative or absolute.</div>`},
+
+{part:"Part 4 · P-values and Hypotheses",title:"What is a p-value?",sum:"How surprising are our results if nothing is going on?",topics:["pvalue","abconcepts"],html:`
+<h2>What is a p-value?</h2>
+<p>A p-value helps us decide whether the difference we observed could reasonably be explained by random chance.</p>
+<div class="tip"><b>In simple terms:</b> the p-value tells us how surprising our results would be if there were actually <b>no real difference</b> between the two versions.</div>
+<p>In the website example, A got 10% and B got 20%. Is B genuinely better, or did we just get lucky with the visitors? The p-value helps us investigate.</p>
+<h2>Understanding the 0.05 threshold</h2>
+<p>A common significance threshold is 0.05 (5%).</p>
+<div class="sig"><div style="flex:5;background:#16a34a">Below 0.05: significant</div><div style="flex:15;background:#d97706">Above 0.05: not significant</div></div>
+${TB(["P-value","Interpretation"],[["0.01","Statistically significant"],["0.03","Statistically significant"],["0.049","Statistically significant"],["0.05","At the threshold"],["0.08","Not statistically significant"],["0.20","Not statistically significant"]])}
+${EX("Example 1: p = 0.03","If there were truly no difference between A and B, the probability of seeing a difference at least this extreme would be 3%. Since 0.03 &lt; 0.05, the result is statistically significant at the 5% level. We have evidence against “no difference”.")}
+${EX("Example 2: p = 0.20","If there were truly no difference, there would be a 20% probability of seeing a difference at least this extreme. Since 0.20 &gt; 0.05, it is not statistically significant. We lack enough evidence to say one version performs better.")}
+<div class="warn"><b>Important:</b> p = 0.03 does <b>NOT</b> mean there is a 3% chance your results are wrong. It also does <b>not</b> mean there is a 97% chance Version B is better.</div>`},
+
+{part:"Part 4 · P-values and Hypotheses",title:"Hypothesis testing and decisions",sum:"H₀, H₁ and reject / fail to reject",topics:["pvalue","abconcepts"],html:`
+<h2>Hypothesis testing</h2>
+<p>A hypothesis is a statement or assumption you want to test. There are two types.</p>
+<h3>A. Null hypothesis (H₀)</h3>
+<p>Assumes there is <b>no difference</b> or no effect. Example: there is no difference in conversion rates between the blue and green buttons.</p>
+${FM("H₀: pA = pB")}
+<h3>B. Alternative hypothesis (H₁)</h3>
+<p>Assumes there <b>is a difference</b>. Example: the conversion rates of the blue and green buttons are different.</p>
+${FM("H₁: pA ≠ pB")}
+<h2>How do we make a decision?</h2>
+<p>Compare the p-value with the significance level, usually 0.05.</p>
+${TB(["Condition","Decision"],[["p-value less than 0.05","Reject the null hypothesis"],["p-value greater than 0.05","Fail to reject the null hypothesis"]])}
+${EX("Scenario A: p = 0.02","0.02 &lt; 0.05, so we <b>reject H₀</b>. There is statistically significant evidence of a difference.")}
+${EX("Scenario B: p = 0.15","0.15 &gt; 0.05, so we <b>fail to reject H₀</b>. We do not have sufficient statistical evidence of a difference.")}
+<div class="warn">We say “fail to reject”, not “accept”, the null hypothesis. A non-significant result does not prove the two versions are identical.</div>
+<p><b>Note:</b> A/B tests comparing two conversion rates commonly use a <b>two-proportion z-test</b> or a <b>chi-square test</b>. The p-value comes from the chosen test; it is not calculated by simply comparing the two conversion rates.</p>`},
+
+{part:"Part 5 · Statistical Inference",title:"Statistical inference: sample vs population",sum:"Estimating a big group from a small one",topics:["popsample","abconcepts"],html:`
+<h2>What is statistical inference?</h2>
+<p>Statistical inference means using information from a small group (a <b>sample</b>) to make conclusions about a much larger group (a <b>population</b>). You don't need to study everybody; study a representative group and make an informed estimate about the whole.</p>
+${EX("Real-life example","You own a business with <b>10,000 customers</b> and want to know what percentage are satisfied. Interviewing everyone is slow and expensive, so you select <b>500 customers</b>.<br>Results: 400 satisfied, 100 not satisfied.<br>Sample satisfaction rate = 400 ÷ 500 × 100 = <b>80%</b>.<br>You estimate that about 80% of all 10,000 customers are satisfied. That is statistical inference, although the true figure is not guaranteed to be exactly 80%.")}
+<h2>Important concepts</h2>
+${TB(["Term","Meaning","Our example"],[["<b>Population</b>","The entire group you want to study","All 10,000 customers"],["<b>Sample</b>","A smaller group selected from the population","500 customers selected"],["<b>Parameter</b>","A number describing the whole population","The actual % of all 10,000 who are satisfied"],["<b>Statistic</b>","A number calculated from your sample","80% satisfied among the 500 surveyed"]])}
+<div class="flow">
+ <div><b>Population</b>10,000 customers</div>
+ <div><b>Select a representative sample ▶</b>500 customers: 80% satisfied, 20% not</div>
+ <div><b>Inference ▶</b>Use the sample to estimate the population’s satisfaction level</div>
+</div>`},
+
+{part:"Part 5 · Statistical Inference",title:"Confidence intervals",sum:"A range of plausible values, with the SE formula",topics:["se","ci","abconcepts"],html:`
+<h2>Confidence intervals</h2>
+<p>A confidence interval gives a range of values within which the true population value is reasonably estimated to lie. Instead of “our satisfaction rate is exactly 80%”, we say: “our estimated rate is 80%, with a 95% confidence interval of approximately 76.5% to 83.5%.” This tells us about the <b>uncertainty</b> in our estimate.</p>
+<h2>95% CI for a sample proportion</h2>
+${FM("CI = p̂ ± 1.96 × √( p̂(1 − p̂) ÷ n )")}
+<ul><li>CI = confidence interval</li><li>p̂ = sample proportion</li><li>1.96 = critical value for 95% confidence</li><li>n = sample size</li></ul>
+${EX("Worked example: n = 500, 400 satisfied, p̂ = 0.80","<b>Standard error:</b><br>SE = √(0.8 × (1 − 0.8) ÷ 500) = √(0.16 ÷ 500) = <b>0.0179</b><br><br><b>Confidence interval:</b><br>CI = 0.8 ± 1.96 × 0.0179 = 0.8 ± 0.0351<br>CI = (0.7649, 0.8351)<br><br>As percentages: <b>95% CI: 76.5% – 83.5%</b>")}
+<div class="tip"><b>Interpretation:</b> using this method, we are 95% confident that the true customer satisfaction rate is between about 76.5% and 83.5%.</div>
+<p>Strictly speaking, 95% confidence means: if we repeatedly took samples and built intervals this way, about 95% of those intervals would contain the true population proportion.</p>`},
+
+{part:"Part 6 · Putting It Together",title:"How the three concepts work together",sum:"A full analyst example, and what to learn next",topics:["abconcepts","pvalue","ci"],html:`
+<h2>The big picture</h2>
+<p>You are a data analyst for an online shop. Your manager wants more people buying products, so you run an A/B test.</p>
+${TB(["Your experiment","Result"],[["Version A conversion rate","12%"],["Version B conversion rate","16%"],["Observed improvement","4 percentage points"],["P-value (illustrative)","0.02"],["Significance level","0.05"],["Statistically significant?","<b>Yes</b> (0.02 &lt; 0.05)"]])}
+<ol>
+<li><b>A/B testing:</b> you compare Version A and Version B to see which performs better.</li>
+<li><b>P-value:</b> you calculate how surprising the observed difference would be if there were actually no difference.</li>
+<li><b>Statistical inference:</b> you use sample results to draw conclusions about the wider population of website visitors.</li></ol>
+${EX("Possible conclusion","“Version B achieved a higher conversion rate than Version A. The difference was statistically significant at the 5% level (p = 0.02). This provides evidence that Version B performs better.”")}
+<div class="warn"><b>One important point:</b> statistical significance does not automatically mean the change is commercially valuable. Consider the cost of implementing it and whether the improvement is large enough to matter.</div>
+<h2>What to learn next</h2>
+<ol><li>Descriptive statistics: mean, median, mode and standard deviation</li><li>Probability: chances and outcomes</li><li>Sampling: populations and samples</li><li>Hypothesis testing: null and alternative hypotheses</li><li>P-values and statistical significance</li><li>Confidence intervals</li><li>A/B testing using Python</li></ol>
+<div class="tip"><b>The ultimate goal:</b> take a real dataset, run an A/B test in Python, calculate a p-value, interpret the results, and explain to a business whether a change actually improved performance.</div>
+<p>You've finished the lessons. Head to practice to test yourself! 🎉</p>`},
+];
+
+let curLesson=0;
+function loadDone(){ try{return JSON.parse(localStorage.getItem("spa-done")||"[]")}catch(e){return[]} }
+function markDone(i){ try{ const d=new Set(loadDone()); d.add(i); localStorage.setItem("spa-done",JSON.stringify([...d])); }catch(e){} }
+function renderHub(){
+  const done=new Set(loadDone()); let lastPart="", out="";
+  LESSONS.forEach((l,i)=>{
+    if(l.part!==lastPart){ out+=`<div class="toc-part">${l.part}</div>`; lastPart=l.part; }
+    out+=`<button class="lesson-item ${done.has(i)?"done":""}" data-l="${i}"><span class="n">${done.has(i)?"✓":i+1}</span><span><b>${l.title}</b><span class="s">${l.sum}</span></span></button>`;
+  });
+  $("toc").innerHTML=out;
+  $("hubProg").textContent=`${done.size} of ${LESSONS.length} lessons viewed`;
+  $("hubStart").textContent=done.size?"▶ Continue learning":"▶ Start learning";
+}
+function openLesson(i){
+  curLesson=i; const l=LESSONS[i];
+  $("lBody").innerHTML=`<div class="tag">${l.part}</div><h1 style="margin-top:0">${l.title}</h1>`+l.html;
+  $("lProg").textContent=`Lesson ${i+1} of ${LESSONS.length}`;
+  $("lPrev").style.visibility=i?"visible":"hidden";
+  $("lNext").textContent=i===LESSONS.length-1?"Finish ✓":"Next ▶";
+  markDone(i); show("lesson");
+}
+$("toc").onclick=e=>{const b=e.target.closest("[data-l]"); if(b) openLesson(+b.dataset.l);};
+function toHub(){ renderHub(); show("hub"); }
+function toPractice(){ renderHome(); show("home"); }
+$("hubStart").onclick=()=>{ const d=new Set(loadDone()); let i=LESSONS.findIndex((_,k)=>!d.has(k)); openLesson(i<0?0:i); };
+$("hubPractice").onclick=toPractice;
+$("hubCheat").onclick=()=>{prevScreen="hub";show("cheat");};
+$("lToc").onclick=toHub; $("homeToc").onclick=toHub; $("tocBtn2").onclick=toHub;
+$("lPrev").onclick=()=>openLesson(curLesson-1);
+$("lNext").onclick=()=>{ curLesson===LESSONS.length-1?toHub():openLesson(curLesson+1); };
+$("lPractice").onclick=()=>{ active=new Set(LESSONS[curLesson].topics); toPractice(); };
+renderHub();
+
+renderHome();
+</script>
+</body>
+</html>
