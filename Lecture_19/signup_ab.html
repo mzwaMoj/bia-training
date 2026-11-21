@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signup A/B Demo</title>
+<style>
+  body { font-family: system-ui, sans-serif; background:#f3f5f9; margin:0; padding:24px; color:#0b0b0b; }
+  .bar { max-width:520px; margin:0 auto 16px; display:flex; gap:8px; align-items:center; font-size:14px; }
+  .bar button { padding:6px 12px; border:1px solid #2a78d6; background:#fff; color:#2a78d6; border-radius:6px; cursor:pointer; }
+  .bar .tag { margin-left:auto; background:#0b0b0b; color:#fff; padding:4px 10px; border-radius:999px; font-weight:600; }
+  .card { max-width:520px; margin:0 auto; background:#fff; border-radius:12px; padding:28px; box-shadow:0 2px 12px rgba(0,0,0,.08); }
+  h1 { margin:0 0 4px; font-size:22px; color:#1d3557; }
+  p.sub { margin:0 0 20px; color:#52514e; font-size:14px; }
+  label { display:block; font-size:13px; margin:12px 0 4px; font-weight:600; }
+  input, select { width:100%; padding:10px; border:1px solid #c7ccd6; border-radius:6px; font-size:15px; box-sizing:border-box; }
+  .cta { margin-top:20px; width:100%; padding:12px; background:#2a78d6; color:#fff; border:0; border-radius:8px; font-size:16px; cursor:pointer; }
+  .hide { display:none; }
+  .done { text-align:center; color:#1baf7a; font-weight:600; margin-top:16px; }
+  ul.perks { font-size:13px; color:#52514e; padding-left:18px; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <button onclick="assign()">New random visitor</button>
+  <button onclick="show('A')">Force A</button>
+  <button onclick="show('B')">Force B</button>
+  <span class="tag" id="tag"></span>
+</div>
+
+<!-- PAGE A: current, long form -->
+<div class="card hide" id="pageA">
+  <h1>Open your bank account</h1>
+  <p class="sub">Complete the form below. It takes about 10 minutes.</p>
+  <ul class="perks"><li>No monthly fee for 3 months</li><li>Free debit card</li><li>Mobile banking app</li></ul>
+  <label>Full name</label><input placeholder="Jane Doe">
+  <label>ID number</label><input placeholder="13 digits">
+  <label>Date of birth</label><input type="date">
+  <label>Email</label><input type="email" placeholder="you@example.com">
+  <label>Phone</label><input type="tel" placeholder="082 000 0000">
+  <label>Residential address</label><input placeholder="Street, city, code">
+  <label>Employment status</label>
+  <select><option>Employed</option><option>Self-employed</option><option>Student</option></select>
+  <label>Monthly income</label><input placeholder="R">
+  <button class="cta" onclick="submitForm()">Submit application</button>
+</div>
+
+<!-- PAGE B: simplified, 2 fields -->
+<div class="card hide" id="pageB">
+  <h1>Open an account in 2 minutes</h1>
+  <p class="sub">Just two details. We'll sort the rest later.</p>
+  <label>Email</label><input type="email" placeholder="you@example.com">
+  <label>Phone</label><input type="tel" placeholder="082 000 0000">
+  <button class="cta" onclick="submitForm()">Get started</button>
+</div>
+
+<div class="done hide" id="done">Signed up! (conversion recorded in the log below)</div>
+<pre id="log" style="max-width:520px;margin:20px auto;font-size:12px;color:#52514e"></pre>
+
+<script>
+  let current = null, log = [];
+  function show(v) {
+    current = v;
+    document.getElementById('pageA').classList.toggle('hide', v !== 'A');
+    document.getElementById('pageB').classList.toggle('hide', v !== 'B');
+    document.getElementById('done').classList.add('hide');
+    document.getElementById('tag').textContent = 'Page ' + v;
+  }
+  // Random assignment, 50:50, once per visitor
+  function assign() { show(Math.random() < 0.5 ? 'A' : 'B'); }
+  function submitForm() {
+    log.push(current + ' -> converted');
+    document.getElementById('done').classList.remove('hide');
+    document.getElementById('log').textContent = log.join('\n');
+  }
+  assign();
+</script>
+</body>
+</html>
