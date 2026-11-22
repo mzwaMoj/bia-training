@@ -277,6 +277,93 @@ svg text{font-family:system-ui,sans-serif}
 .inspector dd.flash{animation:flash .6s}
 @keyframes flash{0%{background:color-mix(in srgb,var(--accent) 35%,transparent)}100%{background:transparent}}
 
+.vout{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:14px 0 6px}
+.vout .vlab{font-weight:800;font-size:1rem}
+.vchips{display:inline-flex;align-items:stretch;gap:6px;padding:6px 10px;border-left:3px solid var(--c1);border-right:3px solid var(--c1);border-radius:10px;flex-wrap:wrap}
+.vchip{display:flex;flex-direction:column;align-items:center;min-width:58px;padding:6px 8px;border-radius:8px;background:color-mix(in srgb,var(--c1) 12%,var(--surface));animation:fade .3s ease}
+.vchip b{font-size:1.3rem;font-variant-numeric:tabular-nums;color:var(--ink)}
+.vchip small{font-size:.68rem;color:var(--muted);font-family:ui-monospace,Menlo,monospace}
+.vchip i{font-style:normal;font-size:.62rem;color:var(--c1);font-weight:700}
+.vchips.col{border-color:var(--c2)} .vchips.col .vchip{background:color-mix(in srgb,var(--c2) 12%,var(--surface))} .vchips.col .vchip i{color:var(--c2)}
+.dataset td.idx,.dataset th.idx{color:var(--muted);font-family:ui-monospace,Menlo,monospace;font-weight:700}
+.oc{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:1px 7px;white-space:pre-wrap;word-break:break-word}
+.opt.right .oc,.opt.wrong .oc{background:var(--surface)}
+.qtext .code,.qc-q .code{margin:10px 0 2px;font-weight:400}
+.qtext .code pre,.qc-q .code pre{font-size:.84rem;padding:12px 16px}
+.pybadge{display:inline-block;margin-left:6px;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--c3);background:color-mix(in srgb,var(--c3) 14%,transparent);border-radius:999px;padding:2px 10px}
+.eqkey{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:10px 0 4px;padding:10px 14px;border-radius:12px;background:var(--surface-2);font-size:.86rem;align-items:baseline}
+.eqkey .m{font-size:1.02rem}
+.eqkey .big{grid-column:1/-1;text-align:center;font-family:"Cambria Math","STIX Two Math",Georgia,serif;font-size:1.35rem;font-weight:700;color:var(--accent);padding-bottom:4px;margin-bottom:2px;border-bottom:1px solid var(--line)}
+.eqkey dt{font-family:"Cambria Math","STIX Two Math",Georgia,serif;font-style:italic;font-weight:700;font-size:1.05rem}
+.eqkey dd{margin:0;color:var(--muted)}
+.eqkey dd b{color:var(--ink)}
+/* data-structure ladder */
+.ladder{display:grid;grid-template-columns:repeat(4,minmax(0,1fr) 22px) minmax(0,1fr);gap:6px;margin:14px 0 4px;align-items:stretch}
+.larr{display:grid;place-items:center;color:var(--muted);font-size:1.3rem;font-weight:300}
+.stage{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:12px 8px 14px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;transition:border-color .15s,box-shadow .15s,transform .15s}
+.stage:hover{border-color:var(--accent);transform:translateY(-2px)}
+.stage.sel{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 15%,transparent)}
+.stage .step{font-size:.64rem;text-transform:uppercase;letter-spacing:.09em;color:var(--accent);font-weight:800}
+.stage b{font-size:.9rem;line-height:1.2}
+.stage small{color:var(--muted);font-size:.74rem;line-height:1.3}
+.mv{min-height:118px;display:grid;place-items:center;width:100%}
+.mv i{font-style:normal;display:grid;place-items:center;min-width:26px;height:22px;padding:0 4px;border-radius:5px;font-family:ui-monospace,Menlo,monospace;font-size:.76rem;font-weight:700;color:var(--ink)}
+.mv-list{font-family:ui-monospace,Menlo,monospace;font-size:.95rem;font-weight:700;padding:8px 10px;border:1.5px dashed var(--line);border-radius:8px;color:var(--ink)}
+.mv-col{display:grid;gap:3px}
+.mv-col i{background:color-mix(in srgb,var(--c1) 18%,var(--surface));border:1.5px solid color-mix(in srgb,var(--c1) 55%,transparent)}
+.mv-grid{display:grid;grid-template-columns:repeat(3,auto);gap:3px}
+.mv-grid i{background:color-mix(in srgb,var(--c3) 16%,var(--surface));border:1.5px solid color-mix(in srgb,var(--c3) 50%,transparent)}
+.mv-grid i.r0{background:color-mix(in srgb,var(--c1) 22%,var(--surface));border-color:color-mix(in srgb,var(--c1) 60%,transparent)}
+.mv-tab{display:grid;gap:3px}
+.mv-tab i{background:color-mix(in srgb,var(--c4) 14%,var(--surface));border:1.5px solid color-mix(in srgb,var(--c4) 45%,transparent)}
+.mv-tab i.hd{background:none;border:0;color:var(--c4);font-size:.62rem;font-family:system-ui,sans-serif;font-weight:800}
+.mv-tab i.ix{background:none;border:0;color:var(--muted)}
+.lp-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start}
+.lp h3{margin:0 0 6px}
+.lp ul{margin:6px 0 10px;padding-left:20px}
+.lp li{margin:3px 0}
+.lp .code{margin:0}
+.lp .code pre{padding-right:70px}
+@media (max-width:860px){.ladder{grid-template-columns:repeat(2,minmax(0,1fr))}.larr{display:none}.lp-grid{grid-template-columns:minmax(0,1fr)}}
+.mwrap{display:inline-flex;flex-direction:column;align-items:center;gap:6px}
+.mwrap>small{font-family:system-ui,sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700}
+.eq .op{color:var(--muted);padding:0 2px;align-self:center}
+.eq[style*="flex-start"] .op{margin-top:14px}
+.shape-eq{gap:6px;font-size:1.3rem;align-items:flex-start}
+.sh{display:inline-flex;flex-direction:column;align-items:center;min-width:44px}
+.sh b{font-size:1.45rem;line-height:1.2}
+.sh small{font-family:system-ui,sans-serif;font-size:.64rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;white-space:nowrap}
+table.pairs tr.hl1 td,table.pairs tr.hl2 td{font-weight:700}
+table.pairs td{font-variant-numeric:tabular-nums}
+table.pairs tr.sum td{border-top:2px solid var(--line);font-size:1.05rem}
+table.pairs tr.sum td:last-child{color:var(--c3)}
+.fsheet{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin:14px 0}
+.fs{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column}
+.fs-top{display:flex;align-items:center;gap:8px}
+.fs-top b{font-size:.95rem}
+.fs-n{flex:none;width:24px;height:24px;border-radius:7px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:.78rem;font-weight:800}
+.fs-tag{margin-left:auto;font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);white-space:nowrap}
+.fs .f{font-family:"Cambria Math","STIX Two Math",Georgia,serif;font-size:1.1rem;background:var(--surface-2);border-radius:10px;padding:12px 10px;margin:10px 0 8px;text-align:center;line-height:2.2}
+.nt{text-transform:none}
+.fs p{margin:0 0 8px;font-size:.88rem;color:var(--muted);flex:1}
+.fs .ex{font-size:.8rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:8px}
+.fs .ex b{color:var(--c3);font-variant-numeric:tabular-nums}
+.big-sum{font-size:1.35em;line-height:1;margin:0 2px}
+.parts3,.mini3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0}
+@media (max-width:860px){.parts3,.mini3{grid-template-columns:minmax(0,1fr)}}
+.parts3 .big{font-family:"Cambria Math","STIX Two Math",Georgia,serif;font-size:1.5rem;margin:6px 0}
+.parts3 p,.mini3 p{margin:4px 0 0;font-size:.9rem;color:var(--muted)}
+.gsteps{padding-left:22px;margin:16px 0}
+.gsteps>li{margin:0 0 18px;padding-left:4px}
+.gsteps>li::marker{font-weight:800;color:var(--accent)}
+.eq-left{flex-direction:column;align-items:flex-start;gap:8px;font-size:1.08rem;margin:10px 0}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:12px 0 18px}
+.chain .link{display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;min-width:120px;transition:border-color .15s,transform .15s}
+.chain .link:hover{border-color:var(--accent);transform:translateY(-2px)}
+.chain .link.on{border-color:var(--accent);background:var(--accent-soft)}
+.chain small{font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--accent)}
+.chain em{font-style:normal;font-size:.76rem;color:var(--muted)}
+.carr{color:var(--muted);font-size:1.2rem}
 /* checklist */
 .checklist label{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer}
 .checklist input{accent-color:var(--good);width:18px;height:18px;margin-top:3px}
@@ -370,7 +457,7 @@ svg text{font-family:system-ui,sans-serif}
       <div class="hero-stats">
         <div><b>7</b><small>bite-sized topics</small></div>
         <div><b>8</b><small>hands-on labs</small></div>
-        <div><b>∞</b><small>quiz questions</small></div>
+        <div><b>∞</b><small>maths &amp; Python quiz questions</small></div>
       </div>
       <div class="btnrow">
         <a class="btn" href="#t1">Start with Topic 1 →</a>
@@ -380,6 +467,14 @@ svg text{font-family:system-ui,sans-serif}
     <div class="card" style="margin:0">
       <div class="chart-title">The puzzle we'll solve</div>
       <svg class="chart" id="heroSvg" aria-label="Scatter chart of products ordered vs amount spent"></svg>
+      <dl class="eqkey">
+        <div class="big">y = m x + c</div>
+        <dt>y</dt><dd>amount spent (R)</dd>
+        <dt>x</dt><dd>products ordered</dd>
+        <dt>m</dt><dd>gradient = <span class="m"><span class="frac"><span>y₂ − y₁</span><span>x₂ − x₁</span></span> = <span class="frac"><span>300 − 200</span><span>3 − 2</span></span></span> = <b>100</b></dd>
+        <dt>c</dt><dd>intercept (where the line crosses x = 0) = <b>0</b></dd>
+        <div style="grid-column:1/-1;text-align:center;margin-top:4px" class="m">y = 100x &nbsp;→&nbsp; x = 6 &nbsp;→&nbsp; <b style="color:var(--c2)">R600</b></div>
+      </dl>
       <p style="font-size:.9rem;color:var(--muted);margin:6px 0 0">Five customers: more products means higher spend. If someone orders <b>6 products</b>, can a computer <i>learn</i> to predict <b>R600</b>?</p>
     </div>
   </div>
@@ -402,6 +497,61 @@ svg text{font-family:system-ui,sans-serif}
       </tbody>
     </table>
   </div>
+
+  <h2>Recap: from a list to a DataFrame</h2>
+  <p class="prose">Every dataset you work with is built up in five steps: <b>the same numbers, with more structure each time</b>. Click a step to see the code.</p>
+  <div class="ladder" id="ladder"><button class="stage sel" data-s="0"><span class="step">Step 1</span><div class="mv"><div class="mv-list">[3, 10, 5]</div></div><b>Python list</b><small>plain values, no maths</small></button><span class="larr">→</span><button class="stage" data-s="1"><span class="step">Step 2</span><div class="mv"><div class="mv-col"><i>3</i><i>10</i><i>5</i></div></div><b>NumPy array</b><small>vector · 1-D · shape (3,)</small></button><span class="larr">→</span><button class="stage" data-s="2"><span class="step">Step 3</span><div class="mv"><div class="mv-grid"><i class="r0">3</i><i class="r0">10</i><i class="r0">5</i><i>1</i><i>2</i><i>3</i><i>5</i><i>18</i><i>4</i></div></div><b>2-D NumPy array</b><small>matrix · rows × columns · (3, 3)</small></button><span class="larr">→</span><button class="stage" data-s="3"><span class="step">Step 4</span><div class="mv"><div class="mv-tab" style="grid-template-columns:repeat(2,auto)"><i class="ix"></i><i class="hd">products</i><i class="ix">A</i><i>3</i><i class="ix">B</i><i>1</i><i class="ix">C</i><i>5</i></div></div><b>pandas Series</b><small>one labelled column</small></button><span class="larr">→</span><button class="stage" data-s="4"><span class="step">Step 5</span><div class="mv"><div class="mv-tab" style="grid-template-columns:repeat(4,auto)"><i class="ix"></i><i class="hd">prod</i><i class="hd">dist</i><i class="hd">rate</i><i class="ix">A</i><i>3</i><i>10</i><i>5</i><i class="ix">B</i><i>1</i><i>2</i><i>3</i><i class="ix">C</i><i>5</i><i>18</i><i>4</i></div></div><b>pandas DataFrame</b><small>table · labelled rows + columns</small></button></div>
+  <div class="card" id="ladderPanel">
+    <div class="lp" data-s="0"><div class="lp-grid">
+      <div class="code has-out"><pre><code class="py-src">order = [3, 10, 5]   # products, distance_km, rating
+print(order)
+print(order * 2)</code></pre><div class="out">[3, 10, 5]
+[3, 10, 5, 3, 10, 5]</div></div>
+      <div><span class="eyebrow">Step 1 of 5</span><h3>Python list</h3><ul><li>A list just <b>holds values in order</b>.</li><li>No maths: <code>* 2</code> <b>repeats</b> the list, and <code>+</code> joins lists.</li><li>Fine for storing, not for ML calculations.</li></ul></div>
+    </div></div><div class="lp hidden" data-s="1"><div class="lp-grid">
+      <div class="code has-out"><pre><code class="py-src">import numpy as np
+
+x = np.array(order)
+print(x, x.shape)
+print(x * 2)</code></pre><div class="out">[ 3 10  5] (3,)
+[ 6 20 10]</div></div>
+      <div><span class="eyebrow">Step 2 of 5</span><h3>NumPy array: a vector</h3><ul><li>Same numbers, now a <b>vector</b> with a shape: <code>(3,)</code>.</li><li>Maths works <b>element by element</b>: <code>* 2</code> doubles every value.</li><li>One vector = <b>one customer</b> (one observation).</li></ul></div>
+    </div></div><div class="lp hidden" data-s="2"><div class="lp-grid">
+      <div class="code has-out"><pre><code class="py-src">X = np.array([[3, 10, 5],
+              [1,  2, 3],
+              [5, 18, 4]])
+print(X.shape)
+print(X[0])      # row 0 = one customer's vector</code></pre><div class="out">(3, 3)
+[ 3 10  5]</div></div>
+      <div><span class="eyebrow">Step 3 of 5</span><h3>2-D NumPy array: a matrix</h3><ul><li>Stack vectors as <b>rows</b> → a matrix with shape (rows, columns).</li><li>Each <b>row is still a vector</b>: <code>X[0]</code> gives it back.</li><li>Lets the model predict for <b>all customers at once</b> (<code>X @ W</code>).</li></ul></div>
+    </div></div><div class="lp hidden" data-s="3"><div class="lp-grid">
+      <div class="code has-out"><pre><code class="py-src">import pandas as pd
+
+products = pd.Series([3, 1, 5], index=["A", "B", "C"],
+                     name="products")
+print(products)
+print(products.mean())</code></pre><div class="out">A    3
+B    1
+C    5
+Name: products, dtype: int64
+3.0</div></div>
+      <div><span class="eyebrow">Step 4 of 5</span><h3>pandas Series</h3><ul><li>A NumPy vector <b>plus labels</b>: an index (A, B, C) and a name.</li><li>Behaves like one <b>column</b> of a spreadsheet.</li><li>Handy for one feature: <code>.mean()</code>, <code>.max()</code>, filtering.</li></ul></div>
+    </div></div><div class="lp hidden" data-s="4"><div class="lp-grid">
+      <div class="code has-out"><pre><code class="py-src">df = pd.DataFrame(X, index=["A", "B", "C"],
+                  columns=["products", "distance_km", "rating"])
+print(df)
+print(df.shape)
+print(df.loc["A"].to_numpy())   # back to a vector</code></pre><div class="out">   products  distance_km  rating
+A         3           10       5
+B         1            2       3
+C         5           18       4
+(3, 3)
+[ 3 10  5]</div></div>
+      <div><span class="eyebrow">Step 5 of 5</span><h3>pandas DataFrame</h3><ul><li>A <b>matrix with names</b>: labelled rows <i>and</i> columns.</li><li>Each <b>column is a Series</b>, and each <b>row is a vector</b>.</li><li>This is your everyday dataset. <code>.to_numpy()</code> turns it back into the matrix the model uses.</li></ul></div>
+    </div></div>
+    <div class="btnrow" style="justify-content:space-between;margin-top:14px"><button class="btn sm ghost" id="ldPrev">← Previous</button><button class="btn sm" id="ldNext">Next step →</button></div>
+  </div>
+  <p style="color:var(--muted);font-size:.88rem;margin:-4px 0 0">Beyond this: stacking matrices gives a 3-D+ <b>tensor</b>, the data shape used in deep learning (images, video, text batches).</p>
 
   <h2>Your learning roadmap</h2>
   <p class="prose">Each topic answers one question. Finish the lab challenges and quick checks to earn XP and level up.</p>
@@ -442,6 +592,23 @@ svg text{font-family:system-ui,sans-serif}
   </div>
   <div class="eq"><span><i>x</i> =</span><span class="vec"><span class="hl1">3</span><span class="hl2">10</span><span class="hl3">5</span></span><span style="font-size:.85rem;color:var(--muted);font-family:system-ui">← products, distance, rating</span></div>
   <div class="callout warn"><b class="t">Order matters</b><span class="m">[3, 10, 5]</span> and <span class="m">[10, 3, 5]</span> are different customers. The model always expects the features in the same positions.</div>
+
+  <h2>Where do vectors live? In your tables.</h2>
+  <div class="prose">
+    <p>Most of the time your data sits in a <b>table</b>: an Excel sheet or a pandas <b>DataFrame</b>. Here's the key idea:</p>
+  </div>
+  <div class="callout idea"><b class="t">Table view</b><b>Every row of the table is a vector.</b> Row 0 is customer 0's vector, row 1 is customer 1's vector, and so on. The column headings tell you what each position in the vector means.</div>
+  <div class="card" id="dfCard">
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px">
+      <div class="chart-title" style="margin:0">DataFrame <span class="mono" style="text-transform:none">df</span>: 5 rows × 5 fields</div>
+      <div class="presets" id="dfMode"><button class="chip sel" data-m="row">Extract a row</button><button class="chip" data-m="col">Extract a column</button></div>
+    </div>
+    <p style="font-size:.9rem;color:var(--muted);margin:8px 0 4px" id="dfHint">Click any row to pull it out of the table as a vector.</p>
+    <div class="tbl-wrap"><table class="t dataset" id="dfTable"></table></div>
+    <div class="vout" id="dfVec"></div>
+    <div class="code has-out" style="margin-top:8px"><pre><code id="dfCode"></code></pre><div class="out" id="dfOut"></div></div>
+    <div class="interp" id="dfInfo"></div>
+  </div>
 
   <div class="prose">
     <h2>Adding vectors</h2>
@@ -536,12 +703,35 @@ print(np.linalg.norm(v))</code></pre><div class="out">[ 3 10  5]
   <p class="prose">Just like vectors: same shape, add matching positions.</p>
   <div class="eq"><span class="mat" style="grid-template-columns:repeat(2,auto)"><span>1</span><span>2</span><span>3</span><span>4</span></span>+<span class="mat" style="grid-template-columns:repeat(2,auto)"><span>5</span><span>6</span><span>7</span><span>8</span></span>=<span class="mat" style="grid-template-columns:repeat(2,auto)"><span>6</span><span>8</span><span>10</span><span>12</span></span></div>
 
-  <h2>Multiplying matrices: the shape rule</h2>
-  <div class="prose">
-    <p>Matrix multiplication is how ML models process <b>thousands of customers in one go</b>. There's one rule:</p>
+  <h2>Multiplying matrices, made simple</h2>
+  <div class="prose"><p>Forget the formula for a moment. Matrix multiplication is just <b>"quantity × price, then add it up"</b>, done for many customers at once.</p></div>
+
+  <h3>Step 1: one customer (like a till slip)</h3>
+  <div class="prose"><p>Customer A buys <b class="hl1">2 products</b> and lives <b class="hl1">5 km</b> away. The shop charges <b class="hl3">R100 per product</b> and <b class="hl3">R10 per km</b>.</p></div>
+  <div class="eq"><span>(<span class="hl1">2</span> × <span class="hl3">100</span>) + (<span class="hl1">5</span> × <span class="hl3">10</span>) = 200 + 50 = <b>R250</b></span></div>
+  <p class="prose">Multiply each pair, then add. That's all a "row times column" is.</p>
+
+  <h3>Step 2: two customers at once</h3>
+  <div class="prose"><p>Put each customer on a <b>row</b> and the prices in a <b>column</b>. Each customer's row <b>walks across</b> the price column and produces <b>one answer</b>.</p></div>
+  <div class="eq" style="align-items:flex-start">
+    <span class="mwrap"><span class="mat" style="grid-template-columns:repeat(2,auto)"><span class="hl1">2</span><span class="hl1">5</span><span class="hl2">3</span><span class="hl2">10</span></span><small>customers</small></span><span class="op">·</span>
+    <span class="mwrap"><span class="mat" style="grid-template-columns:repeat(1,auto)"><span class="hl3">100</span><span class="hl3">10</span></span><small>prices</small></span><span class="op">=</span>
+    <span class="mwrap"><span class="mat" style="grid-template-columns:repeat(1,auto)"><span class="hl1">2×100 + 5×10</span><span class="hl2">3×100 + 10×10</span></span><small>working</small></span><span class="op">=</span>
+    <span class="mwrap"><span class="mat" style="grid-template-columns:repeat(1,auto)"><span class="hl1">R250</span><span class="hl2">R400</span></span><small>one answer each</small></span>
   </div>
-  <div class="eq"><span>(4 × <b class="hl3">3</b>) · (<b class="hl3">3</b> × 2) = (4 × 2)</span></div>
-  <div class="prose"><p>The <b class="hl3">inside numbers must match</b> (columns of the first = rows of the second). The <b>outside numbers</b> give the shape of the answer. Each answer cell is a row of the first matrix "dotted" with a column of the second. You'll meet the dot product properly in Topic 3.</p></div>
+  <p class="prose"><span class="hl1">Customer A</span> (row 1) → R250. <span class="hl2">Customer B</span> (row 2) → R400. One calculation gives a prediction for <b>every</b> customer, whether there are 2 or 2 million.</p>
+
+  <h3>Step 3: the shape rule, in plain words</h3>
+  <div class="eq shape-eq">(<span class="sh"><b class="">2</b><small>customers</small></span> × <span class="sh"><b class="hl3">2</b><small>features</small></span>) <span class="op">·</span> (<span class="sh"><b class="hl3">2</b><small>prices</small></span> × <span class="sh"><b class="">1</b><small>price list</small></span>) <span class="op">=</span> (<span class="sh"><b class="">2</b><small>customers</small></span> × <span class="sh"><b class="">1</b><small>answer each</small></span>)</div>
+  <div class="two">
+    <div class="callout idea" style="margin:0"><b class="t">Middle numbers must match</b>Every feature needs <b>its own price</b> to pair with. 2 features ↔ 2 prices ✓.<br>With 3 features but only 2 prices, one feature has <b>no partner</b>, so the multiplication can't be done ✗.</div>
+    <div class="callout remember" style="margin:0"><b class="t">Outer numbers = size of the answer</b>One answer row per <b>customer</b>, and one answer column per <b>price list</b>.<br>2 customers, 1 price list → a 2 × 1 answer: two predictions.</div>
+  </div>
+
+  <h3>Bigger example</h3>
+  <div class="eq shape-eq">(<span class="sh"><b class="">4</b><small>customers</small></span> × <span class="sh"><b class="hl3">3</b><small>features</small></span>) <span class="op">·</span> (<span class="sh"><b class="hl3">3</b><small>weights</small></span> × <span class="sh"><b class="">2</b><small>weight lists</small></span>) <span class="op">=</span> (<span class="sh"><b class="">4</b><small>customers</small></span> × <span class="sh"><b class="">2</b><small>answers each</small></span>)</div>
+  <p class="prose">4 customers, each described by 3 features. 2 different weight lists: say, one predicts <b>spend</b> and another predicts <b>delivery time</b>. The middle 3s match, so it works. Every customer gets 2 answers → a <b>4 × 2</b> table.</p>
+  <div class="callout remember"><b class="t">Quick trick</b>Write the two shapes side by side: <span class="m">(4 × <b class="hl3">3</b>)(<b class="hl3">3</b> × 2)</span>. If the <b>middle</b> numbers are the same, you can multiply. The answer's shape is the <b>outside</b> numbers: <span class="m">(4 × 2)</span>. The "row × column, add up" step is the <b>dot product</b>, covered in Topic 3.</div>
 
   <div class="lab">
     <div class="lab-head"><span class="lab-tag">🧪 Lab 2</span><h3>Shape Builder</h3><p>Change the shapes of A and B. If they fit, click any green answer cell to see exactly how it was calculated.</p></div>
@@ -599,27 +789,73 @@ print(X @ W)</code></pre><div class="out">Shape: (4, 3)
 
   <div class="callout idea"><b class="t">Big idea</b>A <b>dot product</b> multiplies matching pairs of numbers and adds the results. It's exactly how a till slip works: <i>quantity × price</i> for each item, then add it all up.</div>
 
-  <div class="two">
-    <div class="prose">
-      <h2 style="margin-top:.6em">Features × weights</h2>
-      <p><b>Features</b> are the facts about a customer. <b>Weights</b> say how much each fact matters.</p>
-      <p>Customer: <span class="m">X = [3, 10]</span> (3 products, 10 km).<br>Learned weights: <span class="m">W = [100, 5]</span>, so each product adds R100 and each km adds R5.</p>
-    </div>
-    <div class="card" style="margin:0">
-      <div class="chart-title">The till slip</div>
-      <table class="t" style="margin:0">
-        <tr><td>3 products × R100</td><td class="r"><b>R300</b></td></tr>
-        <tr><td>10 km × R5</td><td class="r"><b>R50</b></td></tr>
-        <tr style="font-size:1.1rem"><td><b>Prediction</b></td><td class="r"><b style="color:var(--accent)">R350</b></td></tr>
-      </table>
-    </div>
+  <h2>Step 1: pair them up, multiply, add</h2>
+  <div class="prose"><p>A customer orders <b class="hl1">3 products</b> and lives <b class="hl2">10 km</b> away. The model has learned two <b>weights</b>: <b class="hl1">R100 per product</b> and <b class="hl2">R5 per km</b>. Each feature is paired with <b>its own</b> weight (same colour = same pair):</p></div>
+  <div class="card tbl-wrap" style="max-width:640px">
+    <table class="t pairs">
+      <thead><tr><th>Feature</th><th class="r">Value (x)</th><th></th><th class="r">Weight (w)</th><th></th><th class="r">Contribution</th></tr></thead>
+      <tbody>
+        <tr class="hl1"><td>Products</td><td class="r">3</td><td>×</td><td class="r">100</td><td>=</td><td class="r">300</td></tr>
+        <tr class="hl2"><td>Distance (km)</td><td class="r">10</td><td>×</td><td class="r">5</td><td>=</td><td class="r">50</td></tr>
+        <tr class="sum"><td colspan="5"><b>Add them up</b></td><td class="r"><b>R350</b></td></tr>
+      </tbody>
+    </table>
   </div>
-  <div class="eq"><span><i>X</i> · <i>W</i> = <i>x</i>₁<i>w</i>₁ + <i>x</i>₂<i>w</i>₂ = (3 × 100) + (10 × 5) = 300 + 50 = <b class="hl3">350</b></span></div>
+  <div class="prose"><p>Written as vectors, it's exactly the same calculation:</p></div>
+  <div class="eq" style="align-items:flex-start">
+    <span class="mwrap"><span class="mat" style="grid-template-columns:repeat(1,auto)"><span class="hl1">3</span><span class="hl2">10</span></span><small>features x</small></span><span class="op">·</span>
+    <span class="mwrap"><span class="mat" style="grid-template-columns:repeat(1,auto)"><span class="hl1">100</span><span class="hl2">5</span></span><small>weights w</small></span><span class="op">=</span>
+    <span class="mwrap"><span style="padding:6px 0;display:inline-block">(<span class="hl1">3 × 100</span>) + (<span class="hl2">10 × 5</span>)</span><small>pair up</small></span><span class="op">=</span>
+    <span class="mwrap"><span style="padding:6px 0;display:inline-block"><span class="hl1">300</span> + <span class="hl2">50</span></span><small>add</small></span><span class="op">=</span>
+    <span class="mwrap"><b style="padding:6px 0;display:inline-block;color:var(--c3)">350</b><small>one number</small></span>
+  </div>
+  <div class="callout idea"><b class="t">The whole idea in one line</b>Two lists in → <b>one number</b> out. Multiply the 1st with the 1st, the 2nd with the 2nd, …, then add everything.</div>
 
-  <h2>Adding a bias</h2>
-  <div class="prose"><p>A <b>bias</b> is a fixed amount added at the end, like a flat service fee. It means the prediction doesn't have to be zero when every feature is zero. With a bias of R50:</p></div>
-  <div class="eq"><span><i>ŷ</i> = <i>X</i> · <i>W</i> + <i>b</i> = 350 + 50 = <b class="hl3">R400</b></span></div>
-  <p class="prose" style="color:var(--muted);font-size:.94rem">In real ML we don't pick the weights by hand. The model <b>learns</b> them from data. That's what Topics 4–6 are about.</p>
+  <h2>Step 2: add the bias</h2>
+  <div class="prose"><p>A <b>bias</b> is a fixed amount added at the end, like a flat service fee. It means the prediction doesn't have to be R0 when every feature is 0. With a bias of <b class="hl4">R50</b>:</p></div>
+  <div class="eq"><span><i>ŷ</i> = <i>x</i> · <i>w</i> + <span class="hl4"><i>b</i></span> = 350 + <span class="hl4">50</span> = <b class="hl3">R400</b></span></div>
+
+  <h2>Step 3: the one rule, same length</h2>
+  <div class="two">
+    <div class="callout remember" style="margin:0"><b class="t">Works ✓</b><span class="m">[<span class="hl1">3</span>, <span class="hl2">10</span>] · [<span class="hl1">100</span>, <span class="hl2">5</span>]</span><br>2 features, 2 weights: every feature has a partner.</div>
+    <div class="callout warn" style="margin:0"><b class="t">Doesn't work ✗</b><span class="m">[<span class="hl1">3</span>, <span class="hl2">10</span>, <span class="hl4">5</span>] · [<span class="hl1">100</span>, <span class="hl2">5</span>]</span><br>3 features but only 2 weights: the rating (<span class="hl4">5</span>) has <b>no weight to pair with</b>.</div>
+  </div>
+  <p class="prose" style="margin-top:12px">This is the same "middle numbers must match" rule you saw with matrices in Topic 2.</p>
+
+  <h2>Step 4: many customers at once (matrix × vector)</h2>
+  <div class="prose"><p>Stack the customers as <b>rows</b> of a matrix. Each row does its own dot product with the <b>same</b> weights, so you get <b>one prediction per customer</b>:</p></div>
+  <div class="eq" style="align-items:flex-start">
+    <span class="mwrap"><span class="mat" style="grid-template-columns:repeat(2,auto)"><span class="hl1">3</span><span class="hl1">10</span><span class="hl2">1</span><span class="hl2">2</span><span class="hl4">5</span><span class="hl4">18</span></span><small>customers X (3 × 2)</small></span><span class="op">·</span>
+    <span class="mwrap"><span class="mat" style="grid-template-columns:repeat(1,auto)"><span class="">100</span><span class="">5</span></span><small>weights w (2 × 1)</small></span><span class="op">=</span>
+    <span class="mwrap"><span class="mat" style="grid-template-columns:repeat(1,auto)"><span class="hl1">3×100 + 10×5</span><span class="hl2">1×100 + 2×5</span><span class="hl4">5×100 + 18×5</span></span><small>each row · w</small></span><span class="op">=</span>
+    <span class="mwrap"><span class="mat" style="grid-template-columns:repeat(1,auto)"><span class="hl1">350</span><span class="hl2">110</span><span class="hl4">590</span></span><small>predictions (3 × 1)</small></span>
+  </div>
+  <div class="card tbl-wrap" style="max-width:640px">
+    <table class="t">
+      <thead><tr><th>Customer</th><th>Row vector</th><th class="r">Row · w</th><th class="r">+ bias 50</th></tr></thead>
+      <tbody>
+        <tr class="hl1"><td>A</td><td class="m">[3, 10]</td><td class="r">300 + 50 = 350</td><td class="r"><b>R400</b></td></tr>
+        <tr class="hl2"><td>B</td><td class="m">[1, 2]</td><td class="r">100 + 10 = 110</td><td class="r"><b>R160</b></td></tr>
+        <tr class="hl4"><td>C</td><td class="m">[5, 18]</td><td class="r">500 + 90 = 590</td><td class="r"><b>R640</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="prose">That's why ML loves matrices: <b>one</b> multiplication, <span class="m">X · w + b</span>, gives predictions for 3 customers or 3 million.</p>
+
+  <h2>Step 5: what the weights tell you</h2>
+  <div class="prose"><p>Keep the same customer <span class="m">[3 products, 10 km]</span> and change only the weights. Each weight says <b>how much its feature matters</b>, and in which direction:</p></div>
+  <div class="card tbl-wrap" style="max-width:760px">
+    <table class="t">
+      <thead><tr><th>Weights [product, km]</th><th>Working</th><th class="r">Prediction</th><th>What it means</th></tr></thead>
+      <tbody>
+        <tr><td class="m">[100, 5]</td><td class="m">300 + 50</td><td class="r"><b>R350</b></td><td>Both features push the price <b style="color:var(--good)">up</b>.</td></tr>
+        <tr><td class="m">[100, 0]</td><td class="m">300 + 0</td><td class="r"><b>R300</b></td><td>Weight 0: distance is <b>ignored</b>.</td></tr>
+        <tr><td class="m">[100, −5]</td><td class="m">300 − 50</td><td class="r"><b>R250</b></td><td>Negative weight: distance pulls the price <b style="color:var(--bad)">down</b> (e.g. a far-away discount).</td></tr>
+        <tr><td class="m">[200, 5]</td><td class="m">600 + 50</td><td class="r"><b>R650</b></td><td>Bigger weight: products matter <b>twice as much</b>.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="prose" style="color:var(--muted);font-size:.94rem">In real ML we don't pick the weights by hand. The model <b>learns</b> them from data. That's what Topics 4–6 are about. First, play with them yourself below.</p>
 
   <div class="lab">
     <div class="lab-head"><span class="lab-tag">🧪 Lab 3</span><h3>Prediction Machine</h3><p>Change the customer's features and the model's weights. The waterfall chart shows how each feature pushes the prediction up or down.</p></div>
@@ -652,7 +888,7 @@ print(X @ W)</code></pre><div class="out">Shape: (4, 3)
     <div class="challenges" data-chal="t3"></div>
   </div>
 
-  <details class="py"><summary>🐍 Python practical: a prediction with np.dot</summary>
+  <details class="py"><summary>🐍 Python practical: one customer, then many customers</summary>
     <div class="code has-out"><pre><code class="py-src">import numpy as np
 
 X = np.array([3, 10])     # customer features
@@ -660,10 +896,19 @@ W = np.array([100, 5])    # model weights
 b = 50                    # model bias
 
 prediction = np.dot(X, W) + b
-print("Predicted spending: R", prediction)</code></pre><div class="out">Predicted spending: R 400</div></div>
+print("Predicted spending: R", prediction)
+
+# Many customers at once: matrix @ vector
+X_all = np.array([[3, 10],
+                  [1, 2],
+                  [5, 18]])
+print(X_all @ W)        # one dot product per row
+print(X_all @ W + b)    # add the bias to every prediction</code></pre><div class="out">Predicted spending: R 400
+[350 110 590]
+[400 160 640]</div></div>
   </details>
 
-  <div class="callout remember"><b class="t">Remember</b>Prediction = (each feature × its weight), added up, plus the bias. Bigger weight = that feature matters more. Negative weight = that feature <i>lowers</i> the prediction.</div>
+  <div class="callout remember"><b class="t">Remember</b>Prediction = (each feature × its weight), added up, plus the bias. For many customers: <span class="m">X · w + b</span>, one dot product per row. Bigger weight = that feature matters more. Negative weight = that feature <i>lowers</i> the prediction.</div>
   <div class="qc" data-qc="t3"></div>
   <div class="pager" data-pager="t3"></div>
 </section>
@@ -851,22 +1096,80 @@ MAE: 50.0</div></div>
 
   <div class="callout idea"><b class="t">Big idea</b><b>Gradient descent</b> = walk downhill on the loss valley in small steps. Each step: check the slope, then move the weight the opposite way.</div>
 
-  <h2>The update rule</h2>
-  <div class="eq" style="font-size:1.35rem"><span><i>w</i><sub>new</sub> = <i>w</i><sub>old</sub> − <span class="hl2">α</span> · <span class="hl4"><span class="frac"><span>d<i>L</i></span><span>d<i>w</i></span></span></span></span></div>
-  <div class="two">
-    <div class="card" style="margin:0"><b><i>w</i><sub>old</sub></b>: the weight right now, e.g. 80.</div>
-    <div class="card" style="margin:0"><b class="hl2">α (alpha), the learning rate</b>: how big each step is, e.g. 0.1.</div>
-    <div class="card" style="margin:0"><b class="hl4">dL/dw, the gradient</b>: the slope of the loss, e.g. −300.</div>
-    <div class="card" style="margin:0"><b>The minus sign</b>: step <i>against</i> the slope, which means downhill.</div>
+  <h2>The formula sheet: everything in one place</h2>
+  <p class="prose">Gradient descent uses every idea from the previous topics. Here are all the formulas, in the order the model uses them, with the numbers from our store example (<span class="m">w = 80</span>, data x = [1, 2, 3, 4], y = [100, 200, 300, 400]).</p>
+  <div class="fsheet"><div class="fs"><div class="fs-top"><span class="fs-n">1</span><b>Model (prediction)</b><span class="fs-tag">Topic 3</span></div>
+  <div class="f"><i>ŷ</i> = <i>w</i> · <i>x</i> &nbsp;(+ <i>b</i>)</div><p>Turns features into a guess. Many customers: <span class="m">ŷ = X · w + b</span>.</p><div class="ex">Store example: <b>w = 80 → ŷ = [80, 160, 240, 320]</b></div></div><div class="fs"><div class="fs-top"><span class="fs-n">2</span><b>Error (residual)</b><span class="fs-tag">Topic 4</span></div>
+  <div class="f"><i>e</i> = <i>y</i> − <i>ŷ</i></div><p>How far off one prediction is. Positive means the guess was too low.</p><div class="ex">Store example: <b>e = [20, 40, 60, 80]</b></div></div><div class="fs"><div class="fs-top"><span class="fs-n">3</span><b>Loss function L(w)</b><span class="fs-tag">Topic 4</span></div>
+  <div class="f"><i>L</i>(<i>w</i>) = <span class="frac"><span>1</span><span><i>n</i></span></span> <span class="big-sum">Σ</span> (<i>y</i><sub>i</sub> − <i>w x</i><sub>i</sub>)²</div><p>The MSE written as a function of the weight. Plotting it gives the <b>loss valley</b>, and training searches for its bottom.</p><div class="ex">Store example: <b>L(80) = 3,000 · L(100) = 0</b></div></div><div class="fs"><div class="fs-top"><span class="fs-n">4</span><b>MSE (Mean Squared Error)</b><span class="fs-tag">Topic 4</span></div>
+  <div class="f">MSE = <span class="frac"><span>1</span><span><i>n</i></span></span> <span class="big-sum">Σ</span> (<i>y</i> − <i>ŷ</i>)²</div><p>Square, then average. Big mistakes count much more. Units are squared (R²).</p><div class="ex">Store example: <b>(400+1600+3600+6400) ÷ 4 = 3,000</b></div></div><div class="fs"><div class="fs-top"><span class="fs-n">5</span><b>RMSE (Root MSE)</b><span class="fs-tag">new</span></div>
+  <div class="f">RMSE = √MSE</div><p>Undo the squaring, so the result is back in <b>rand</b>. Read it as a "typical" error size.</p><div class="ex">Store example: <b>√3,000 ≈ R54.77</b></div></div><div class="fs"><div class="fs-top"><span class="fs-n">6</span><b>MAE (Mean Absolute Error)</b><span class="fs-tag">Topic 4</span></div>
+  <div class="f">MAE = <span class="frac"><span>1</span><span><i>n</i></span></span> <span class="big-sum">Σ</span> |<i>y</i> − <i>ŷ</i>|</div><p>Average size of the miss, ignoring the sign. Less sensitive to outliers.</p><div class="ex">Store example: <b>(20+40+60+80) ÷ 4 = R50</b></div></div><div class="fs"><div class="fs-top"><span class="fs-n">7</span><b>Gradient</b><span class="fs-tag">Topic 5</span></div>
+  <div class="f"><span class="frac"><span>d<i>L</i></span><span>d<i>w</i></span></span> = <span class="frac"><span>2</span><span><i>n</i></span></span> <span class="big-sum">Σ</span> <i>x</i><sub>i</sub>(<i>w x</i><sub>i</sub> − <i>y</i><sub>i</sub>)</div><p>The slope of the loss valley at the current weight. Its <b>sign</b> gives the direction and its <b>size</b> the steepness.</p><div class="ex">Store example: <b>−300 → increase w</b></div></div><div class="fs"><div class="fs-top"><span class="fs-n">8</span><b>Update rule (gradient descent)</b><span class="fs-tag">Topic 6</span></div>
+  <div class="f"><i>w</i><sub>new</sub> = <i>w</i><sub>old</sub> − α · <span class="frac"><span>d<i>L</i></span><span>d<i>w</i></span></span></div><p>Step against the slope. α (the learning rate) sets the step size.</p><div class="ex">Store example: <b>80 − 0.1 × (−300) = 110</b></div></div></div>
+
+  <h2>The gradient descent equation</h2>
+  <p class="prose">This is one of the most important equations in machine learning:</p>
+  <div class="eq" style="font-size:1.4rem"><span><i>w</i><sub>new</sub> = <span class="hl1"><i>w</i><sub>old</sub></span> − <span class="hl2">α</span> · <span class="hl4"><span class="frac"><span>d<i>L</i></span><span>d<i>w</i></span></span></span></span></div>
+  <div class="parts3">
+    <div class="card" style="margin:0"><span class="eyebrow" style="color:var(--c1)">A · Current weight</span><div class="big hl1">w = 80</div><p>The weight the model is using <b>right now</b>. It's our starting guess: R80 per product.</p></div>
+    <div class="card" style="margin:0"><span class="eyebrow" style="color:var(--c2)">B · Learning rate</span><div class="big hl2">α = 0.1</div><p>Controls <b>how big a step</b> the model takes. Small α = small, careful steps. Large α = big, risky steps.</p></div>
+    <div class="card" style="margin:0"><span class="eyebrow" style="color:var(--c4)">C · Gradient</span><div class="big hl4">dL/dw = −300</div><p>The <b>direction and rate</b> of change of the loss. The minus sign in the equation makes us step <b>downhill</b>.</p></div>
   </div>
 
-  <h2>One step, worked out</h2>
-  <div class="eq"><span><i>w</i><sub>new</sub> = 80 − 0.1 × (−300) = 80 + 30 = <b class="hl3">110</b></span></div>
-  <div class="card tbl-wrap" style="max-width:520px">
-    <table class="t"><thead><tr><th>Measurement</th><th class="r">Before</th><th class="r">After</th></tr></thead>
-    <tbody><tr><td>Weight</td><td class="r">80</td><td class="r">110</td></tr><tr><td>MSE</td><td class="r">3,000</td><td class="r" style="color:var(--good);font-weight:700">750 ↓</td></tr></tbody></table>
+  <h2>Step-by-step: one full update</h2>
+  <div class="two">
+    <div>
+      <h3 style="margin-top:0">The setup</h3>
+      <table class="t" style="max-width:340px"><thead><tr><th class="r">Products x</th><th class="r">Actual y</th></tr></thead>
+        <tbody><tr><td class="r">1</td><td class="r">R100</td></tr><tr><td class="r">2</td><td class="r">R200</td></tr><tr><td class="r">3</td><td class="r">R300</td></tr><tr><td class="r">4</td><td class="r">R400</td></tr></tbody></table>
+      <div class="stats"><div class="stat"><small>Model</small><b class="m">ŷ = wx</b></div><div class="stat"><small>Start weight</small><b class="hl1">80</b></div><div class="stat"><small>Learning rate</small><b class="hl2">0.1</b></div><div class="stat"><small>Start MSE</small><b>3,000</b></div></div>
+    </div>
+    <div class="card" style="margin:0"><div class="chart-title">Before vs after one step</div><svg class="chart" id="gdBA"></svg>
+      <div class="legend"><span><i class="sw" style="background:var(--bad)"></i>w = 80 (before)</span><span><i class="sw" style="background:var(--c2)"></i>w = 110 (after)</span><span><i class="sw" style="background:var(--good)"></i>w = 100 (best)</span></div></div>
   </div>
-  <p class="prose">The loss dropped from 3,000 to 750. We overshot 100 a little, but we're much closer. The next steps will zig-zag in. Try it below.</p>
+
+  <ol class="gsteps">
+    <li><b>Find the gradient</b> using <span class="m"><span class="frac"><span>d<i>L</i></span><span>d<i>w</i></span></span> = <span class="frac"><span>2</span><span><i>n</i></span></span> Σ <i>x</i><sub>i</sub>(<i>w x</i><sub>i</sub> − <i>y</i><sub>i</sub>)</span> with all four customers:
+      <div class="eq eq-left">
+        <div>= <span class="frac"><span>2</span><span>4</span></span> [ 1(80 − 100) + 2(160 − 200) + 3(240 − 300) + 4(320 − 400) ]</div>
+        <div>= <span class="frac"><span>1</span><span>2</span></span> [ −20 − 80 − 180 − 320 ]</div>
+        <div>= <span class="frac"><span>1</span><span>2</span></span> × (−600) = <b class="hl4">−300</b></div>
+      </div>
+      The gradient is <b>negative</b>, so increasing w will lower the loss.</li>
+    <li><b>Apply the update rule:</b>
+      <div class="eq eq-left"><div><i>w</i><sub>new</sub> = 80 − 0.1 × (−300) = 80 + 30 = <b class="hl3">110</b></div></div>
+      Subtracting a negative number <b>adds</b>, so the weight goes up from 80 to 110.</li>
+    <li><b>Check the new loss:</b>
+      <table class="t" style="max-width:520px"><thead><tr><th class="r">Products</th><th class="r">Actual</th><th class="r">New prediction</th><th class="r">Error</th><th class="r">Error²</th></tr></thead>
+        <tbody><tr><td class="r">1</td><td class="r">100</td><td class="r">110</td><td class="r">−10</td><td class="r">100</td></tr><tr><td class="r">2</td><td class="r">200</td><td class="r">220</td><td class="r">−20</td><td class="r">400</td></tr><tr><td class="r">3</td><td class="r">300</td><td class="r">330</td><td class="r">−30</td><td class="r">900</td></tr><tr><td class="r">4</td><td class="r">400</td><td class="r">440</td><td class="r">−40</td><td class="r">1,600</td></tr></tbody></table>
+      <div class="eq eq-left"><div>MSE = <span class="frac"><span>(−10)² + (−20)² + (−30)² + (−40)²</span><span>4</span></span> = <span class="frac"><span>100 + 400 + 900 + 1600</span><span>4</span></span> = <b class="hl3">750</b></div></div></li>
+  </ol>
+
+  <div class="card tbl-wrap" style="max-width:620px">
+    <div class="chart-title">Look at the improvement</div>
+    <table class="t"><thead><tr><th>Measurement</th><th class="r">Before</th><th class="r">After 1 step</th></tr></thead>
+    <tbody>
+      <tr><td>Weight w</td><td class="r">80</td><td class="r"><b>110</b></td></tr>
+      <tr><td>MSE</td><td class="r">3,000</td><td class="r" style="color:var(--good);font-weight:700">750 ↓</td></tr>
+      <tr><td>RMSE</td><td class="r">R54.77</td><td class="r" style="color:var(--good);font-weight:700">R27.39 ↓</td></tr>
+      <tr><td>MAE</td><td class="r">R50</td><td class="r" style="color:var(--good);font-weight:700">R25 ↓</td></tr>
+    </tbody></table>
+  </div>
+  <p class="prose">The loss dropped from <b>3,000 to 750</b>, so the model improved. It overshot 100 a little (110), so it hasn't found the best weight yet, but it's moving in the right direction. Repeat the same steps and it closes in:</p>
+
+  <div class="card tbl-wrap" style="max-width:720px">
+    <div class="chart-title">Repeating the update (<span class="nt">α</span> = 0.1)</div>
+    <table class="t"><thead><tr><th>Iteration</th><th class="r">w (before)</th><th class="r">MSE</th><th class="r">Gradient</th><th class="r">w (after)</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td class="r">80</td><td class="r">3,000</td><td class="r">−300</td><td class="r"><b>110</b></td></tr>
+      <tr><td>2</td><td class="r">110</td><td class="r">750</td><td class="r">+150</td><td class="r"><b>95</b></td></tr>
+      <tr><td>3</td><td class="r">95</td><td class="r">187.5</td><td class="r">−75</td><td class="r"><b>102.5</b></td></tr>
+      <tr><td>4</td><td class="r">102.5</td><td class="r">46.88</td><td class="r">+37.5</td><td class="r"><b>98.75</b></td></tr>
+      <tr><td>5</td><td class="r">98.75</td><td class="r">11.72</td><td class="r">−18.75</td><td class="r"><b>100.63</b></td></tr>
+    </tbody></table>
+    <p style="margin:8px 0 0;font-size:.9rem;color:var(--muted)">Notice the <b>gradient's sign flips</b> each time (it overshoots, then corrects) while its size halves. That's why the weight zig-zags in on 100. Try it yourself in the simulator.</p>
+  </div>
 
   <div class="lab">
     <div class="lab-head"><span class="lab-tag">🧪 Lab 6</span><h3>Descent Simulator</h3><p>Pick a starting weight and a learning rate, then press <b>Play</b> or <b>Step</b>. Try the scenario buttons to see what goes wrong when the step size is off.</p></div>
@@ -902,13 +1205,50 @@ MAE: 50.0</div></div>
     <div class="challenges" data-chal="t6"></div>
   </div>
 
-  <h2>What can go wrong?</h2>
-  <div class="two">
-    <div class="callout warn" style="margin:0"><b class="t">Learning rate too small</b>Tiny steps. The model gets there eventually, but training takes far too long.</div>
-    <div class="callout warn" style="margin:0"><b class="t">Learning rate too large</b>Giant steps. The model jumps over the bottom, bounces around, and can even fly off (the loss explodes).</div>
+  <h2>What can go wrong? Picking the learning rate</h2>
+  <p class="prose">Imagine walking down a hill in the fog. You can only feel the slope under your feet (the gradient) and choose how big a step to take (the learning rate).</p>
+  <div class="mini3">
+    <div class="card" style="margin:0"><span class="eyebrow" style="color:var(--warn)">🐢 Too small (<span class="nt">α</span> = 0.01)</span><svg class="chart" id="gdMini0"></svg><p>Tiny steps. It gets there eventually, but <b>training takes far too long</b>.</p></div>
+    <div class="card" style="margin:0"><span class="eyebrow" style="color:var(--good)">✓ Just right (<span class="nt">α</span> = 0.05)</span><svg class="chart" id="gdMini1"></svg><p>Sensible steps that shrink as the slope flattens. Reaches the bottom <b>quickly and safely</b>.</p></div>
+    <div class="card" style="margin:0"><span class="eyebrow" style="color:var(--bad)">💥 Too large (<span class="nt">α</span> = 0.16)</span><svg class="chart" id="gdMini2"></svg><p>Giant steps <b>jump over the bottom</b>, each time further away. The model fails to converge.</p></div>
   </div>
 
-  <div class="callout remember"><b class="t">Remember</b>Gradient descent improves the model by nudging weights against the gradient. The learning rate sets the size of each nudge, and picking it well matters.</div>
+  <h2>Bringing it all together</h2>
+  <p class="prose">Every topic is one link in the same chain. Click a link to revisit it:</p>
+  <div class="chain">
+    <a href="#t1" class="link"><small>Topic 1 · Vector</small><span class="m">x = [3, 10]</span><em>one customer</em></a><span class="carr">→</span>
+    <a href="#t2" class="link"><small>Topic 2 · Matrix</small><span class="m">X (n × features)</span><em>all customers</em></a><span class="carr">→</span>
+    <a href="#t3" class="link"><small>Topic 3 · Dot product</small><span class="m">ŷ = X·w + b</span><em>predict</em></a><span class="carr">→</span>
+    <a href="#t4" class="link"><small>Topic 4 · Loss</small><span class="m">MSE, RMSE, MAE</span><em>how wrong?</em></a><span class="carr">→</span>
+    <a href="#t5" class="link"><small>Topic 5 · Gradient</small><span class="m">dL/dw</span><em>which way?</em></a><span class="carr">→</span>
+    <a href="#t6" class="link on"><small>Topic 6 · Update</small><span class="m">w ← w − α·dL/dw</span><em>improve</em></a><span class="carr">↺</span>
+    <a href="#t7" class="link"><small>Topic 7 · Repeat</small><span class="m">for i in range(n)</span><em>train</em></a>
+  </div>
+
+  <details class="py" open><summary>🐍 One gradient-descent step in Python (all the formulas)</summary>
+    <div class="code has-out"><pre><code class="py-src">import numpy as np
+
+X = np.array([1, 2, 3, 4])            # feature vector (products)
+y = np.array([100, 200, 300, 400])    # target (actual spend)
+w, lr = 80.0, 0.1                     # current weight, learning rate
+
+y_hat = w * X                                   # 1. predict
+mse = np.mean((y - y_hat) ** 2)                 # 2. loss (MSE)
+rmse = np.sqrt(mse)                             #    RMSE
+mae = np.mean(np.abs(y - y_hat))                #    MAE
+gradient = np.mean(2 * X * (y_hat - y))         # 3. gradient dL/dw
+w_new = w - lr * gradient                       # 4. update
+
+print("MSE:", mse, "RMSE:", round(rmse, 2), "MAE:", mae)
+print("Gradient:", gradient, "New weight:", w_new)
+
+new_mse = np.mean((y - w_new * X) ** 2)
+print("New MSE:", new_mse, "New RMSE:", round(np.sqrt(new_mse), 2))</code></pre><div class="out">MSE: 3000.0 RMSE: 54.77 MAE: 50.0
+Gradient: -300.0 New weight: 110.0
+New MSE: 750.0 New RMSE: 27.39</div></div>
+  </details>
+
+  <div class="callout remember"><b class="t">Remember</b>Gradient descent improves a model by adjusting its weights to reduce the loss: <b>predict → measure loss → find the gradient → step against it → repeat</b>. The learning rate sets the size of each step, and picking it well matters.</div>
   <div class="qc" data-qc="t6"></div>
   <div class="pager" data-pager="t6"></div>
 </section>
@@ -1012,7 +1352,7 @@ print("Predicted spending: R", (w * new_customer)[0])</code></pre></div>
     <div id="qSetup">
       <span class="eyebrow">🎮 Quiz arena</span>
       <h1>Test your ML maths</h1>
-      <p class="lead">Fresh questions every round, with new numbers each time. Build a streak for bonus points and read the worked answer after every question.</p>
+      <p class="lead">Fresh questions every round, with new numbers each time, including real Python/NumPy code to read and predict. Build a streak for bonus points and read the worked answer after every question.</p>
       <div class="card setup-grid">
         <div><div class="grp">Mode</div>
           <div class="modes" id="qMode">
@@ -1021,6 +1361,8 @@ print("Predicted spending: R", (w * new_customer)[0])</code></pre></div>
           </div></div>
         <div><div class="grp">Difficulty</div>
           <div class="presets" id="qDiff"><button class="chip sel" data-v="0">Easy</button><button class="chip" data-v="1">Medium</button><button class="chip" data-v="2">Hard</button></div></div>
+        <div><div class="grp">Question style</div>
+          <div class="presets" id="qStyle"><button class="chip sel" data-v="mixed">Mixed</button><button class="chip" data-v="math">📐 Maths only</button><button class="chip" data-v="py">🐍 Python code only</button></div></div>
         <div><div class="grp">Number of questions</div>
           <div class="presets" id="qCount"><button class="chip" data-v="5">5</button><button class="chip sel" data-v="10">10</button><button class="chip" data-v="15">15</button><button class="chip" data-v="20">20</button></div></div>
         <div><div class="grp">Topics</div>
@@ -1042,7 +1384,7 @@ print("Predicted spending: R", (w * new_customer)[0])</code></pre></div>
         <div class="timer hidden" id="qTimer"><i id="qTimerFill"></i></div>
       </div>
       <div class="card" id="qCard">
-        <span class="qtag" id="qTag"></span>
+        <span class="qtag" id="qTag"></span><span class="pybadge hidden" id="qPy">🐍 Python</span>
         <div class="qtext" id="qText"></div>
         <div class="opts" id="qOpts"></div>
         <div id="qFb"></div>
@@ -1272,6 +1614,17 @@ function drawHero(){
   [1,2,3,4,5].forEach(x=>el('circle',{cx:P.X(x),cy:P.Y(100*x),r:7,style:`fill:${css('c1')};stroke:${css('surface')};stroke-width:2`},P.top));
   el('circle',{cx:P.X(6),cy:P.Y(600),r:16,style:`fill:none;stroke:${css('c2')};stroke-width:2.5;stroke-dasharray:4 3`},P.top);
   text(P.top,P.X(6),P.Y(600)+5,'?',`fill:${css('c2')};font-size:16px`);
+  // rise / run triangle between (2,200) and (3,300)
+  line(P.top,P.X(2),P.Y(200),P.X(3),P.Y(200),`stroke:${css('c3')};stroke-width:2`);
+  line(P.top,P.X(3),P.Y(200),P.X(3),P.Y(300),`stroke:${css('c4')};stroke-width:2`);
+  text(P.top,(P.X(2)+P.X(3))/2,P.Y(200)+15,'x₂ − x₁ = 1',`fill:${css('c3')};font-size:10px`);
+  text(P.top,P.X(3)+6,(P.Y(200)+P.Y(300))/2+4,'y₂ − y₁ = 100',`fill:${css('c4')};font-size:10px`,'start');
+  // intercept
+  el('circle',{cx:P.X(0),cy:P.Y(0),r:5,style:`fill:${css('accent')}`},P.top);
+  text(P.top,P.X(0)+8,P.Y(0)-8,'c = 0',`fill:${css('accent')};font-size:11px`,'start');
+  // equation on the line
+  text(P.top,P.X(1.1),P.Y(560),'y = mx + c',`fill:${css('accent')};font-size:16px;font-family:Cambria Math,STIX Two Math,Georgia,serif;font-style:italic`,'start');
+  text(P.top,P.X(1.1),P.Y(490),'y = 100x',`fill:${css('muted')};font-size:12px`,'start');
 }
 function drawCycle(svg,active){
   const steps=['Input data','Predict','Loss','Gradient','Update weights','Repeat'];
@@ -1285,6 +1638,17 @@ function drawCycle(svg,active){
     el('rect',{x:p[0]-68,y:p[1]-19,width:136,height:38,rx:19,style:`fill:${on?css(cols[i]):css('surface')};stroke:${css(cols[i])};stroke-width:2`},g);
     text(g,p[0],p[1]+5,`${i+1}. ${steps[i]}`,`fill:${on?'#fff':css('ink')};font-size:12.5px`);});
   text(svg,cx,cy-4,'Training','fill:var(--muted);font-size:13px');text(svg,cx,cy+14,'loop','fill:var(--muted);font-size:13px');
+}
+
+/* ---------- Overview: list → DataFrame ladder ---------- */
+function initLadder(){
+  let cur=0;const n=5;
+  const show=i=>{cur=Math.max(0,Math.min(n-1,i));$$('#ladder .stage').forEach(b=>b.classList.toggle('sel',+b.dataset.s===cur));$$('#ladderPanel .lp').forEach(d=>d.classList.toggle('hidden',+d.dataset.s!==cur));
+    $('#ldPrev').disabled=cur===0;$('#ldNext').textContent=cur===n-1?'Start Topic 1 →':'Next step →';};
+  $$('#ladder .stage').forEach(b=>b.onclick=()=>show(+b.dataset.s));
+  $('#ldPrev').onclick=()=>show(cur-1);
+  $('#ldNext').onclick=()=>{if(cur===n-1){location.hash='#t1';return;}show(cur+1);};
+  show(0);
 }
 
 /* ================================================================
@@ -1331,6 +1695,31 @@ function initVec(){
   bind(['va1','va2','vb1','vb2'],vecUpdate);['vsum','vmag'].forEach(id=>$('#'+id).addEventListener('change',vecUpdate));
   $$('[data-vp]').forEach(b=>b.onclick=()=>{const v=b.dataset.vp.split(',').map(Number);['va1','va2','vb1','vb2'].forEach((id,i)=>setVal(id,v[i]));vecUpdate();});
   vecUpdate();
+}
+
+/* ---------- Topic 1: vectors from a table (DataFrame view) ---------- */
+const DF={cols:['products','distance_km','rating','age','visits'],rows:[[2,5,4,32,3],[3,10,5,45,7],[1,2,3,23,1],[5,18,4,51,12],[4,7,2,38,5]]};
+const df={mode:'row',i:0};
+function dfRender(){
+  const {cols,rows}=DF,isRow=df.mode==='row';
+  $('#dfTable').innerHTML=`<thead><tr><th class="idx">index</th>${cols.map((c,j)=>`<th class="r mono ${!isRow&&j===df.i?'hcol':''}" data-col="${j}" style="text-transform:none">${c}</th>`).join('')}</tr></thead><tbody>`+
+    rows.map((r,i)=>`<tr data-row="${i}" class="${isRow&&i===df.i?'hrow':''}"><td class="idx">${i}</td>${r.map((v,j)=>`<td class="r ${!isRow&&j===df.i?'hcol':''}">${v}</td>`).join('')}</tr>`).join('')+'</tbody>';
+  $$('#dfTable tbody tr').forEach(tr=>tr.onclick=()=>{if(df.mode!=='row')return;df.i=+tr.dataset.row;dfRender();});
+  $$('#dfTable th[data-col]').forEach(th=>th.onclick=()=>{if(df.mode!=='col')return;df.i=+th.dataset.col;dfRender();});
+  $$('#dfTable tbody td').forEach(td=>td.addEventListener('click',()=>{if(df.mode!=='col')return;const j=td.cellIndex-1;if(j>=0){df.i=j;dfRender();}}));
+  const v=isRow?rows[df.i]:rows.map(r=>r[df.i]);
+  const lbl=isRow?cols:rows.map((_,i)=>'row '+i);
+  $('#dfVec').innerHTML=`<span class="vlab" style="color:var(--${isRow?'c1':'c2'})">${isRow?'Row '+df.i:'Column "'+cols[df.i]+'"'} →</span><span class="vchips ${isRow?'':'col'}">${v.map((x,k)=>`<span class="vchip"><i>[${k}]</i><b>${x}</b><small>${lbl[k]}</small></span>`).join('')}</span>`;
+  $('#dfCode').innerHTML=hlPy(isRow?`# Row ${df.i} as a vector (one customer)\nx = df.iloc[${df.i}].to_numpy()\nprint(x, x.shape)`:`# Column "${cols[df.i]}" as a vector (one feature)\nc = df["${cols[df.i]}"].to_numpy()\nprint(c, c.shape)`);
+  $('#dfOut').textContent=`[${v.join(' ')}] (5,)`;
+  $('#dfHint').textContent=isRow?'Click any row to pull it out of the table as a vector.':'Click any column heading (or cell) to pull out that column.';
+  $('#dfInfo').innerHTML=isRow?
+    `<b class="t">Row ${df.i} = customer ${df.i}'s feature vector</b>It has <b>5 numbers because the table has 5 fields</b>. Position [0] is always <span class="mono">products</span>, position [1] is always <span class="mono">distance_km</span>, and so on. So <span class="m">[${v.join(', ')}]</span> means: ${v[0]} products, ${v[1]} km away, rating ${v[2]}, aged ${v[3]}, ${v[4]} visits. This row is what the model receives to make <b>one prediction</b> for <b>one customer</b>.`:
+    `<b class="t">A column is also a vector, but a different kind</b>This one holds <b>one feature</b> (<span class="mono">${cols[df.i]}</span>) for <b>all 5 customers</b>. It's useful for stats like the average ${cols[df.i]}. When we feed a model, though, we usually give it <b>row vectors</b>: one row = one observation.`;
+}
+function initDfVec(){
+  $$('#dfMode .chip').forEach(c=>c.onclick=()=>{df.mode=c.dataset.m;df.i=0;$$('#dfMode .chip').forEach(x=>x.classList.toggle('sel',x===c));dfRender();});
+  dfRender();
 }
 
 /* ================================================================
@@ -1587,7 +1976,7 @@ function gdDraw(){
   $('#gdInterp').className=cls;$('#gdInterp').innerHTML=`<b class="t">${t}</b>${msg}`;
   // table
   const startI=Math.max(0,path.length-6);
-  $('#gdTable').innerHTML=`<thead><tr><th>Iter</th><th class="r">w (before)</th><th class="r">Gradient</th><th class="r">α × gradient</th><th class="r">w (after)</th><th class="r">Loss after</th></tr></thead><tbody>`+
+  $('#gdTable').innerHTML=`<thead><tr><th>Iter</th><th class="r">w (before)</th><th class="r">Gradient</th><th class="r"><span class="nt">α</span> × gradient</th><th class="r">w (after)</th><th class="r">Loss after</th></tr></thead><tbody>`+
     path.slice(1).map((w,k)=>{const i=k+1,wb=path[i-1],g=gGrad(wb);return i>startI?`<tr><td>${i}</td><td class="r">${fmt(wb,3)}</td><td class="r">${fmt(g,2)}</td><td class="r">${fmt(a*g,3)}</td><td class="r"><b>${fmt(w,3)}</b></td><td class="r">${comma(gLoss(w))}</td></tr>`:'';}).join('')+
     (path.length===1?'<tr><td colspan="6" style="color:var(--muted)">Press Step or Play to start training.</td></tr>':'')+'</tbody>';
   // challenges
@@ -1604,6 +1993,32 @@ function initGD(){
   $('#gdPlay').onclick=()=>{if(gd.timer){gdStop();return;}$('#gdPlay').textContent='⏸ Pause';const ms=650-val('gds')*58;gd.timer=setInterval(()=>{if(!gdStepOnce())gdStop();},ms);};
   $$('[data-gdp]').forEach(b=>b.onclick=()=>{const v=b.dataset.gdp.split(',').map(Number);setVal('gdw',v[0]);setVal('gda',v[1]);gdReset();});
   gdReset();
+}
+
+/* ---------- Topic 6 static visuals ---------- */
+function drawT6(){
+  // before / after chart
+  const P=plot($('#gdBA'),{w:420,h:260,x:[0,5],y:[0,500],xt:[0,1,2,3,4,5],yt:[0,100,200,300,400,500],xl:'Products x',yl:'Spend (R)',pad:{l:50}});
+  [[80,'bad','6 4'],[110,'c2',''],[100,'good','2 4']].forEach(([w,c,d])=>{
+    line(P.g,P.X(0),P.Y(0),P.X(5),P.Y(5*w),`stroke:${css(c)};stroke-width:${w===100?2:2.5};stroke-dasharray:${d}`);
+});
+  [1,2,3,4].forEach(x=>{
+    line(P.g,P.X(x)-4,P.Y(80*x),P.X(x)-4,P.Y(100*x),`stroke:${css('bad')};stroke-width:2;opacity:.6`);
+    line(P.g,P.X(x)+4,P.Y(110*x),P.X(x)+4,P.Y(100*x),`stroke:${css('c2')};stroke-width:2;opacity:.6`);
+    el('circle',{cx:P.X(x),cy:P.Y(100*x),r:5.5,style:`fill:${css('c1')};stroke:${css('surface')};stroke-width:2`},P.top);});
+  // three learning-rate sketches
+  [[0.01,40,8],[0.05,40,5],[0.16,92,6]].forEach(([a,w0,n],k)=>{
+    const path=[w0];for(let i=0;i<n;i++){const w=path[path.length-1];path.push(w-a*gGrad(w));}
+    const half=Math.max(...path.map(w=>Math.abs(w-100)))*1.12,lo=100-half,hi=100+half,ymax=gLoss(hi);
+    const M=plot($('#gdMini'+k),{w:300,h:180,x:[lo,hi],y:[0,ymax*1.05],xt:[],yt:[],xl:'weight',yl:'loss',pad:{l:26,b:24,t:8,r:8},noZero:true});
+    const pts=[];for(let i=0;i<=80;i++){const x=lo+(hi-lo)*i/80;pts.push([M.X(x),M.Y(gLoss(x))]);}
+    el('path',{d:pathFrom(pts),style:`fill:none;stroke:${css('c4')};stroke-width:2.2`},M.g);
+    el('circle',{cx:M.X(100),cy:M.Y(0),r:4,style:`fill:${css('good')}`},M.top);
+    const col=css(k===0?'warn':k===1?'good':'bad');
+    for(let i=0;i<path.length-1;i++)arrow(M.top,M.X(path[i]),M.Y(gLoss(path[i])),M.X(path[i+1]),M.Y(gLoss(path[i+1])),col,1.8);
+    path.forEach((w,i)=>el('circle',{cx:M.X(w),cy:M.Y(gLoss(w)),r:i===0?5:3,style:`fill:${i===0?css('c1'):col}`},M.top));
+    text(M.top,M.X(path[0])+(k===2?0:12),M.Y(gLoss(path[0]))+(k===2?16:-4),'start',`fill:${css('c1')};font-size:10px`,k===2?'middle':'start');
+  });
 }
 
 /* ================================================================
@@ -1686,18 +2101,26 @@ function initLoop(){
 ================================================================ */
 const QC={
   t1:[{q:'A customer has 2 products, a 5 km delivery distance and a rating of 4. Which vector represents them (products, distance, rating)?',o:['[2, 5, 4]','[5, 2, 4]','[11]','[2 × 5 × 4]'],a:0,e:'List each feature in the agreed order: products, distance, rating → [2, 5, 4].'},
+      {q:'A DataFrame <span class="mono">df</span> has one row per customer. Which code gives you the feature vector for the <b>first customer</b>?',o:['df["products"]','df.iloc[0]','df.shape','df.iloc[:, 0]'],a:1,e:'<span class="mono">df.iloc[0]</span> takes row 0, which is one customer and therefore one vector. <span class="mono">df["products"]</span> and <span class="mono">df.iloc[:, 0]</span> take a <i>column</i> (one feature for everyone).'},
+      {q:'What does this code print?'+pyBlock('import numpy as np\n\nv = np.array([3, 10, 5])\nprint(v.shape)'),o:[C('(3,)'),C('(1, 3)'),C('3'),C('(3, 3)')],a:0,e:'A vector of 3 numbers has shape <code>(3,)</code>: one dimension, 3 elements.'},
       {q:'What is the magnitude of the vector [6, 8]?',o:['14','10','100','48'],a:1,e:'√(6² + 8²) = √(36 + 64) = √100 = 10.'}],
   t2:[{q:'A matrix has 3 customers (rows) and 2 features (columns). What is its shape?',o:['(2, 3)','(3, 2)','(6, 1)','(3, 3)'],a:1,e:'Shape is (rows, columns) → (3, 2).'},
+      {q:'What does this code print?'+pyBlock('import numpy as np\n\nX = np.array([[1, 5], [2, 10], [3, 15]])\nprint(X.shape)'),o:[C('(2, 3)'),C('(3, 2)'),C('(6,)'),C('3')],a:1,e:'3 inner lists = 3 rows, each with 2 numbers = 2 columns → <code>(3, 2)</code>.'},
       {q:'Can a (2 × 3) matrix be multiplied by a (2 × 3) matrix?',o:['Yes, they have the same shape','No, the inside numbers (3 and 2) don\'t match','Yes, the answer is (2 × 3)','Only if all numbers are positive'],a:1,e:'For A·B the columns of A (3) must equal the rows of B (2). They don\'t.'}],
   t3:[{q:'X = [2, 5] and W = [100, 10], bias = 0. What is the prediction?',o:['R117','R250','R1,000','R700'],a:1,e:'(2 × 100) + (5 × 10) = 200 + 50 = 250.'},
+      {q:'What does this code print?'+pyBlock('import numpy as np\n\nX = np.array([3, 10])\nW = np.array([100, 5])\nprint(np.dot(X, W) + 50)'),o:[C('350'),C('400'),C('[300  50]'),C('[350 100]')],a:1,e:'np.dot: 3×100 + 10×5 = 350. Plus the bias 50 → 400.'},
       {q:'What does the bias do?',o:['It multiplies every feature','It adds a fixed amount so predictions don\'t have to pass through zero','It removes outliers','It sets the learning rate'],a:1,e:'The bias is a constant added to every prediction, like a base fee.'}],
   t4:[{q:'Errors are 10, 20 and 30. What is the MSE?',o:['20','466.67','1,400','60'],a:1,e:'(100 + 400 + 900) ÷ 3 = 1,400 ÷ 3 ≈ 466.67.'},
+      {q:'What does this code print?'+pyBlock('import numpy as np\n\nerrors = np.array([20, 40, 60, 80])\nprint(np.mean(np.abs(errors)))'),o:[C('50.0'),C('3000.0'),C('200'),C('[20 40 60 80]')],a:0,e:'Absolute errors averaged: (20 + 40 + 60 + 80) ÷ 4 = 50.0. That is the MAE.'},
       {q:'Model A has MSE 466.67 and Model B has MSE 50. Which is better?',o:['Model A, since a bigger number means more learning','Model B, since lower loss means smaller errors','They are equal','You can\'t compare them'],a:1,e:'Lower loss = predictions closer to the actual values.'}],
   t5:[{q:'What is the slope between (1, 3) and (3, 7)?',o:['2','4','0.5','10'],a:0,e:'(7 − 3) ÷ (3 − 1) = 4 ÷ 2 = 2.'},
+      {q:'With <code>X = [1, 2, 3, 4]</code> and <code>y = [100, 200, 300, 400]</code>, what does this print, and what does it mean?'+pyBlock('w = 100\ngradient = np.mean(2 * X * (w * X - y))\nprint(gradient)'),o:[C('0.0')+' → at the minimum, stop',C('-300.0')+' → increase w',C('300.0')+' → decrease w',C('100.0')+' → keep going'],a:0,e:'At w = 100 every prediction is exact, so (w·X − y) is all zeros and the gradient is 0.0: flat ground, the best weight.'},
       {q:'The gradient of the loss is positive. What should happen to the weight?',o:['Increase it','Decrease it','Set it to zero','Nothing'],a:1,e:'Positive gradient = loss rises as w rises, so move w down.'}],
   t6:[{q:'Current weight = 50, learning rate = 0.1, gradient = −20. What is the new weight?',o:['48','52','70','30'],a:1,e:'w = 50 − 0.1 × (−20) = 50 + 2 = 52. Subtracting a negative increases the weight.'},
+      {q:'What does this code print?'+pyBlock('w = 50\nlearning_rate = 0.1\ngradient = -20\nw = w - learning_rate * gradient\nprint(w)'),o:[C('48.0'),C('52.0'),C('70.0'),C('30.0')],a:1,e:'50 − 0.1 × (−20) = 50 + 2 = 52.0 (a float, because 0.1 is a float).'},
       {q:'During training the loss bounces up and down and keeps getting bigger. What is the most likely cause?',o:['Learning rate too small','Learning rate too large','Too few features','The bias is zero'],a:1,e:'Giant steps overshoot the minimum more each time, so the loss diverges.'}],
   t7:[{q:'What is the correct order of one training iteration?',o:['Update → Predict → Gradient → Loss','Predict → Loss → Gradient → Update','Loss → Predict → Update → Gradient','Gradient → Update → Loss → Predict'],a:1,e:'Predict, measure the loss, compute the gradient, then update the weight.'},
+      {q:'How many lines does this print?'+pyBlock('for i in range(20):\n    if i % 5 == 0:\n        print(f"Iteration: {i}")'),o:['20','4','5','1'],a:1,e:'It prints when i = 0, 5, 10 and 15, so 4 lines. That matches the notebook output.'},
       {q:'After training, w ≈ 100. What does the model predict for 6 products?',o:['R106','R600','R16.67','R60'],a:1,e:'ŷ = w × x = 100 × 6 = R600.'}]
 };
 function renderQC(){
@@ -1742,8 +2165,11 @@ const GEN={
  t1:[
   d=>{const p=ri(1,6),km=ri(7,30);let r;do{r=ri(1,5);}while(r===p);return Q('t1',`A customer orders <b>${p} products</b>, lives <b>${km} km</b> away and gave a rating of <b>${r}</b>. Using the order [products, distance, rating], what is their feature vector?`,
     `[${p}, ${km}, ${r}]`,[`[${km}, ${p}, ${r}]`,`[${r}, ${km}, ${p}]`,`[${p+km+r}]`,`[${p}, ${r}, ${km}]`,`[${km}, ${r}, ${p}]`],`Each position holds one feature in the agreed order: products = ${p}, distance = ${km}, rating = ${r}.`);},
+  d=>{const cols=['products','distance_km','rating'],rows=Array.from({length:4},()=>[ri(1,6),ri(7,25),ri(1,5)]),i=ri(0,3);
+    const tbl=`<table class="t" style="max-width:420px;margin:8px 0 0"><tr><th>index</th>${cols.map(c=>`<th class="mono" style="text-transform:none">${c}</th>`).join('')}</tr>${rows.map((r,k)=>`<tr><td>${k}</td>${r.map(v=>`<td>${v}</td>`).join('')}</tr>`).join('')}</table>`;
+    return Q('t1',`Which vector is <b>row ${i}</b> of this table?${tbl}`,vstr(rows[i]),[vstr(rows.map(r=>r[0])),vstr(rows[(i+1)%4]),vstr(rows[i].slice().reverse()),vstr(rows.map(r=>r[1])),vstr(rows[(i+2)%4]),vstr(rows[(i+3)%4])],`A row is one observation: read across row ${i} → ${vstr(rows[i])}. Reading <i>down</i> a column would give one feature for every customer instead.`);},
   d=>{const n=d===2?3:2,lo=d===0?1:-9,hi=d===0?9:20;const A=Array.from({length:n},()=>ri(lo,hi)),B=Array.from({length:n},()=>ri(lo,hi));const S=A.map((v,i)=>v+B[i]);
-    return Q('t1',`What is <span class="m">${vstr(A)} + ${vstr(B)}</span>?`,vstr(S),[vstr(A.map((v,i)=>v*B[i])),vstr(A.map((v,i)=>v-B[i])),n===2?vstr([A[0]+A[1],B[0]+B[1]]):vstr([S[0]+S[1]+S[2]]),vstr(S.map(v=>v+1))],`Add position by position: ${A.map((v,i)=>`${fmt(v)} + ${fmt(B[i])} = ${fmt(S[i])}`).join(', ')}.`);},
+    return Q('t1',`What is <span class="m">${vstr(A)} + ${vstr(B)}</span>?`,vstr(S),[vstr(A.map((v,i)=>v*B[i])),vstr(A.map((v,i)=>v-B[i])),n===2?vstr([A[0]+A[1],B[0]+B[1]]):vstr([S[0]+S[1]+S[2]]),vstr(S.map(v=>v+1)),vstr(S.map(v=>v-1)),vstr(S.map(v=>v*2))],`Add position by position: ${A.map((v,i)=>`${fmt(v)} + ${fmt(B[i])} = ${fmt(S[i])}`).join(', ')}.`);},
   d=>{const T=[[[3,4,5],[6,8,10]],[[5,12,13],[9,12,15],[8,6,10]],[[8,15,17],[7,24,25],[12,16,20],[20,21,29]]][d];let [a,b,c]=pick(T);if(d===2&&Math.random()<.5)a=-a;
     return Q('t1',`What is the magnitude (length) of the vector <span class="m">[${fmt(a)}, ${fmt(b)}]</span>?`,fmt(c),[fmt(Math.abs(a)+b),fmt(a*a+b*b),fmt(Math.abs(Math.abs(a)-b)),fmt(c+1)],`|v| = √(${fmt(a)}² + ${b}²) = √(${a*a} + ${b*b}) = √${a*a+b*b} = ${c}.`);},
   d=>pick([
@@ -1825,16 +2251,146 @@ const GEN={
  ]
 };
 
+
+/* ================================================================
+   QUIZ — Python-code questions
+================================================================ */
+function escH(x){return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function C(x){return `<code class="oc">${escH(x)}</code>`;}
+function pyBlock(src){return `<div class="code"><pre><code>${hlPy(src)}</code></pre></div>`;}
+function npArr(a,isFloat){const ss=a.map(v=>isFloat?(Number.isInteger(v)?v+'.':String(v)):String(v));const w=Math.max(...ss.map(x=>x.length));return '['+ss.map(x=>x.padStart(w)).join(' ')+']';}
+function pyF(v){return Number.isInteger(v)?v.toFixed(1):String(v);}
+const r2=v=>Math.round(v*100)/100;
+function pool(t){return quiz.style==='py'?PYGEN[t]:quiz.style==='math'?GEN[t]:GEN[t].concat(PYGEN[t]);}
+/* PQ = "what does this code print?"; CQ = "which code is correct?" */
+function PQ(topic,intro,src,out,ds,explain,extra){const q=Q(topic,intro+pyBlock(src),C(out),ds.map(C),explain,(extra||[]).map(C));q.py=true;q.src=src;q.out=out;return q;}
+function CQ(topic,intro,correct,ds,explain){const q=Q(topic,intro,C(correct),ds.map(C),explain);q.py=true;return q;}
+const NP='import numpy as np\n\n';
+const pl=k=>k===1?'1 line':k+' lines';
+const PD='import pandas as pd\n\n';
+function tinyDF(n){return Array.from({length:n},()=>[ri(1,6),ri(7,25),ri(1,5)]);}
+function dfSrc(rows,tail){return PD+`df = pd.DataFrame({\n    "products": [${rows.map(r=>r[0]).join(', ')}],\n    "distance_km": [${rows.map(r=>r[1]).join(', ')}],\n    "rating": [${rows.map(r=>r[2]).join(', ')}]\n})\n`+tail;}
+
+const PYGEN={
+ t1:[
+  d=>{const n=ri(2,6),v=Array.from({length:n},()=>ri(1,30));
+    return PQ('t1','What does this code print?',NP+`v = np.array([${v.join(', ')}])\nprint(v.shape)`,`(${n},)`,[`(1, ${n})`,`(${n}, 1)`,`${n}`,`(${n}, ${n})`],
+      `A 1-D NumPy vector holding ${n} numbers has shape <code>(${n},)</code>. The comma is there because a shape is always a tuple, even with one dimension.`);},
+  d=>{const a=[ri(1,9),ri(1,9)],b=[ri(1,9),ri(10,19)],S=[a[0]+b[0],a[1]+b[1]],list=Math.random()<.5;
+    const cat=`[${a[0]}, ${a[1]}, ${b[0]}, ${b[1]}]`,sum=npArr(S);
+    return PQ('t1','What does this code print?',list?`a = [${a.join(', ')}]\nb = [${b.join(', ')}]\nprint(a + b)`:NP+`a = np.array([${a.join(', ')}])\nb = np.array([${b.join(', ')}])\nprint(a + b)`,
+      list?cat:sum,[list?sum:cat,npArr([a[0]*b[0],a[1]*b[1]]),npArr([S[0]+S[1]]),`[${S.join(', ')}]`],
+      list?'These are plain Python <b>lists</b>, and <code>+</code> on lists <b>joins</b> them end to end. To add vectors position by position, use NumPy arrays.':'These are NumPy <b>arrays</b>, so <code>+</code> adds position by position, which is vector addition. (Plain lists would be joined end to end instead.)');},
+  d=>{const [a,b,c]=pick([[3,4,5],[6,8,10],[5,12,13],[8,15,17],[9,12,15]]);
+    return PQ('t1','What does this code print?',NP+`v = np.array([${a}, ${b}])\nprint(np.linalg.norm(v))`,`${c}.0`,[`${a+b}.0`,`${a*a+b*b}.0`,`${(a+b)/2}`,`${c*c}.0`],
+      `<code>np.linalg.norm</code> gives the vector's length (magnitude): √(${a}² + ${b}²) = √${a*a+b*b} = ${c}. NumPy returns it as a float, ${c}.0.`);},
+  d=>{const i=ri(0,4);
+    return CQ('t1',`<code>df</code> has one row per customer. Which code extracts the customer at index <b>${i}</b> as a feature vector?`,`df.iloc[${i}].to_numpy()`,[`df.iloc[:, ${i}].to_numpy()`,`df.iloc[${i}:].to_numpy()`,`df.columns[${i}]`],
+      `<code>df.iloc[${i}]</code> selects <b>row</b> ${i}, one customer. <code>df.iloc[:, ${i}]</code> selects a <b>column</b> (one feature for everyone), and <code>df.iloc[${i}:]</code> takes every row from ${i} onwards, which is a table, not a vector.`);},
+  d=>{const rows=tinyDF(3),i=ri(0,2),col=rows.map(r=>r[0]);
+    return PQ('t1','What does this code print?',dfSrc(rows,`print(df.iloc[${i}].to_numpy())`),npArr(rows[i]),[npArr(col),npArr(rows[(i+1)%3]),npArr(rows[i].slice().reverse()),npArr(rows[(i+2)%3])],
+      `<code>iloc[${i}]</code> reads <b>across</b> row ${i}: products, distance_km, rating → ${npArr(rows[i])}. That row is customer ${i}'s feature vector.`);}
+ ],
+ t2:[
+  d=>{const r=ri(2,4),c=ri(2,4),M=Array.from({length:r},()=>Array.from({length:c},()=>ri(1,20)));
+    return PQ('t2','What does this code print?',NP+`X = np.array([\n${M.map(row=>'    ['+row.join(', ')+']').join(',\n')}\n])\nprint(X.shape)`,`(${r}, ${c})`,[`(${c}, ${r})`,`(${r*c},)`,`${r}`,`(${r}, ${c+1})`,`(${r+1}, ${c})`],
+      `${r} inner lists = ${r} rows, each with ${c} numbers = ${c} columns. Shape is (rows, columns) = (${r}, ${c}).`);},
+  d=>{const r=ri(3,6),k=ri(2,4);let k2=k;if(Math.random()<.4){do{k2=ri(2,4);}while(k2===k);}const ok=k===k2;
+    return PQ('t2','What does this code print?',NP+`X = np.ones((${r}, ${k}))   # ${r} customers, ${k} features\nW = np.ones(${k2})        # ${k2} weights\nprint((X @ W).shape)`,ok?`(${r},)`:'ValueError',[`(${k},)`,`(${r}, ${k})`,ok?'ValueError':`(${r},)`,`(${r}, 1)`,`(${k2},)`],
+      ok?`Inside sizes match (${k} features, ${k} weights), so <code>X @ W</code> gives <b>one prediction per customer</b>: ${r} numbers, shape (${r},).`:`X has ${k} columns but W has ${k2} weights. The inside sizes don't match, so NumPy raises a <b>ValueError</b>.`);},
+  d=>{const r=ri(2,4);let c;do{c=ri(2,4);}while(c===r);const op=pick(['+','@']);
+    return PQ('t2','What does this code print?',NP+`A = np.ones((${r}, ${c}))\nB = np.ones((${r}, ${c}))\nprint((A ${op} B).shape)`,op==='+'?`(${r}, ${c})`:'ValueError',[op==='+'?'ValueError':`(${r}, ${c})`,`(${r}, ${r})`,`(${c}, ${c})`,`(${c}, ${r})`],
+      op==='+'?`Addition only needs the <b>same shape</b>. Both are (${r}, ${c}), so the result is (${r}, ${c}).`:`<code>@</code> is matrix multiplication: A's columns (${c}) must equal B's rows (${r}). They don't, so NumPy raises a <b>ValueError</b>.`);},
+  d=>{const n=ri(3,5),rows=tinyDF(n),k=pick(['len(df)','df.shape[0]','df.shape[1]','df.shape']);const ans=k==='df.shape[1]'?'3':k==='df.shape'?`(${n}, 3)`:`${n}`;
+    return PQ('t2','What does this code print?',dfSrc(rows,`print(${k})`),ans,[`${n}`,'3',`(${n}, 3)`,`(3, ${n})`,`${n*3}`,`${n+1}`,`(${n}, 4)`,'4'],
+      `This DataFrame has ${n} rows (customers) and 3 columns (features). <code>len(df)</code> and <code>df.shape[0]</code> count rows, <code>df.shape[1]</code> counts columns, and <code>df.shape</code> gives both: (${n}, 3).`);}
+ ],
+ t3:[
+  d=>{const x=[ri(1,5),ri(2,20)],w=[pick([50,100,200]),pick([2,5,10])],b=pick([20,50]),parts=[x[0]*w[0],x[1]*w[1]],dot=parts[0]+parts[1],v=ri(0,2);
+    const src=NP+`X = np.array([${x.join(', ')}])\nW = np.array([${w.join(', ')}])\n`+(v===2?`b = ${b}\nprint(X @ W + b)`:v===1?'print(np.dot(X, W))':'print(X * W)');
+    const out=v===0?npArr(parts):v===1?`${dot}`:`${dot+b}`;
+    return PQ('t3','What does this code print?',src,out,[npArr(parts),`${dot}`,`${dot+b}`,`${(x[0]+x[1])*(w[0]+w[1])}`,`${x[0]+x[1]+w[0]+w[1]}`],
+      v===0?`<code>X * W</code> multiplies matching pairs but does <b>not</b> add them: ${npArr(parts)}. That's only half a dot product.`:
+      v===1?`<code>np.dot</code> multiplies matching pairs <b>and adds</b>: ${x[0]}×${w[0]} + ${x[1]}×${w[1]} = ${parts[0]} + ${parts[1]} = ${dot}.`:
+      `<code>@</code> is the dot product: ${parts[0]} + ${parts[1]} = ${dot}. Add the bias ${b} → ${dot+b}.`);},
+  d=>CQ('t3','Which line computes the prediction <span class="m">ŷ = X · W + b</span> for one customer?','y_hat = np.dot(X, W) + b',['y_hat = np.dot(X, W + b)','y_hat = X * W + b','y_hat = np.sum(X) * np.sum(W) + b'],
+      '<code>np.dot(X, W)</code> gives one number (multiply pairs and add), then the bias is added once. <code>X * W + b</code> gives an array, not a single prediction.'),
+  d=>{const W=[pick([50,100]),pick([2,5])],X=Array.from({length:3},()=>[ri(1,5),ri(2,20)]),pr=X.map(r=>r[0]*W[0]+r[1]*W[1]);
+    return PQ('t3','Three customers, one weight vector. What does this code print?',NP+`X = np.array([${X.map(r=>'['+r.join(', ')+']').join(', ')}])\nW = np.array([${W.join(', ')}])\nprint(X @ W)`,npArr(pr),
+      [npArr(X.map(r=>r[0]*W[0])),npArr(X.map(r=>r[0]+r[1])),npArr(pr.slice().reverse()),`${pr.reduce((a,c)=>a+c,0)}`],
+      `Each row is dotted with W, which gives <b>one prediction per customer</b>: ${X.map((r,i)=>`${r[0]}×${W[0]}+${r[1]}×${W[1]}=${pr[i]}`).join('; ')}.`);}
+ ],
+ t4:[
+  d=>{const n=pick([2,3,4]),y=Array.from({length:n},(_,i)=>(i+1)*100),e=Array.from({length:n},()=>ri(1,6)*10),yh=y.map((v,i)=>v-e[i]);
+    const mse=e.reduce((a,c)=>a+c*c,0)/n,mae=e.reduce((a,c)=>a+c,0)/n;
+    return PQ('t4','What does this code print?',NP+`y = np.array([${y.join(', ')}])\ny_hat = np.array([${yh.join(', ')}])\nprint(round(np.mean((y - y_hat) ** 2), 2))`,pyF(r2(mse)),
+      [pyF(r2(mae)),pyF(r2(mse*n)),pyF(r2(mae*mae*1.5)),pyF(r2(mse/2))],
+      `Errors: ${e.join(', ')}. Squared: ${e.map(v=>v*v).join(', ')}. The average of those is the MSE = ${pyF(r2(mse))}.`,[pyF(r2(mse+100)),pyF(r2(mse+50))]);},
+  d=>CQ('t4','Which line calculates the <b>Mean Absolute Error</b>?','mae = np.mean(np.abs(y - y_hat))',['mae = np.mean(y - y_hat)','mae = np.abs(np.mean(y - y_hat))','mae = np.mean((y - y_hat) ** 2)'],
+      'Take the absolute value of <b>each</b> error first, then average. Averaging first lets positive and negative errors cancel out. The last option is MSE.'),
+  d=>{const a=ri(1,5)*10,b=ri(1,5)*10,me=(a-b)/2,ms=(a*a+b*b)/2;
+    return PQ('t4','A common bug. What does this code print?',NP+`errors = np.array([${a}, -${b}])\nprint(np.mean(errors) ** 2, np.mean(errors ** 2))`,`${pyF(me*me)} ${pyF(ms)}`,
+      [`${pyF(ms)} ${pyF(ms)}`,`${pyF(ms)} ${pyF(me*me)}`,`${pyF(me*me)} ${pyF(me*me)}`,`${pyF(Math.abs(me))} ${pyF(ms)}`],
+      `<code>np.mean(errors) ** 2</code> averages first (${pyF(me)}), so the +${a} and −${b} partly cancel. Only <code>np.mean(errors ** 2)</code> is the real MSE (${pyF(ms)}). Always square <b>before</b> averaging.`);},
+  d=>CQ('t4','Which scikit-learn call gives the same number as <code>np.mean((y - y_hat) ** 2)</code>?','mean_squared_error(y, y_hat)',['mean_absolute_error(y, y_hat)','r2_score(y, y_hat)','accuracy_score(y, y_hat)'],
+      '<code>from sklearn.metrics import mean_squared_error</code> computes exactly the MSE you wrote by hand.')
+ ],
+ t5:[
+  d=>{const m=pick([-3,-2,-1,1,2,3,0.5,-0.5,1.5]),dx=pick(Number.isInteger(m)?[1,2,3]:[2,4]),x1=ri(0,4),y1=ri(0,6),x2=x1+dx,y2=y1+m*dx;
+    return PQ('t5','What does this code print?',`def slope(x1, y1, x2, y2):\n    return (y2 - y1) / (x2 - x1)\n\nprint(slope(${x1}, ${y1}, ${x2}, ${y2}))`,pyF(m),[pyF(-m),pyF(y2-y1),pyF(m*2),pyF(y2+y1)],
+      `Rise over run: (${y2} − ${y1}) / (${x2} − ${x1}) = ${y2-y1} / ${dx} = ${pyF(m)}. Python's <code>/</code> always returns a float.`,[pyF(m+1),pyF(m-1)]);},
+  d=>{const w=pick([60,70,80,90,110,120,130]),g=15*(w-100);
+    return PQ('t5','Same data as the lesson. What does this code print?',NP+`X = np.array([1, 2, 3, 4])\ny = np.array([100, 200, 300, 400])\nw = ${w}\ngradient = np.mean(2 * X * (w * X - y))\nprint(gradient)`,pyF(g),[pyF(-g),pyF(g*2),pyF(w-100),pyF(g/2)],
+      `The gradient is ${pyF(g)}. It's ${g<0?'<b>negative</b>, so increase w':'<b>positive</b>, so decrease w'} towards 100.`);},
+  d=>{const x=ri(1,4),p=pick([50,100]),y=p*x,w=pick([40,60,80,120,150]),yh=w*x,g=2*x*(yh-y);
+    return PQ('t5','One customer, squared-error loss. What does this code print?',`x, y, w = ${x}, ${y}, ${w}\ny_hat = w * x\ngradient = 2 * x * (y_hat - y)\nprint(gradient)`,`${g}`,[`${2*(yh-y)}`,`${-g}`,`${x*(yh-y)}`,`${yh-y}`],
+      `y_hat = ${w} × ${x} = ${yh}. gradient = 2 × ${x} × (${yh} − ${y}) = ${g}. ${g<0?'Negative → increase w.':'Positive → decrease w.'}`,[`${g+10}`,`${g-10}`]);},
+  d=>{const g=pick([-300,-45,0,25,150]);
+    return PQ('t5','What does this code print?',`gradient = ${g}\n\nif gradient > 0:\n    print("decrease w")\nelif gradient < 0:\n    print("increase w")\nelse:\n    print("stop: flat")`,g>0?'decrease w':g<0?'increase w':'stop: flat',['decrease w','increase w','stop: flat','error'],
+      'This is the sign rule in code. Positive gradient → go down. Negative → go up. Zero → flat ground, so stop.');}
+ ],
+ t6:[
+  d=>{const w=pick([50,80,100,120]),lr=pick([0.1,0.01,0.05]),g=pick([-300,-200,-20,40,150,250]),nw=r2(w-lr*g);
+    return PQ('t6','What does this code print?',`w = ${w}\nlearning_rate = ${lr}\ngradient = ${g}\n\nw = w - learning_rate * gradient\nprint(round(w, 2))`,pyF(nw),[pyF(r2(w+lr*g)),pyF(r2(w-g)),pyF(r2(lr*g)),pyF(r2(w-lr))],
+      `w = ${w} − ${lr} × (${g}) = ${w} ${g<0?'+':'−'} ${pyF(r2(Math.abs(lr*g)))} = ${pyF(nw)}. ${g<0?'Negative gradient → weight goes up.':'Positive gradient → weight goes down.'}`);},
+  d=>CQ('t6','Which line is the correct gradient-descent update?','w = w - learning_rate * gradient',['w = w + learning_rate * gradient','w = learning_rate * gradient','w = w - gradient / learning_rate'],
+      'Step <b>against</b> the gradient (minus), scaled by the learning rate. A plus sign would walk uphill.'),
+  d=>{const w0=pick([60,80,120,140]),lr=pick([0.05,0.1]),n=ri(1,3),r=1-15*lr,w=r2(100+(w0-100)*Math.pow(r,n));
+    const once=r2(100+(w0-100)*r),wrong=r2(100+(w0-100)*Math.pow(1+15*lr,n));
+    return PQ('t6',`What does this code print after <b>${n}</b> iteration${n>1?'s':''}?`,NP+`X = np.array([1, 2, 3, 4])\ny = np.array([100, 200, 300, 400])\nw, learning_rate = ${w0}.0, ${lr}\n\nfor i in range(${n}):\n    gradient = np.mean(2 * X * (w * X - y))\n    w = w - learning_rate * gradient\n\nprint(round(w, 2))`,pyF(w),
+      [pyF(n>1?once:r2(w0+(w0-100)*15*lr)),pyF(wrong),pyF(w0),'100.0'],
+      `Each step: gradient = 15 × (w − 100), then w ← w − ${lr} × gradient. Starting at ${w0}, after ${n} step${n>1?'s':''}: ${pyF(w)}.`,[pyF(r2(w+5)),pyF(r2(w-5))]);},
+  d=>{const sc=pick([['[3000.0, 750.0, 187.5, 46.88]','Converging nicely: keep training'],['[3000.0, 4560.0, 7100.0, 11050.0]','Diverging: lower the learning rate'],['[3000.0, 2991.0, 2982.0, 2973.0]','Too slow: raise the learning rate a little']]);
+    const q=Q('t6',`A training loop prints its loss history:${pyBlock('print(loss_history)')}<div class="code" style="margin-top:0"><div class="out">${sc[0]}</div></div>What should you conclude?`,sc[1],['Converging nicely: keep training','Diverging: lower the learning rate','Too slow: raise the learning rate a little','Perfect: the loss is already zero'],
+      'Falling fast = good. Growing = steps too big (diverging). Barely moving = steps too small.');q.py=true;return q;}
+ ],
+ t7:[
+  d=>{const L=['predictions = w * X','loss = np.mean((predictions - y) ** 2)','gradient = np.mean(2 * X * (predictions - y))','w = w - learning_rate * gradient'],k=ri(0,3);
+    const src=NP+'for i in range(20):\n'+L.map((l,j)=>'    '+(j===k?'# ??? missing line':l)).join('\n');
+    return CQ('t7','One line of the training loop is missing. Which one?'+pyBlock(src),L[k],L.filter((_,j)=>j!==k),
+      `The loop must <b>predict → loss → gradient → update</b>. The missing step here is #${k+1}: <code>${escH(L[k])}</code>.`);},
+  d=>{const n=pick([10,20,25,30]),m=pick([5,10]),cnt=Math.ceil(n/m);
+    const q=Q('t7','How many lines does this code print?'+pyBlock(`for i in range(${n}):\n    # ... training step ...\n    if i % ${m} == 0:\n        print(f"Iteration {i}")`),pl(cnt),[pl(n),pl(cnt+1),pl(m),pl(cnt-1),pl(cnt+2),pl(n/m+2)],
+      `<code>i</code> runs 0 to ${n-1}. It prints when <code>i % ${m} == 0</code>: i = ${Array.from({length:cnt},(_,j)=>j*m).join(', ')}, so ${cnt} lines.`);q.py=true;return q;},
+  d=>{const w=pick([100,120,85]),a=ri(2,9),b=ri(2,9),pr=[w*a,w*b];
+    return PQ('t7','The model is trained. What does this code print?',NP+`w = ${w}.0\nnew_customers = np.array([${a}, ${b}])\nprint(w * new_customers)`,npArr(pr,true),[npArr(pr),pyF(pr[0]+pr[1]),npArr([w+a,w+b],true),npArr([w*a],true)],
+      `w × each customer's products: ${w}×${a} = ${pr[0]}, ${w}×${b} = ${pr[1]}. w is a float, so NumPy prints floats (<code>${pr[0]}.</code>).`);},
+  d=>{const n=pick([10,20,50,100]);
+    const q=Q('t7',`How many times is the weight updated?${pyBlock(`for i in range(${n}):\n    predictions = w * X\n    gradient = np.mean(2 * X * (predictions - y))\n    w = w - learning_rate * gradient`)}`,`${n}`,[`${n-1}`,`${n+1}`,'1'],
+      `<code>range(${n})</code> runs ${n} iterations (i = 0 … ${n-1}), and each iteration updates w once.`);q.py=true;return q;}
+ ]
+};
+
 /* ================================================================
    QUIZ — engine
 ================================================================ */
-const quiz={active:false,mode:'practice',diff:0,count:10,topics:new Set(TOPICS.map(t=>t.id)),qs:[],i:0,score:0,streak:0,best:0,lives:3,correct:0,per:{},miss:[],timer:null,tLeft:0,tMax:0,answered:false};
+const quiz={active:false,style:'mixed',mode:'practice',diff:0,count:10,topics:new Set(TOPICS.map(t=>t.id)),qs:[],i:0,score:0,streak:0,best:0,lives:3,correct:0,per:{},miss:[],timer:null,tLeft:0,tMax:0,answered:false};
 function chipGroup(sel,cb,multi){$$(sel+' [data-v]').forEach(b=>b.onclick=()=>{if(multi){b.classList.toggle('sel');}else{$$(sel+' [data-v]').forEach(x=>x.classList.toggle('sel',x===b));}cb(b);});}
 function showSetup(){quiz.active=false;stopTimer();$('#qSetup').classList.remove('hidden');$('#qPlay').classList.add('hidden');$('#qResult').classList.add('hidden');$('#qBest').textContent=state.best?`🏆 Best score: ${comma(state.best)}`:'';}
 function buildQuiz(){
   const ts=[...quiz.topics];const order=[];while(order.length<quiz.count)order.push(...shuffle(ts.slice()));order.length=quiz.count;
   const used=new Set();const qs=[];
-  order.forEach(t=>{let q=null;for(let k=0;k<25&&!q;k++){const c=pick(GEN[t])(quiz.diff);if(c&&!used.has(c.text)){q=c;}}if(!q){for(let k=0;k<25&&!q;k++)q=pick(GEN[t])(quiz.diff);}used.add(q.text);qs.push(q);});
+  order.forEach(t=>{let q=null;for(let k=0;k<25&&!q;k++){const c=pick(pool(t))(quiz.diff);if(c&&!used.has(c.text)){q=c;}}if(!q){for(let k=0;k<25&&!q;k++)q=pick(pool(t))(quiz.diff);}used.add(q.text);qs.push(q);});
   return shuffle(qs);
 }
 function startQuiz(){
@@ -1852,7 +2408,7 @@ function hudQ(){
 }
 function showQ(){
   const q=quiz.qs[quiz.i];quiz.answered=false;hudQ();
-  $('#qTag').textContent=TOPICS.find(t=>t.id===q.topic).title;$('#qText').innerHTML=q.text;
+  $('#qTag').textContent=TOPICS.find(t=>t.id===q.topic).title;$('#qPy').classList.toggle('hidden',!q.py);$('#qText').innerHTML=q.text;
   $('#qOpts').innerHTML=q.opts.map((o,j)=>`<button class="opt" data-j="${j}"><kbd>${j+1}</kbd><span>${o}</span></button>`).join('');
   $$('#qOpts .opt').forEach(b=>b.onclick=()=>answer(+b.dataset.j));
   $('#qFb').innerHTML='';$('#qNextRow').classList.add('hidden');
@@ -1896,7 +2452,7 @@ function finish(){
 function initQuiz(){
   $('#qTopics').innerHTML=TOPICS.map((t,i)=>`<button class="chip sel" data-v="${t.id}">${i+1}. ${t.title}</button>`).join('');
   $$('#qMode .mode').forEach(b=>b.onclick=()=>{quiz.mode=b.dataset.v;$$('#qMode .mode').forEach(x=>x.classList.toggle('sel',x===b));});
-  chipGroup('#qDiff',b=>quiz.diff=+b.dataset.v);chipGroup('#qCount',b=>quiz.count=+b.dataset.v);
+  chipGroup('#qDiff',b=>quiz.diff=+b.dataset.v);chipGroup('#qStyle',b=>quiz.style=b.dataset.v);chipGroup('#qCount',b=>quiz.count=+b.dataset.v);
   chipGroup('#qTopics',b=>{b.classList.contains('sel')?quiz.topics.add(b.dataset.v):quiz.topics.delete(b.dataset.v);},true);
   $('#qStart').onclick=startQuiz;$('#qNext').onclick=nextQ;$('#qAgain').onclick=startQuiz;$('#qSetupBtn').onclick=showSetup;
   $('#qQuit').onclick=()=>{if(confirm('Quit this round? Your progress in this round will be lost.'))showSetup();};
@@ -1912,7 +2468,7 @@ function initQuiz(){
 ================================================================ */
 applyTheme();buildNav();renderChallenges();renderQC();renderGloss();initCode();
 drawHero();drawCycle($('#cycleHome'),-1);
-initVec();initMat();initDot();initLoss();initSlope();initGD();initLoop();initQuiz();
+initLadder();initVec();initDfVec();initMat();initDot();initLoss();initSlope();initGD();drawT6();initLoop();initQuiz();
 renderHud();route();labsReady=true;
 </script>
 </body>
